@@ -4,3 +4,4 @@ export const reformatDate = (date: string, previous: string, next: string) => fo
 export { formatDate, parseDate };
 
 export const boldIF = (string: string, condition: boolean) => condition ? `**${string}**` : string;
+export const underlineIF = (string: string, condition: boolean) => condition ? `__${string}__` : string;
