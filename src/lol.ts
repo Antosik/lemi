@@ -2,6 +2,7 @@ import axios from "axios";
 import { IStage } from "./interfaces/IStage";
 import { IStageClub, ISeasonsClub, IParticipatingClub } from "./interfaces/IClub";
 import { ISeason, ICurrentSeason } from "./interfaces/ISeason";
+import { IStageSummoner } from "interfaces/ISummoner";
 
 export default class ClubsAPI {
   public static readonly endpoint = "https://clubs.ru.leagueoflegends.com/api";
@@ -60,7 +61,21 @@ export default class ClubsAPI {
     if (!Cookie) throw new Error("No token passed!");
 
     const { season: season_id, id: stage_id } = stage;
-    const { results: stageClubs }: { results: IStageClub[] } = await this.query(`contest/season/${season_id}/stages/${stage_id}/clubs`, { headers: { Cookie }, params: { per_page: count }  });
+    const { results: stageClubs }: { results: IStageClub[] } = await this.query(`contest/season/${season_id}/stages/${stage_id}/clubs`, { headers: { Cookie }, params: { per_page: count } });
     return stageClubs;
+  }
+
+  public async getHomeClubStageMembers(stage: IStage, count: number = 25): Promise<IStageSummoner[]> {
+    const Cookie = this.getAuthCookie();
+    if (!Cookie) throw new Error("No token passed!");
+
+    const { season: season_id, id: stage_id } = stage;
+    const { results: stageMembers }: { results: IStageSummoner[] } = await this.query(`contest/season/${season_id}/stages/${stage_id}/summoners`, { headers: { Cookie }, params: { per_page: count } });
+    return stageMembers;
+  }
+
+  public async getHomeClubLiveStageMembers(count: number = 25): Promise<IStageSummoner[]> {
+    const stage: IStage = await this.getLiveStage();
+    return this.getHomeClubStageMembers(stage, count);
   }
 }

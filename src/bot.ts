@@ -68,12 +68,12 @@ export default class Lemi {
   }
 
   private async handleCommand(command: string, args: string[]) {
+    const live_season = await this.clubs.getLiveSeason();
+    if (!live_season) return "Нет активных сезонов!";
+
     console.log(command, args)
     switch (command) {
       case "topseason": {
-        const live_season = await this.clubs.getLiveSeason();
-        if (!live_season) return "Нет активных сезонов!";
-
         const count = Number(args[0]) || 10;
         const top10 = await this.clubs.getTopNSeason(live_season, count);
 
@@ -99,9 +99,6 @@ export default class Lemi {
       };
 
       case "seasoninfo": {
-        const live_season = await this.clubs.getLiveSeason();
-        if (!live_season) return "Нет активных сезонов!";
-
         const stages = await this.clubs.getStages(live_season);
 
         const start_date = reformatDate(live_season.start_date, "yyyy-MM-dd", "dd.MM.yyyy");
@@ -130,7 +127,6 @@ export default class Lemi {
       };
 
       case "myclub": {
-        const live_season = await this.clubs.getLiveSeason();
         const live_stage = await this.clubs.getLiveStage();
         const club = await this.clubs.getHomeClub(live_season);
         const clubs_on_stage = await this.clubs.getHomeClubStage(live_stage);
@@ -151,6 +147,36 @@ export default class Lemi {
 
         return result;
       }
+
+      case "myclubmembers": {
+        const count = Number(args[0]) || 10;
+        const live_stage = await this.clubs.getLiveStage();
+        const club = await this.clubs.getHomeClub(live_season);
+        const members = await this.clubs.getHomeClubStageMembers(live_stage, count);
+
+        const start_date = reformatDate(live_stage.start_date, "yyyy-MM-dd", "dd.MM.yyyy");
+        const end_date = reformatDate(live_stage.end_date, "yyyy-MM-dd", "dd.MM.yyyy");
+        const now = formatDate(new Date(), "HH:mm:ss dd.MM.yyyy");
+
+        const result = new RichEmbed()
+          .setColor('#0099ff')
+          .setURL(`https://clubs.ru.leagueoflegends.com/rating?ssid=${live_season.id}&stid=${live_stage.id}`)
+          .setAuthor(`Рейтинг игроков клуба ${club.club.lol_name}`)
+          .setTitle(`Сезон "${live_season.title}". Этап ${live_stage.number}`)
+          .setDescription(`${start_date} - ${end_date}`)
+          .setFooter(now);
+
+        members.forEach((member, i) => {
+          const title = boldIF(`${i + 1}. ${member.summoner.summoner_name}`, i < 3);
+          const description = `${member.points}pt - ${member.games} игр`;
+          result.addField(title, description)
+        })
+
+        return result;
+      }
+
+      default:
+        return "Извините, данная команда не найдена";
     }
   }
 }
