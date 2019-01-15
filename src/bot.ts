@@ -1,5 +1,5 @@
 import { Client, Guild, Message, RichEmbed } from "discord.js";
-import { formatDate, reformatDate, boldIF } from "./helpers";
+import { formatDate, reformatDate, boldIF, underlineIF } from "./helpers";
 
 import ClubsClient from "./lol";
 
@@ -8,7 +8,6 @@ export interface LemiConfig {
   lol_token: string;
   prefix: string;
 }
-
 
 export default class Lemi {
   private config: LemiConfig;
@@ -42,7 +41,7 @@ export default class Lemi {
   }
 
   private initClubs() {
-    const client = new ClubsClient();
+    const client = new ClubsClient(this.config.lol_token);
     return client;
   }
 
@@ -98,6 +97,7 @@ export default class Lemi {
 
         return result;
       };
+
       case "seasoninfo": {
         const live_season = await this.clubs.getLiveSeason();
         if (!live_season) return "Нет активных сезонов!";
@@ -126,9 +126,31 @@ export default class Lemi {
           result.addField(title, description)
         })
 
-
         return result;
       };
+
+      case "myclub": {
+        const live_season = await this.clubs.getLiveSeason();
+        const live_stage = await this.clubs.getLiveStage();
+        const club = await this.clubs.getHomeClub(live_season);
+        const clubs_on_stage = await this.clubs.getHomeClubStage(live_stage);
+        const club_on_stage = clubs_on_stage.filter(stage_club => stage_club.club.id === club.club.id)[0];
+
+        const title = `${club.club.members_count} участников | Владелец - ${club.club.owner.summoner_name}`;
+        const points = `${club.points}pt`;
+        const season_place = `#${club.rank}`;
+        const stage_place = club_on_stage && club_on_stage.id ? `#${club_on_stage.rank}` : "Нет места";
+
+        const result = new RichEmbed()
+          .setColor('#0099ff')
+          .setAuthor(`Клуб "${club.club.lol_name}"`)
+          .setTitle(title)
+          .addField(`Текущее количество очков`, points)
+          .addField(`Текущее место в сезоне`, season_place)
+          .addField(`Текущее место в этапе`, stage_place)
+
+        return result;
+      }
     }
   }
 }
