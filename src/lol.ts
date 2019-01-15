@@ -55,12 +55,12 @@ export default class ClubsAPI {
     return this.query(`contest/season/${season_id}/clubs/current`, { headers: { Cookie } });
   };
 
-  public async getHomeClubStage(stage: IStage): Promise<IStageClub[]> {
+  public async getHomeClubStage(stage: IStage, count: number = 25): Promise<IStageClub[]> {
     const Cookie = this.getAuthCookie();
     if (!Cookie) throw new Error("No token passed!");
 
     const { season: season_id, id: stage_id } = stage;
-    const { results: stageClubs }: { results: IStageClub[] } = await this.query(`contest/season/${season_id}/stages/${stage_id}/clubs`, { headers: { Cookie } });
+    const { results: stageClubs }: { results: IStageClub[] } = await this.query(`contest/season/${season_id}/stages/${stage_id}/clubs`, { headers: { Cookie }, params: { per_page: count }  });
     return stageClubs;
   }
 }
