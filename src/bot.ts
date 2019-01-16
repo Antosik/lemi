@@ -192,7 +192,8 @@ export default class Lemi {
       }
 
       case "myclubstage": {
-        const stage_index = Number(args[0]) || undefined;
+        const count = Number(args[0]) || 10;
+        const stage_index = Number(args[1]) || undefined;
 
         const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
         const stage = live_season.getStageIdByIndex(stage_index);
@@ -217,11 +218,17 @@ export default class Lemi {
           .setDescription(`${start_date} - ${end_date}`)
           .setFooter(now);
 
-        stage_clubs.forEach(stage_club => {
+        stage_clubs.slice(0, count).forEach(stage_club => {
           const title = underlineIF(boldIF(`${stage_club.rank}. ${stage_club.club.lol_name}`, stage_club.rank <= 3), homeclub.id === stage_club.club.id);
           const description = `${stage_club.points}pt - ${stage_club.club.members_count} игроков`;
           result.addField(title, description)
         })
+
+        if (stage_clubs.indexOf(homeclub_stage) > count) {
+          const title = underlineIF(boldIF(`${homeclub_stage.rank}. ${homeclub_stage.club.lol_name}`, homeclub_stage.rank <= 3), homeclub.id === homeclub_stage.club.id);
+          const description = `${homeclub_stage.points}pt - ${homeclub_stage.club.members_count} игроков`;
+          result.addField(title, description)
+        } 
 
         return result;
       }
