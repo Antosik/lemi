@@ -2,6 +2,7 @@ import { Client, Guild, Message, RichEmbed } from "discord.js";
 import { formatDate, reformatDate, boldIF, underlineIF } from "./helpers";
 
 import ClubsClient from "./lol";
+import { ICurrentSeason } from "interfaces/ISeason";
 
 export interface LemiConfig {
   discord_token: string;
@@ -68,17 +69,18 @@ export default class Lemi {
   }
 
   private async handleCommand(command: string, args: string[]) {
-    const live_season = await this.clubs.getLiveSeason();
-    if (!live_season) return "Нет активных сезонов!";
-
     console.log(command, args)
+
     switch (command) {
       case "topseason": {
-        const count = Number(args[0]) || 10;
-        const top10 = await this.clubs.getTopNSeason(live_season, count);
+        const live_season = await this.clubs.getLiveSeason();
+        if (!live_season) return "Нет активных сезонов!";
 
-        const start_date = reformatDate(live_season.start_date, "yyyy-MM-dd", "dd.MM.yyyy");
-        const end_date = reformatDate(live_season.end_date, "yyyy-MM-dd", "dd.MM.yyyy");
+        const count = Number(args[0]) || 10;
+        const top10 = await live_season.getTopN(count);
+
+        const start_date = formatDate(live_season.start_date, "dd.MM.yyyy");
+        const end_date = formatDate(live_season.end_date, "dd.MM.yyyy");
         const now = formatDate(new Date(), "HH:mm:ss dd.MM.yyyy");
 
         const result = new RichEmbed()
@@ -99,10 +101,13 @@ export default class Lemi {
       };
 
       case "seasoninfo": {
-        const stages = await this.clubs.getStages(live_season);
+        const live_season = await this.clubs.getLiveSeason();
+        if (!live_season) return "Нет активных сезонов!";
 
-        const start_date = reformatDate(live_season.start_date, "yyyy-MM-dd", "dd.MM.yyyy");
-        const end_date = reformatDate(live_season.end_date, "yyyy-MM-dd", "dd.MM.yyyy");
+        const stages = await live_season.getStages();
+
+        const start_date = formatDate(live_season.start_date, "dd.MM.yyyy");
+        const end_date = formatDate(live_season.end_date, "dd.MM.yyyy");
 
         const result = new RichEmbed()
           .setColor('#0099ff')
@@ -112,13 +117,11 @@ export default class Lemi {
           .setDescription(`${start_date} - ${end_date}`)
 
         stages.forEach(stage => {
-          const start_date = reformatDate(stage.start_date, "yyyy-MM-dd", "dd.MM.yyyy");
-          const end_date = reformatDate(stage.end_date, "yyyy-MM-dd", "dd.MM.yyyy");
+          const start_date = formatDate(stage.start_date, "dd.MM.yyyy");
+          const end_date = formatDate(stage.end_date, "dd.MM.yyyy");
 
-          const is_live = stage.is_open && !stage.is_closed;
-
-          const title = boldIF(`Этап ${stage.number}`, is_live);
-          const description = boldIF(`${start_date} - ${end_date}`, is_live);
+          const title = boldIF(`Этап ${stage.number}`, stage.is_live);
+          const description = boldIF(`${start_date} - ${end_date}`, stage.is_live);
 
           result.addField(title, description)
         })
@@ -127,42 +130,55 @@ export default class Lemi {
       };
 
       case "myclub": {
-        const live_stage = await this.clubs.getLiveStage();
-        const club = await this.clubs.getHomeClub(live_season);
-        const clubs_on_stage = await this.clubs.getHomeClubStage(live_stage);
-        const club_on_stage = clubs_on_stage.filter(stage_club => stage_club.club.id === club.club.id)[0];
+        const stage_index = Number(args[0]) || undefined;
 
-        const title = `${club.club.members_count} участников | Владелец - ${club.club.owner.summoner_name}`;
-        const points = `${club.points}pt`;
-        const season_place = `#${club.rank}`;
-        const stage_place = club_on_stage && club_on_stage.id ? `#${club_on_stage.rank}` : "Нет места";
+        const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
+        const stage = live_season.getStageIdByIndex(stage_index);
+        if (!stage) {
+          return "Этап не найден!"
+        }
+
+        const [stage_clubs, homeclub_season] = await Promise.all([homeclub.getStageClubs(stage.id), homeclub.getSeason()]);
+        const homeclub_stage = stage_clubs.find(stage_club => stage_club.club.id === homeclub.id);
+
+        const title = `Владелец - ${homeclub.owner_name} | ${homeclub.members_count} участников`;
+        const points = `${homeclub_season.points}pt`;
+        const season_place = `#${homeclub_season.rank}`;
+        const stage_place = homeclub_stage && homeclub_stage.id ? `#${homeclub_stage.rank}` : "Нет места";
 
         const result = new RichEmbed()
           .setColor('#0099ff')
-          .setAuthor(`Клуб "${club.club.lol_name}"`)
+          .setURL(`https://clubs.ru.leagueoflegends.com/progress`)
+          .setAuthor(`Клуб "${homeclub.name}"`)
           .setTitle(title)
-          .addField(`Текущее количество очков`, points)
-          .addField(`Текущее место в сезоне`, season_place)
-          .addField(`Текущее место в этапе`, stage_place)
+          .addField(`Общее количество очков`, points)
+          .addField(`Место в сезоне`, season_place)
+          .addField(`Место в ${stage.number} этапе`, stage_place)
 
         return result;
       }
 
       case "myclubmembers": {
         const count = Number(args[0]) || 10;
-        const live_stage = await this.clubs.getLiveStage();
-        const club = await this.clubs.getHomeClub(live_season);
-        const members = await this.clubs.getHomeClubStageMembers(live_stage, count);
+        const stage_index = Number(args[1]) || undefined;
 
-        const start_date = reformatDate(live_stage.start_date, "yyyy-MM-dd", "dd.MM.yyyy");
-        const end_date = reformatDate(live_stage.end_date, "yyyy-MM-dd", "dd.MM.yyyy");
+        const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
+        const stage = live_season.getStageIdByIndex(stage_index);
+        if (!stage) {
+          return "Этап не найден!"
+        }
+
+        const members = await homeclub.getStageMembers(stage.id, count);
+
+        const start_date = formatDate(stage.start_date, "dd.MM.yyyy");
+        const end_date = formatDate(stage.end_date, "dd.MM.yyyy");
         const now = formatDate(new Date(), "HH:mm:ss dd.MM.yyyy");
 
         const result = new RichEmbed()
           .setColor('#0099ff')
-          .setURL(`https://clubs.ru.leagueoflegends.com/rating?ssid=${live_season.id}&stid=${live_stage.id}`)
-          .setAuthor(`Рейтинг игроков клуба ${club.club.lol_name}`)
-          .setTitle(`Сезон "${live_season.title}". Этап ${live_stage.number}`)
+          .setURL(`https://clubs.ru.leagueoflegends.com/club/member`)
+          .setAuthor(`Рейтинг игроков клуба "${homeclub.name}"`)
+          .setTitle(`Сезон "${live_season.title}". Этап ${stage.number}`)
           .setDescription(`${start_date} - ${end_date}`)
           .setFooter(now);
 
@@ -172,6 +188,78 @@ export default class Lemi {
           result.addField(title, description)
         })
 
+        return result;
+      }
+
+      case "myclubstage": {
+        const stage_index = Number(args[0]) || undefined;
+
+        const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
+        const stage = live_season.getStageIdByIndex(stage_index);
+        if (!stage) {
+          return "Этап не найден!"
+        }
+
+        const stage_clubs = await homeclub.getStageClubs(stage.id);
+        const homeclub_stage = stage_clubs.find(stage_club => stage_club.club.id === homeclub.id);
+
+        if (!homeclub_stage || !homeclub_stage.id) return "Недостаточно очков для участия в этапе!";
+
+        const start_date = formatDate(stage.start_date, "dd.MM.yyyy");
+        const end_date = formatDate(stage.end_date, "dd.MM.yyyy");
+        const now = formatDate(new Date(), "HH:mm:ss dd.MM.yyyy");
+
+        const result = new RichEmbed()
+          .setColor('#0099ff')
+          .setURL(`https://clubs.ru.leagueoflegends.com/rating?ssid=${live_season.id}&stid=${stage.id}`)
+          .setAuthor(`Рейтинг клубов`)
+          .setTitle(`Сезон "${live_season.title}". Этап ${stage.number}`)
+          .setDescription(`${start_date} - ${end_date}`)
+          .setFooter(now);
+
+        stage_clubs.forEach(stage_club => {
+          const title = underlineIF(boldIF(`${stage_club.rank}. ${stage_club.club.lol_name}`, stage_club.rank <= 3), homeclub.id === stage_club.club.id);
+          const description = `${stage_club.points}pt - ${stage_club.club.members_count} игроков`;
+          result.addField(title, description)
+        })
+
+        return result;
+      }
+
+      case "searchclub": {
+        const name = args.join(" ");
+        if (!name.trim()) return "Введите название клуба"
+        if (name.length < 3) return "Имя клуба должно быть больше 2 символов"
+
+        const live_season = await this.clubs.getLiveSeason();
+        const clubs = await live_season.findClub(name);
+        if (!clubs.length) return "Клубов с таким названием не найдено (или они не в топ500)"
+
+        if (clubs.length === 1) {
+          const [club] = clubs;
+
+          const title = `${club.club.members_count} участников | Владелец - ${club.club.owner.summoner_name}`;
+          const points = `${club.points}pt`;
+          const season_place = `#${club.rank}`;
+
+          const result = new RichEmbed()
+            .setColor('#0099ff')
+            .setAuthor(`Клуб "${club.club.lol_name}"`)
+            .setTitle(title)
+            .addField(`Текущее количество очков`, points)
+            .addField(`Текущее место в сезоне`, season_place)
+          return result;
+        }
+
+        const result = new RichEmbed()
+          .setColor('#0099ff')
+          .setAuthor(`Итоги поиска по клубам ("${name}"):`)
+          .setTitle(`Найдено ${clubs.length} клубов`)
+          .setFooter(`Укажите точное название для получения полной информации`);
+        clubs.forEach((club, i) => {
+          result
+            .addField(`${i + 1}. ${club.club.lol_name}`, `#${club.rank} в сезоне, ${club.points}pt`)
+        });
         return result;
       }
 

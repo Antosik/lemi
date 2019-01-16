@@ -13,5 +13,5 @@ export interface ISeason {
 
 export interface ICurrentSeason extends ISeason {
   current_stage: IStage;
-  stages: IStage;
+  stages: IStage[];
 }
