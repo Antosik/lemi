@@ -48,7 +48,7 @@ export default class HomeClub {
   }
 
   private async query(query, { data = {}, params = {} } = { data: {}, params: {} }): Promise<any> {
-    if (!this.token) throw new Error("No token provided");
+    if (!this.token) throw new Error("Ошибка авторизации");
 
     return axios.get(`${HomeClub.endpoint}/${query}/`, { params, data, headers: { Cookie: `PVPNET_TOKEN_RU=${this.token}` } }).then(({ data: result }) => result);
   }

@@ -39,10 +39,10 @@ export default class ClubsAPI {
 
   public async getHomeClub(): Promise<HomeClub> {
     const Cookie = this.getAuthCookie();
-    if (!Cookie) throw new Error("No token passed!");
+    if (!Cookie) throw new Error("Ошибка авторизации!");
 
     const season = await this.getLiveSeason();
-    if (!season) throw new Error("No Live seasons!");
+    if (!season) throw new Error("Нет активных сезонов!");
 
     const club: ISeasonsClub = await this.query(`contest/season/${season.id}/clubs/current`, { headers: { Cookie } });
     return !club.id ? undefined : new HomeClub(club.club, season.id, this.token);
