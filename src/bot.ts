@@ -263,6 +263,23 @@ export default class Lemi {
         return result;
       }
 
+      case "help":
+      case "commands": {
+        const result = new RichEmbed()
+          .setColor('#0099ff')
+          .setTitle(`Доступные команды`)
+          .addField(`${this.config.prefix}seasoninfo`, `Отображает общую информацию о действующем сезоне.`)
+          .addField(`${this.config.prefix}topseason {количество}`, `Показывает топ сезона. \nПример использования: \`${this.config.prefix}topseason\` или \`${this.config.prefix}topseason 10\``)
+          .addField(`${this.config.prefix}searchclub {название}`, `Поиск по клубам (топ-500). Чем полнее название, тем лучше`)
+          .addField(`${this.config.prefix}myclub`, `Отображает информацию о ~~ вашем клубе ~~  клубе создателя *(пока что)*.`)
+          .addField(`${this.config.prefix}myclubstage {количество клубов} {номер этапа (1-3)}`, `Показывает топ этапа ~~ вашего клуба ~~  клуба создателя *(пока что)*. \nПример использования: \`${this.config.prefix}myclubstage\`, \`${this.config.prefix}myclubstage 3\`, \`${this.config.prefix}myclubstage 3 1\``)
+          .addField(`${this.config.prefix}myclubmembers {количество участников} {номер этапа (1-3)}`, `Отображает информацию об очках, заработанных участниками ~~ вашего клубе ~~  клуба создателя *(пока что)*. \nПример использования: \`${this.config.prefix}myclubmembers\`, \`${this.config.prefix}myclubmembers 3\`, \`${this.config.prefix}myclubmembers 3 1\``)
+          .setFooter(`Made with <3 by Antosik#6224`);
+
+        return result;
+      }
+
+
       default:
         return "Извините, данная команда не найдена";
     }
