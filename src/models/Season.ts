@@ -39,11 +39,19 @@ export default class Season {
   }
 
   public async findClub(name: string): Promise<ISeasonsClub[]> {
-    return co(this.clubSearcher(name));
+    const results: ISeasonsClub[] = await co(this.clubSearcher(name));
+    
+    for (let club of results) {
+      if (club.club.lol_name.toLowerCase() === name.toLowerCase()) {
+        return [club]
+      }
+    }
+
+    return results;
   }
 
   private * clubSearcher(name: string) {
-    const searchRegExp = new RegExp(name, "ig");
+    const searchRegExp = new RegExp(name, "i");
     let currentPage = 1;
     let result: ISeasonsClub[] = [];
 
