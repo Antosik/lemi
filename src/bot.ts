@@ -228,7 +228,7 @@ export default class Lemi {
           const title = underlineIF(boldIF(`${homeclub_stage.rank}. ${homeclub_stage.club.lol_name}`, homeclub_stage.rank <= 3), homeclub.id === homeclub_stage.club.id);
           const description = `${homeclub_stage.points}pt - ${homeclub_stage.club.members_count} игроков`;
           result.addField(title, description)
-        } 
+        }
 
         return result;
       }
@@ -245,7 +245,7 @@ export default class Lemi {
         if (clubs.length === 1) {
           const [club] = clubs;
 
-          const { id: season_id, current_stage: { id: stage_id, number: stage_index }} = live_season;
+          const { id: season_id, current_stage: { id: stage_id, number: stage_index } } = live_season;
           const { club: { id: club_id } } = club;
           const club_stage = await this.clubs.getClubStage(club_id, season_id, stage_id);
 
@@ -274,6 +274,22 @@ export default class Lemi {
             .addField(`${i + 1}. ${club.club.lol_name}`, `#${club.rank} в сезоне, ${club.points}pt`)
         });
         return result;
+      }
+
+      case "myclubcalc": {
+        let type = args[0] || "stage";
+        const top = Number(args[1]) || 1;
+        const group_size = Number(args[2]) || 5;
+        let mode = args[3] === "aram" ? 1 : 0;
+        if (type !== "stage" && type !== "season") type = "stage";
+        const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
+
+        const { current_stage: { id: stage_id } } = live_season;
+        const { top: wanted, games_count, points_needed } = await homeclub.calculateStage(stage_id, { top, group_size, mode });
+
+        if (!games_count) return "Вы уже достигли желаемого места, так держать!";
+        if (!wanted) return `Ваш клуб не участвует в этапе.\nЧтобы участвовать, нужно заработать ${points_needed} очков, выиграв **${games_count}** игр (составом из ${group_size} игроков)`;
+        return `Чтобы достигнуть желаемого ${wanted} места, нужно заработать ${points_needed} очков, выиграв **${games_count}** игр (составом из ${group_size} игроков)`;
       }
 
       case "help":
