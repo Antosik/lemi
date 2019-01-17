@@ -284,12 +284,18 @@ export default class Lemi {
         if (type !== "stage" && type !== "season") type = "stage";
         const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
 
-        const { current_stage: { id: stage_id } } = live_season;
-        const { top: wanted, games_count, points_needed } = await homeclub.calculateStage(stage_id, { top, group_size, mode });
+        if (type === "stage") {
+          const { current_stage: { id: stage_id } } = live_season;
+          const { top: wanted, games_count, points_needed } = await homeclub.calculateStage(stage_id, { top, group_size, mode });
 
-        if (!games_count) return "Вы уже достигли желаемого места, так держать!";
-        if (!wanted) return `Ваш клуб не участвует в этапе.\nЧтобы участвовать, нужно заработать ${points_needed} очков, выиграв **${games_count}** игр (составом из ${group_size} игроков)`;
-        return `Чтобы достигнуть желаемого ${wanted} места, нужно заработать ${points_needed} очков, выиграв **${games_count}** игр (составом из ${group_size} игроков)`;
+          if (!games_count) return "Вы уже достигли желаемого места в этапе, так держать!";
+          if (!wanted) return `Ваш клуб не участвует в этапе.\nЧтобы участвовать, нужно заработать ${points_needed} очков, выиграв **${games_count}** игр (составом из ${group_size} игроков)`;
+          return `Чтобы достигнуть желаемого ${wanted} места в этапе, нужно заработать ${points_needed} очков, выиграв **${games_count}** игр (составом из ${group_size} игроков)`;
+        }
+
+        const { top: wanted, games_count, points_needed } = await homeclub.calculateSeason({ top, group_size, mode });
+        if (!games_count) return "Вы уже достигли желаемого места в сезоне, так держать!";
+        return `Чтобы достигнуть желаемого ${wanted} места в сезоне, нужно заработать ${points_needed} очков, выиграв **${games_count}** игр (составом из ${group_size} игроков)`;
       }
 
       case "help":

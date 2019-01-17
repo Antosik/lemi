@@ -47,7 +47,7 @@ export default class HomeClub {
     return stage_members;
   }
 
-  public async calculateStage(stage_id: number, { top = 1, group_size = 5, mode = 0 } = { top: 1, group_size: 5 }): Promise<{ top: number, games_count: number, points_needed: number }> {
+  public async calculateStage(stage_id: number, { top = 1, group_size = 5, mode = 0 } = { top: 1, group_size: 5, mode: 0 }): Promise<{ top: number, games_count: number, points_needed: number }> {
     if (top < 1 || top > 25) throw new Error("Неверная позиция в топе");
     if (group_size < 2 || group_size > 5) throw new Error("Количество игроков может быть от 2 до 5");
     const points_per_game = !mode ? group_size * group_size * 10 : 5 * (group_size - 1) * group_size;
@@ -69,6 +69,23 @@ export default class HomeClub {
     const games_count = Math.ceil(points_needed / points_per_game);
 
     return { top: 0, games_count, points_needed };
+  }
+
+  public async calculateSeason({ top = 1, group_size = 5, mode = 0 } = { top: 1, group_size: 5, mode: 0 }): Promise<{ top: number, games_count: number, points_needed: number }> {
+    if (top < 1 || top > 500) throw new Error("Неверная позиция в топе");
+    if (group_size < 2 || group_size > 5) throw new Error("Количество игроков может быть от 2 до 5");
+    const points_per_game = !mode ? group_size * group_size * 10 : 5 * (group_size - 1) * group_size;
+
+    const { rank: current_place, points: current_points } = await this.getSeason();
+    if (current_place <= top) return { top, games_count: 0, points_needed: 0 };
+
+    const page = Math.ceil(top / 10);
+    const { results: season_clubs }: { results: ISeasonsClub[] } = await this.query(`contest/season/${this.season_id}/clubs`, { params: { per_page: 10, page } });
+    const { points } = season_clubs.find(club => club.rank === top);
+
+    const points_needed = points - current_points;
+    const games_count = Math.ceil(points_needed / points_per_game);
+    return { top, games_count, points_needed };
   }
 
   private async query(query, { data = {}, params = {} } = { data: {}, params: {} }): Promise<any> {
