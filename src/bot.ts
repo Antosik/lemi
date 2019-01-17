@@ -245,16 +245,22 @@ export default class Lemi {
         if (clubs.length === 1) {
           const [club] = clubs;
 
+          const { id: season_id, current_stage: { id: stage_id, number: stage_index }} = live_season;
+          const { club: { id: club_id } } = club;
+          const club_stage = await this.clubs.getClubStage(club_id, season_id, stage_id);
+
           const title = `${club.club.members_count} участников | Владелец - ${club.club.owner.summoner_name}`;
           const points = `${club.points}pt`;
-          const season_place = `#${club.rank}`;
+          const season_place = `#${club.rank} (${club.games} игр)`;
+          const stage_place = club_stage.rank ? `#${club_stage.rank} (${club_stage.games} игр)` : `Недостаточно очков - ${club_stage.points}/1000`;
 
           const result = new RichEmbed()
             .setColor('#0099ff')
             .setAuthor(`Клуб "${club.club.lol_name}"`)
             .setTitle(title)
-            .addField(`Текущее количество очков`, points)
-            .addField(`Текущее место в сезоне`, season_place)
+            .addField(`Общее количество очков`, points)
+            .addField(`Место в сезоне`, season_place)
+            .addField(`Место в ${stage_index} этапе`, stage_place)
           return result;
         }
 

@@ -47,4 +47,12 @@ export default class ClubsAPI {
     const club: ISeasonsClub = await this.query(`contest/season/${season.id}/clubs/current`, { headers: { Cookie } });
     return !club.id ? undefined : new HomeClub(club.club, season.id, this.token);
   };
+
+  public async getClubStage(club_id: number, season_id: number, stage_id: number): Promise<IStageClub> {
+    const Cookie = this.getAuthCookie();
+    if (!Cookie) throw new Error("Ошибка авторизации!");
+
+    const { results: stages }: { results: IStageClub[] } = await this.query(`contest/season/${season_id}/clubs/${club_id}/stages`, { headers: { Cookie } });
+    return stages.find(stage => stage.stage === stage_id);
+  }
 }
