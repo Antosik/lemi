@@ -1,4 +1,4 @@
-import { Client, Guild, Message, RichEmbed } from "discord.js";
+import { Client, Guild, Message, RichEmbed, DMChannel, GroupDMChannel } from "discord.js";
 import { format as formatDate } from "date-fns";
 
 import { boldIF, underlineIF } from "./helpers";
@@ -59,6 +59,7 @@ export default class Lemi {
   }
 
   private async onMessage(message: Message) {
+    if (message.channel instanceof DMChannel || message.channel instanceof GroupDMChannel) return;
     if (message.author.bot) return;
     if (message.content.indexOf(this.config.prefix) !== 0) return;
 
@@ -169,7 +170,7 @@ export default class Lemi {
           const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
           const stage = live_season.getStageIdByIndex(stage_index);
           if (!stage) {
-            return "Этап не найден!"
+            return consts.stageNotFound;
           }
 
           const members = await homeclub.getStageMembers(stage.id, count);
@@ -312,14 +313,16 @@ export default class Lemi {
           const result = new RichEmbed()
             .setColor('#0099ff')
             .setTitle(`Доступные команды`)
-            .addField(`${this.config.prefix}seasoninfo`, `Отображает общую информацию о действующем сезоне.`)
-            .addField(`${this.config.prefix}topseason [количество]`, `Показывает топ сезона. \nПример использования: \n\`${this.config.prefix}topseason\` или \`${this.config.prefix}topseason 10\``)
-            .addField(`${this.config.prefix}searchclub [название]`, `Поиск по клубам (топ-500). Чем полнее название, тем лучше`)
-            .addField(`${this.config.prefix}myclub`, `Отображает информацию о вашем клубе.`)
-            .addField(`${this.config.prefix}myclubstage [количество клубов] [номер этапа (1-3)]`, `Показывает топ этапа вашего клуба. \nПример использования: \n\`${this.config.prefix}myclubstage\`, \`${this.config.prefix}myclubstage 3\`, \`${this.config.prefix}myclubstage 3 1\``)
-            .addField(`${this.config.prefix}myclubmembers [количество участников] [номер этапа (1-3)]`, `Отображает информацию об очках, заработанных участниками вашего клуба. \nПример использования: \n\`${this.config.prefix}myclubmembers\`, \`${this.config.prefix}myclubmembers 3\`, \`${this.config.prefix}myclubmembers 3 1\``)
-            .addField(`${this.config.prefix}myclubcalc ["season"/"stage"] [место в топе] [количество игроков в группе] [aram]`, `Отображает количество игр, которые нужно выиграть участниками вашего клуба для достижения желаего места в этапе/сезоне. \nПример использования: \n\`${this.config.prefix}myclubcalc\`, \`${this.config.prefix}myclubcalc season\`, \`${this.config.prefix}myclubcalc stage 10\`, \`${this.config.prefix}myclubcalc season 150 3\``)
-            .setFooter(`Made with <3 by Antosik#6224`);
+            .setDescription(`Используйте префикс ${this.config.prefix} перед командой`)
+            .addField(`• \`seasoninfo/сезон\``, `Отображает общую информацию о действующем сезоне.`)
+            .addField(`• \`topseason/топсезона [количество мест]\``, `Показывает топ сезона.`)
+            .addField(`• \`searchclub/поиск [название]\``, `Поиск по клубам (Топ-500). Чем полнее название, тем лучше.`)
+            .addField(`• \`myclub/клуб\``, `Отображает информацию о вашем клубе.`)
+            .addField(`• \`myclubstage/этап [количество клубов] [номер этапа (1-3)]\``, `Показывает топ этапа вашего клуба.`)
+            .addField(`• \`myclubmembers/участники [количество участников] [номер этапа (1-3)]\``, `Отображает информацию об очках, заработанных участниками вашего клуба.`)
+            .addField(`• \`myclubcalc/расчет [season/stage] [место в топе] [игроков в группе (2-5)] [aram]\``, `Отображает количество игр, которые нужно выиграть участниками вашего клуба для достижения желаего места в сезоне/этапе.`)
+            .addField(`• \`help/команды\``, `Показывает данное сообщение`)
+            .setFooter(`Made with <3 by @Antosik#6224`);
 
           return result;
         }
