@@ -69,7 +69,8 @@ export default class HomeClub {
     }
 
     const { results: stages }: { results: IStageClub[] } = await this.query(`contest/season/${this.season_id}/clubs/${this.id}/stages`);
-    const { points: current_points } = stages.find(stage => stage.stage === stage_id);
+    const current_stage = stages.find(stage => stage.stage === stage_id);
+    const { points: current_points } = current_stage || { points: 0 };
     const { games_count, points_needed } = this.calculatePoints(current_points, 1000, { group_size, mode });
 
     return { top: 0, games_count, points_needed };
@@ -84,7 +85,7 @@ export default class HomeClub {
 
     const page = Math.ceil(top / 10);
     const { results: season_clubs }: { results: ISeasonsClub[] } = await this.query(`contest/season/${this.season_id}/clubs`, { params: { per_page: 10, page } });
-    const club_on_place = season_clubs[top % 10 - 1];
+    const club_on_place = season_clubs[top % 10];
     if (!club_on_place) throw new Error(consts.errorGettingTopPosition);
 
     const { points } = club_on_place;
