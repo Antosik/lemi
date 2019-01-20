@@ -1,6 +1,7 @@
 import { Client, Guild, Message, RichEmbed } from "discord.js";
+import { format as formatDate } from "date-fns";
 
-import { formatDate, reformatDate, boldIF, underlineIF } from "./helpers";
+import { boldIF, underlineIF } from "./helpers";
 import format, { consts } from "./localization";
 import ClubsClient from "./lol";
 
@@ -88,9 +89,8 @@ export default class Lemi {
           const result = new RichEmbed()
             .setColor('#0099ff')
             .setURL(`https://clubs.ru.leagueoflegends.com/rating?ssid=${live_season.id}&stid=0`)
-            .setAuthor(`Рейтинг клубов`)
-            .setTitle(`Сезон ${live_season.title}`)
-            .setDescription(`${start_date} - ${end_date}`)
+            .setTitle(`Рейтинг клубов`)
+            .setDescription(`Сезон "${live_season.title}" (${start_date} - ${end_date})`)
             .setFooter(now);
 
           top10.forEach(club => {
@@ -115,9 +115,8 @@ export default class Lemi {
           const result = new RichEmbed()
             .setColor('#0099ff')
             .setURL(`https://clubs.ru.leagueoflegends.com/rating?ssid=${live_season.id}&stid=0`)
-            .setAuthor(`Информация о сезоне`)
-            .setTitle(`Сезон ${live_season.title}`)
-            .setDescription(`${start_date} - ${end_date}`)
+            .setTitle(`Информация о сезоне "${live_season.title}"`)
+            .setDescription(`Даты сезона: ${start_date} - ${end_date}`)
 
           stages.forEach(stage => {
             const start_date = formatDate(stage.start_date, "dd.MM.yyyy");
@@ -145,7 +144,7 @@ export default class Lemi {
           const [stage_clubs, homeclub_season] = await Promise.all([homeclub.getStageClubs(stage.id), homeclub.getSeason()]);
           const homeclub_stage = stage_clubs.find(stage_club => stage_club.club.id === homeclub.id);
 
-          const title = `Владелец - ${homeclub.owner_name} | ${format("participient", homeclub.members_count)}`;
+          const description = `Владелец - ${homeclub.owner_name} | ${format("participient", homeclub.members_count)}`;
           const points = `${homeclub_season.points}pt`;
           const season_place = `#${homeclub_season.rank}`;
           const stage_place = homeclub_stage && homeclub_stage.id ? `#${homeclub_stage.rank}` : consts.noPlaceInTop;
@@ -153,11 +152,11 @@ export default class Lemi {
           const result = new RichEmbed()
             .setColor('#0099ff')
             .setURL(`https://clubs.ru.leagueoflegends.com/progress`)
-            .setAuthor(`Клуб "${homeclub.name}"`)
-            .setTitle(title)
+            .setTitle(`Клуб "${homeclub.name}"`)
+            .setDescription(description)
             .addField(`Общее количество очков`, points)
-            .addField(`Место в сезоне`, season_place)
-            .addField(`Место в ${stage.number} этапе`, stage_place)
+            .addField(`Место в сезоне`, season_place, true)
+            .addField(`Место в ${stage.number} этапе`, stage_place, true)
 
           return result;
         }
@@ -182,9 +181,8 @@ export default class Lemi {
           const result = new RichEmbed()
             .setColor('#0099ff')
             .setURL(`https://clubs.ru.leagueoflegends.com/club/member`)
-            .setAuthor(`Рейтинг игроков клуба "${homeclub.name}"`)
-            .setTitle(`Сезон "${live_season.title}". Этап ${stage.number}`)
-            .setDescription(`${start_date} - ${end_date}`)
+            .setTitle(`Рейтинг игроков клуба "${homeclub.name}"`)
+            .setDescription(`Сезон "${live_season.title}". Этап ${stage.number} (${start_date} - ${end_date})`)
             .setFooter(now);
 
           members.forEach((member, i) => {
@@ -219,9 +217,8 @@ export default class Lemi {
           const result = new RichEmbed()
             .setColor('#0099ff')
             .setURL(`https://clubs.ru.leagueoflegends.com/rating?ssid=${live_season.id}&stid=${stage.id}`)
-            .setAuthor(`Рейтинг клубов`)
-            .setTitle(`Сезон "${live_season.title}". Этап ${stage.number}`)
-            .setDescription(`${start_date} - ${end_date}`)
+            .setTitle(`Рейтинг клубов`)
+            .setDescription(`Сезон "${live_season.title}". Этап ${stage.number} (${start_date} - ${end_date})`)
             .setFooter(now);
 
           stage_clubs
@@ -258,18 +255,18 @@ export default class Lemi {
             const { club: { id: club_id } } = club;
             const club_stage = await this.clubs.getClubStage(club_id, season_id, stage_id);
 
-            const title = `${format("participient", club.club.members_count)} участников | Владелец - ${club.club.owner.summoner_name}`;
+            const description = `Владелец - ${club.club.owner.summoner_name} | ${format("participient", club.club.members_count)}`;
             const points = `${club.points}pt`;
             const season_place = `#${club.rank} (${format("game", club.games)})`;
-            const stage_place = club_stage.rank ? `#${club_stage.rank} (${format("game", club_stage.games)}` : `Недостаточно очков - ${club_stage.points}/1000`;
+            const stage_place = club_stage.rank ? `#${club_stage.rank} (${format("game", club_stage.games)})` : `Недостаточно очков - ${club_stage.points}/1000`;
 
             const result = new RichEmbed()
               .setColor('#0099ff')
-              .setAuthor(`Клуб "${club.club.lol_name}"`)
-              .setTitle(title)
+              .setTitle(`Клуб "${club.club.lol_name}"`)
+              .setDescription(description)
               .addField(`Общее количество очков`, points)
-              .addField(`Место в сезоне`, season_place)
-              .addField(`Место в ${stage_index} этапе`, stage_place)
+              .addField(`Место в сезоне`, season_place, true)
+              .addField(`Место в ${stage_index} этапе`, stage_place, true)
             return result;
           }
 
