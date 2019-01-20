@@ -5,6 +5,7 @@ import { ISeason, ICurrentSeason } from "./interfaces/ISeason";
 
 import Season, { LiveSeason } from "./models/Season";
 import HomeClub from "./models/HomeClub";
+import { consts } from "./localization";
 
 export default class ClubsAPI {
   public static readonly endpoint = "https://clubs.ru.leagueoflegends.com/api";
@@ -18,7 +19,7 @@ export default class ClubsAPI {
   private async query(query, { data = {}, params = {}, headers = {} } = { data: {}, params: {}, headers: {} }): Promise<any> {
     return axios.get(`${ClubsAPI.endpoint}/${query}/`, { params, data, headers })
       .then(({ data: result }) => result)
-      .catch(() => { throw new Error("Ошибка получения данных с сервера"); });
+      .catch(() => { throw new Error(consts.requestError); })
   }
 
   private getAuthCookie() {
@@ -37,10 +38,10 @@ export default class ClubsAPI {
 
   public async getHomeClub(): Promise<HomeClub> {
     const Cookie = this.getAuthCookie();
-    if (!Cookie) throw new Error("Ошибка авторизации!");
+    if (!Cookie) throw new Error(consts.authError);
 
     const season = await this.getLiveSeason();
-    if (!season) throw new Error("Нет активных сезонов!");
+    if (!season) throw new Error(consts.noActiveSeason);
 
     const club: ISeasonsClub = await this.query(`contest/season/${season.id}/clubs/current`, { headers: { Cookie } });
     return !club.id ? undefined : new HomeClub(club.club, season.id, this.token);
@@ -48,7 +49,7 @@ export default class ClubsAPI {
 
   public async getClubStage(club_id: number, season_id: number, stage_id: number): Promise<IStageClub> {
     const Cookie = this.getAuthCookie();
-    if (!Cookie) throw new Error("Ошибка авторизации!");
+    if (!Cookie) throw new Error(consts.authError);
 
     const { results: stages }: { results: IStageClub[] } = await this.query(`contest/season/${season_id}/clubs/${club_id}/stages`, { headers: { Cookie } });
     return stages.find(stage => stage.stage === stage_id);

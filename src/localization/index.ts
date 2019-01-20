@@ -53,7 +53,10 @@ export const consts = {
   calcEnoughGames: "Вы уже достигли желаемого места в этапе, так держать!",
   invalidPlayerCount: "Количество игроков может быть от 2 до 5",
   invalidTopPosition: "Неверная позиция в топе",
-  authError: "Ошибка авторизации"
+  errorGettingTopPosition: "Ошибка получения клуба в топе",
+
+  authError: "Ошибка авторизации",
+  requestError: "Ошибка получения данных с сервера"
 }
 
 export default function format(token, count: number): string {

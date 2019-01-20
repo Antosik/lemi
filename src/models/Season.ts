@@ -6,6 +6,7 @@ import { ISeason, ICurrentSeason } from "../interfaces/ISeason";
 import { ISeasonsClub } from "../interfaces/IClub";
 
 import Stage from "./Stage";
+import { consts } from "../localization";
 
 export default class Season {
   public static readonly endpoint = "https://clubs.ru.leagueoflegends.com/api/contest/season";
@@ -37,7 +38,7 @@ export default class Season {
   protected async query(query, { data = {}, params = {}, headers = {} } = { data: {}, params: {}, headers: {} }): Promise<any> {
     return axios.get(`${Season.endpoint}/${query}/`, { params, data, headers })
       .then(({ data: result }) => result)
-      .catch(() => { throw new Error("Ошибка получения данных с сервера"); })
+      .catch(() => { throw new Error(consts.requestError); })
   }
 
   public async findClub(name: string): Promise<ISeasonsClub[]> {

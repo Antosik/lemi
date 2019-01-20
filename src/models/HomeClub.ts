@@ -1,6 +1,9 @@
 import axios from "axios";
+
 import { IClub, IStageClub, ISeasonsClub } from "../interfaces/IClub";
-import { IStageSummoner } from "interfaces/ISummoner";
+import { IStageSummoner } from "../interfaces/ISummoner";
+
+import { consts } from "../localization";
 
 export default class HomeClub {
   public static readonly endpoint = "https://clubs.ru.leagueoflegends.com/api";
@@ -48,16 +51,20 @@ export default class HomeClub {
   }
 
   public async calculateStage(stage_id: number, { top = 1, group_size = 5, mode = 0 } = { top: 1, group_size: 5, mode: 0 }): Promise<{ top: number, games_count: number, points_needed: number }> {
-    if (top < 1 || top > 25) throw new Error("Неверная позиция в топе");
-    if (group_size < 2 || group_size > 5) throw new Error("Количество игроков может быть от 2 до 5");
+    if (top < 1 || top > 25) throw new Error(consts.invalidTopPosition);
+    if (group_size < 2 || group_size > 5) throw new Error(consts.invalidPlayerCount);
 
     const stage_clubs = await this.getStageClubs(stage_id);
     if (stage_clubs.length) {
       const { rank: current_place, points: current_points } = stage_clubs.find(stage_club => stage_club.club.id === this.id);
 
       if (current_place <= top) return { top, games_count: 0, points_needed: 0 };
-      const { points } = stage_clubs.find(club => club.rank === top);
+      const club_on_place = stage_clubs[top - 1];
+      if (!club_on_place) throw new Error(consts.errorGettingTopPosition);
+
+      const { points } = club_on_place;
       const { games_count, points_needed } = this.calculatePoints(current_points, points, { group_size, mode });
+
       return { top, games_count, points_needed };
     }
 
@@ -69,23 +76,26 @@ export default class HomeClub {
   }
 
   public async calculateSeason({ top = 1, group_size = 5, mode = 0 } = { top: 1, group_size: 5, mode: 0 }): Promise<{ top: number, games_count: number, points_needed: number }> {
-    if (top < 1 || top > 500) throw new Error("Неверная позиция в топе");
-    if (group_size < 2 || group_size > 5) throw new Error("Количество игроков может быть от 2 до 5");
+    if (top < 1 || top > 500) throw new Error(consts.invalidTopPosition);
+    if (group_size < 2 || group_size > 5) throw new Error(consts.invalidPlayerCount);
 
     const { rank: current_place, points: current_points } = await this.getSeason();
     if (current_place <= top) return { top, games_count: 0, points_needed: 0 };
 
     const page = Math.ceil(top / 10);
     const { results: season_clubs }: { results: ISeasonsClub[] } = await this.query(`contest/season/${this.season_id}/clubs`, { params: { per_page: 10, page } });
-    const club_on_place = season_clubs[top % 10];
-    if (!club_on_place) throw new Error("Ошибка получения клуба в топе");
-    const { points } = club_on_place;
+    const club_on_place = season_clubs[top % 10 - 1];
+    if (!club_on_place) throw new Error(consts.errorGettingTopPosition);
 
+    const { points } = club_on_place;
     const { games_count, points_needed } = this.calculatePoints(current_points, points, { group_size, mode });
+
     return { top, games_count, points_needed };
   }
 
   public calculatePoints(current_points: number, points: number, { group_size = 5, mode = 0 } = { group_size: 5, mode: 0 }): { points: number, games_count: number, points_needed: number } {
+    if (group_size < 2 || group_size > 5) throw new Error(consts.invalidPlayerCount);
+    
     const points_per_game = !mode ? group_size * group_size * 10 : 5 * (group_size - 1) * group_size;
 
     if (points <= current_points) return { points, games_count: 0, points_needed: 0 };
@@ -97,10 +107,10 @@ export default class HomeClub {
   }
 
   private async query(query, { data = {}, params = {} } = { data: {}, params: {} }): Promise<any> {
-    if (!this.token) throw new Error("Ошибка авторизации");
+    if (!this.token) throw new Error(consts.authError);
 
     return axios.get(`${HomeClub.endpoint}/${query}/`, { params, data, headers: { Cookie: `PVPNET_TOKEN_RU=${this.token}` } })
       .then(({ data: result }) => result)
-      .catch(() => { throw new Error("Ошибка получения данных с сервера"); })
+      .catch(() => { throw new Error(consts.requestError); })
   }
 }
