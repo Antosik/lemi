@@ -1,8 +1,8 @@
 import { Client, Guild, Message, RichEmbed } from "discord.js";
-import { formatDate, reformatDate, boldIF, underlineIF } from "./helpers";
 
+import { formatDate, reformatDate, boldIF, underlineIF } from "./helpers";
+import format, { consts } from "./localization";
 import ClubsClient from "./lol";
-import { ICurrentSeason } from "interfaces/ISeason";
 
 export interface LemiConfig {
   discord_token: string;
@@ -74,7 +74,7 @@ export default class Lemi {
     switch (command) {
       case "topseason": {
         const live_season = await this.clubs.getLiveSeason();
-        if (!live_season) return "Нет активных сезонов!";
+        if (!live_season) return consts.noActiveSeason;
 
         const count = Number(args[0]) || 10;
         const top10 = await live_season.getTopN(count);
@@ -93,7 +93,7 @@ export default class Lemi {
 
         top10.forEach(club => {
           const title = boldIF(`${club.rank}. ${club.club.lol_name}`, club.rank <= 3);
-          const description = `${club.points}pt - ${club.club.members_count} игроков`;
+          const description = `${club.points}pt - ${format("player", club.club.members_count)}`;
           result.addField(title, description)
         })
 
@@ -102,7 +102,7 @@ export default class Lemi {
 
       case "seasoninfo": {
         const live_season = await this.clubs.getLiveSeason();
-        if (!live_season) return "Нет активных сезонов!";
+        if (!live_season) return consts.noActiveSeason;
 
         const stages = await live_season.getStages();
 
@@ -135,16 +135,16 @@ export default class Lemi {
         const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
         const stage = live_season.getStageIdByIndex(stage_index);
         if (!stage) {
-          return "Этап не найден!"
+          return consts.stageNotFound;
         }
 
         const [stage_clubs, homeclub_season] = await Promise.all([homeclub.getStageClubs(stage.id), homeclub.getSeason()]);
         const homeclub_stage = stage_clubs.find(stage_club => stage_club.club.id === homeclub.id);
 
-        const title = `Владелец - ${homeclub.owner_name} | ${homeclub.members_count} участников`;
+        const title = `Владелец - ${homeclub.owner_name} | ${format("participient", homeclub.members_count)}`;
         const points = `${homeclub_season.points}pt`;
         const season_place = `#${homeclub_season.rank}`;
-        const stage_place = homeclub_stage && homeclub_stage.id ? `#${homeclub_stage.rank}` : "Нет места";
+        const stage_place = homeclub_stage && homeclub_stage.id ? `#${homeclub_stage.rank}` : consts.noPlaceInTop;
 
         const result = new RichEmbed()
           .setColor('#0099ff')
@@ -184,7 +184,7 @@ export default class Lemi {
 
         members.forEach((member, i) => {
           const title = boldIF(`${i + 1}. ${member.summoner.summoner_name}`, i < 3);
-          const description = `${member.points}pt - ${member.games} игр`;
+          const description = `${member.points}pt - ${format("game", member.games)}`;
           result.addField(title, description)
         })
 
@@ -198,13 +198,13 @@ export default class Lemi {
         const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
         const stage = live_season.getStageIdByIndex(stage_index);
         if (!stage) {
-          return "Этап не найден!"
+          return consts.stageNotFound;
         }
 
         const stage_clubs = await homeclub.getStageClubs(stage.id);
         const homeclub_stage = stage_clubs.find(stage_club => stage_club.club.id === homeclub.id);
 
-        if (!homeclub_stage || !homeclub_stage.id) return "Недостаточно очков для участия в этапе!";
+        if (!homeclub_stage || !homeclub_stage.id) return consts.noEnoughPt;
 
         const start_date = formatDate(stage.start_date, "dd.MM.yyyy");
         const end_date = formatDate(stage.end_date, "dd.MM.yyyy");
@@ -218,15 +218,17 @@ export default class Lemi {
           .setDescription(`${start_date} - ${end_date}`)
           .setFooter(now);
 
-        stage_clubs.slice(0, count).forEach(stage_club => {
-          const title = underlineIF(boldIF(`${stage_club.rank}. ${stage_club.club.lol_name}`, stage_club.rank <= 3), homeclub.id === stage_club.club.id);
-          const description = `${stage_club.points}pt - ${stage_club.club.members_count} игроков`;
-          result.addField(title, description)
-        })
+        stage_clubs
+          .filter(stage_club => stage_club.rank < count)
+          .forEach(stage_club => {
+            const title = underlineIF(boldIF(`${stage_club.rank}. ${stage_club.club.lol_name}`, stage_club.rank <= 3), homeclub.id === stage_club.club.id);
+            const description = `${stage_club.points}pt - ${format("player", stage_club.club.members_count)}`;
+            result.addField(title, description)
+          })
 
-        if (stage_clubs.indexOf(homeclub_stage) > count) {
+        if (homeclub_stage.rank > count) {
           const title = underlineIF(boldIF(`${homeclub_stage.rank}. ${homeclub_stage.club.lol_name}`, homeclub_stage.rank <= 3), homeclub.id === homeclub_stage.club.id);
-          const description = `${homeclub_stage.points}pt - ${homeclub_stage.club.members_count} игроков`;
+          const description = `${homeclub_stage.points}pt - ${format("player", homeclub_stage.club.members_count)}`;
           result.addField(title, description)
         }
 
@@ -234,13 +236,13 @@ export default class Lemi {
       }
 
       case "searchclub": {
-        const name = args.join(" ");
-        if (!name.trim()) return "Введите название клуба"
-        if (name.length < 3) return "Имя клуба должно быть больше 2 символов"
+        const name = args.join(" ").trim();
+        if (!name) return consts.clubNameInvalid;
+        if (name.length < 3) return consts.clubNameLength;
 
         const live_season = await this.clubs.getLiveSeason();
         const clubs = await live_season.findClub(name);
-        if (!clubs.length) return "Клубов с таким названием не найдено (или они не в топ500)"
+        if (!clubs.length) return consts.clubNotFound;
 
         if (clubs.length === 1) {
           const [club] = clubs;
@@ -249,10 +251,10 @@ export default class Lemi {
           const { club: { id: club_id } } = club;
           const club_stage = await this.clubs.getClubStage(club_id, season_id, stage_id);
 
-          const title = `${club.club.members_count} участников | Владелец - ${club.club.owner.summoner_name}`;
+          const title = `${format("participient", club.club.members_count)} участников | Владелец - ${club.club.owner.summoner_name}`;
           const points = `${club.points}pt`;
-          const season_place = `#${club.rank} (${club.games} игр)`;
-          const stage_place = club_stage.rank ? `#${club_stage.rank} (${club_stage.games} игр)` : `Недостаточно очков - ${club_stage.points}/1000`;
+          const season_place = `#${club.rank} (${format("game", club.games)})`;
+          const stage_place = club_stage.rank ? `#${club_stage.rank} (${format("game", club_stage.games)}` : `Недостаточно очков - ${club_stage.points}/1000`;
 
           const result = new RichEmbed()
             .setColor('#0099ff')
@@ -267,7 +269,7 @@ export default class Lemi {
         const result = new RichEmbed()
           .setColor('#0099ff')
           .setAuthor(`Итоги поиска по клубам ("${name}"):`)
-          .setTitle(`Найдено ${clubs.length} клубов`)
+          .setTitle(`Найдено ${format("club", clubs.length)}`)
           .setFooter(`Укажите точное название для получения полной информации`);
         clubs.forEach((club, i) => {
           result
@@ -288,14 +290,14 @@ export default class Lemi {
           const { current_stage: { id: stage_id } } = live_season;
           const { top: wanted, games_count, points_needed } = await homeclub.calculateStage(stage_id, { top, group_size, mode });
 
-          if (!games_count) return "Вы уже достигли желаемого места в этапе, так держать!";
-          if (!wanted) return `Ваш клуб не участвует в этапе.\nЧтобы участвовать, нужно заработать ${points_needed} очков, выиграв **${games_count}** игр (составом из ${group_size} игроков)`;
-          return `Чтобы достигнуть желаемого ${wanted} места в этапе, нужно заработать ${points_needed} очков, выиграв **${games_count}** игр (составом из ${group_size} игроков)`;
+          if (!games_count) return consts.calcEnoughGames;
+          if (!wanted) return `Ваш клуб не участвует в этапе.\nЧтобы участвовать, нужно заработать ${format("point", points_needed)}, выиграв **${games_count}** игр (составом из ${format("player", group_size)} игроков)`;
+          return `Чтобы достигнуть желаемого ${format("place", wanted)} в этапе, нужно заработать ${format("point", points_needed)} очков, выиграв **${format("game", games_count)}** (составом из ${format("player", group_size)} игроков)`;
         }
 
         const { top: wanted, games_count, points_needed } = await homeclub.calculateSeason({ top, group_size, mode });
-        if (!games_count) return "Вы уже достигли желаемого места в сезоне, так держать!";
-        return `Чтобы достигнуть желаемого ${wanted} места в сезоне, нужно заработать ${points_needed} очков, выиграв **${games_count}** игр (составом из ${group_size} игроков)`;
+        if (!games_count) return consts.calcEnoughGames;
+        return `Чтобы достигнуть желаемого ${format("place", wanted)} в сезоне, нужно заработать ${format("point", points_needed)} очков, выиграв **${format("game", games_count)}** (составом из ${format("player", group_size)} игроков)`;
       }
 
       case "help":
@@ -304,11 +306,12 @@ export default class Lemi {
           .setColor('#0099ff')
           .setTitle(`Доступные команды`)
           .addField(`${this.config.prefix}seasoninfo`, `Отображает общую информацию о действующем сезоне.`)
-          .addField(`${this.config.prefix}topseason {количество}`, `Показывает топ сезона. \nПример использования: \`${this.config.prefix}topseason\` или \`${this.config.prefix}topseason 10\``)
-          .addField(`${this.config.prefix}searchclub {название}`, `Поиск по клубам (топ-500). Чем полнее название, тем лучше`)
-          .addField(`${this.config.prefix}myclub`, `Отображает информацию о ~~ вашем клубе ~~  клубе создателя *(пока что)*.`)
-          .addField(`${this.config.prefix}myclubstage {количество клубов} {номер этапа (1-3)}`, `Показывает топ этапа ~~ вашего клуба ~~  клуба создателя *(пока что)*. \nПример использования: \`${this.config.prefix}myclubstage\`, \`${this.config.prefix}myclubstage 3\`, \`${this.config.prefix}myclubstage 3 1\``)
-          .addField(`${this.config.prefix}myclubmembers {количество участников} {номер этапа (1-3)}`, `Отображает информацию об очках, заработанных участниками ~~ вашего клубе ~~  клуба создателя *(пока что)*. \nПример использования: \`${this.config.prefix}myclubmembers\`, \`${this.config.prefix}myclubmembers 3\`, \`${this.config.prefix}myclubmembers 3 1\``)
+          .addField(`${this.config.prefix}topseason [количество]`, `Показывает топ сезона. \nПример использования: \n\`${this.config.prefix}topseason\` или \`${this.config.prefix}topseason 10\``)
+          .addField(`${this.config.prefix}searchclub [название]`, `Поиск по клубам (топ-500). Чем полнее название, тем лучше`)
+          .addField(`${this.config.prefix}myclub`, `Отображает информацию о вашем клубе.`)
+          .addField(`${this.config.prefix}myclubstage [количество клубов] [номер этапа (1-3)]`, `Показывает топ этапа вашего клуба. \nПример использования: \n\`${this.config.prefix}myclubstage\`, \`${this.config.prefix}myclubstage 3\`, \`${this.config.prefix}myclubstage 3 1\``)
+          .addField(`${this.config.prefix}myclubmembers [количество участников] [номер этапа (1-3)]`, `Отображает информацию об очках, заработанных участниками вашего клуба. \nПример использования: \n\`${this.config.prefix}myclubmembers\`, \`${this.config.prefix}myclubmembers 3\`, \`${this.config.prefix}myclubmembers 3 1\``)
+          .addField(`${this.config.prefix}myclubcalc ["season"/"stage"] [место в топе] [количество игроков в группе] [aram]`, `Отображает количество игр, которые нужно выиграть участниками вашего клуба для достижения желаего места в этапе/сезоне. \nПример использования: \n\`${this.config.prefix}myclubcalc\`, \`${this.config.prefix}myclubcalc season\`, \`${this.config.prefix}myclubcalc stage 10\`, \`${this.config.prefix}myclubcalc season 150 3\``)
           .setFooter(`Made with <3 by Antosik#6224`);
 
         return result;
@@ -316,7 +319,7 @@ export default class Lemi {
 
 
       default:
-        return "Извините, данная команда не найдена";
+        return consts.commandNotFound;
     }
   }
 }
