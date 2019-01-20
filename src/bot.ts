@@ -72,7 +72,8 @@ export default class Lemi {
     console.log(command, args)
 
     switch (command) {
-      case "topseason": {
+      case "topseason":
+      case "топсезона": {
         const live_season = await this.clubs.getLiveSeason();
         if (!live_season) return consts.noActiveSeason;
 
@@ -100,7 +101,8 @@ export default class Lemi {
         return result;
       };
 
-      case "seasoninfo": {
+      case "seasoninfo":
+      case "сезон": {
         const live_season = await this.clubs.getLiveSeason();
         if (!live_season) return consts.noActiveSeason;
 
@@ -129,7 +131,8 @@ export default class Lemi {
         return result;
       };
 
-      case "myclub": {
+      case "myclub":
+      case "клуб": {
         const stage_index = Number(args[0]) || undefined;
 
         const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
@@ -158,7 +161,8 @@ export default class Lemi {
         return result;
       }
 
-      case "myclubmembers": {
+      case "myclubmembers":
+      case "участники": {
         const count = Number(args[0]) || 10;
         const stage_index = Number(args[1]) || undefined;
 
@@ -191,7 +195,8 @@ export default class Lemi {
         return result;
       }
 
-      case "myclubstage": {
+      case "myclubstage":
+      case "этап": {
         const count = Number(args[0]) || 10;
         const stage_index = Number(args[1]) || undefined;
 
@@ -235,7 +240,8 @@ export default class Lemi {
         return result;
       }
 
-      case "searchclub": {
+      case "searchclub":
+      case "поиск": {
         const name = args.join(" ").trim();
         if (!name) return consts.clubNameInvalid;
         if (name.length < 3) return consts.clubNameLength;
@@ -278,30 +284,33 @@ export default class Lemi {
         return result;
       }
 
-      case "myclubcalc": {
+      case "myclubcalc":
+      case "расчет": {
         let type = args[0] || "stage";
         const top = Number(args[1]) || 1;
         const group_size = Number(args[2]) || 5;
         let mode = args[3] === "aram" ? 1 : 0;
-        if (type !== "stage" && type !== "season") type = "stage";
+        if (type !== "stage" && type !== "season" && type !== "сезон" && type !== "этап") type = "stage";
         const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
 
-        if (type === "stage") {
+        if (type === "stage" || type === "этап") {
           const { current_stage: { id: stage_id } } = live_season;
           const { top: wanted, games_count, points_needed } = await homeclub.calculateStage(stage_id, { top, group_size, mode });
 
           if (!games_count) return consts.calcEnoughGames;
           if (!wanted) return `Ваш клуб не участвует в этапе.\nЧтобы участвовать, нужно заработать ${format("point", points_needed)}, выиграв **${format("gameToPlay", games_count)}** игр (составом из ${format("player", group_size)} игроков)`;
-          return `Чтобы достигнуть желаемого ${wanted} места в этапе, нужно заработать ${format("point", points_needed)} очков, выиграв **${format("gameToPlay", games_count)}** (составом из ${format("player", group_size)} игроков)`;
+          return `Чтобы достигнуть желаемого ${wanted} места в этапе, нужно заработать ${format("point", points_needed)}, выиграв **${format("gameToPlay", games_count)}** (составом из ${format("player", group_size)} игроков)`;
         }
 
         const { top: wanted, games_count, points_needed } = await homeclub.calculateSeason({ top, group_size, mode });
         if (!games_count) return consts.calcEnoughGames;
-        return `Чтобы достигнуть желаемого ${wanted} места в сезоне, нужно заработать ${format("point", points_needed)} очков, выиграв **${format("gameToPlay", games_count)}** (составом из ${format("player", group_size)} игроков)`;
+        return `Чтобы достигнуть желаемого ${wanted} места в сезоне, нужно заработать ${format("point", points_needed)}, выиграв **${format("gameToPlay", games_count)}** (составом из ${format("player", group_size)} игроков)`;
       }
 
       case "help":
-      case "commands": {
+      case "commands":
+      case "помощь":
+      case "команды": {
         const result = new RichEmbed()
           .setColor('#0099ff')
           .setTitle(`Доступные команды`)
