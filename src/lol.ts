@@ -1,13 +1,9 @@
 import axios from "axios";
-import co from "co";
 
-import { IStage } from "./interfaces/IStage";
-import { IStageClub, ISeasonsClub, IParticipatingClub } from "./interfaces/IClub";
+import { IStageClub, ISeasonsClub } from "./interfaces/IClub";
 import { ISeason, ICurrentSeason } from "./interfaces/ISeason";
-import { IStageSummoner } from "./interfaces/ISummoner";
 
 import Season, { LiveSeason } from "./models/Season";
-import Stage from "./models/Stage";
 import HomeClub from "./models/HomeClub";
 
 export default class ClubsAPI {
@@ -20,7 +16,9 @@ export default class ClubsAPI {
   }
 
   private async query(query, { data = {}, params = {}, headers = {} } = { data: {}, params: {}, headers: {} }): Promise<any> {
-    return axios.get(`${ClubsAPI.endpoint}/${query}/`, { params, data, headers }).then(({ data: result }) => result);
+    return axios.get(`${ClubsAPI.endpoint}/${query}/`, { params, data, headers })
+      .then(({ data: result }) => result)
+      .catch(() => { throw new Error("Ошибка получения данных с сервера"); });
   }
 
   private getAuthCookie() {

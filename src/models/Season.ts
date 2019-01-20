@@ -35,12 +35,14 @@ export default class Season {
   }
 
   protected async query(query, { data = {}, params = {}, headers = {} } = { data: {}, params: {}, headers: {} }): Promise<any> {
-    return axios.get(`${Season.endpoint}/${query}/`, { params, data, headers }).then(({ data: result }) => result);
+    return axios.get(`${Season.endpoint}/${query}/`, { params, data, headers })
+      .then(({ data: result }) => result)
+      .catch(() => { throw new Error("Ошибка получения данных с сервера"); })
   }
 
   public async findClub(name: string): Promise<ISeasonsClub[]> {
     const results: ISeasonsClub[] = await co(this.clubSearcher(name));
-    
+
     for (let club of results) {
       if (club.club.lol_name.toLowerCase() === name.toLowerCase()) {
         return [club]

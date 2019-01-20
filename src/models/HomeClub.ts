@@ -77,15 +77,17 @@ export default class HomeClub {
 
     const page = Math.ceil(top / 10);
     const { results: season_clubs }: { results: ISeasonsClub[] } = await this.query(`contest/season/${this.season_id}/clubs`, { params: { per_page: 10, page } });
-    const { points } = season_clubs.find(club => club.rank === top);
+    const club_on_place = season_clubs[top % 10];
+    if (!club_on_place) throw new Error("Ошибка получения клуба в топе");
+    const { points } = club_on_place;
 
     const { games_count, points_needed } = this.calculatePoints(current_points, points, { group_size, mode });
     return { top, games_count, points_needed };
   }
 
-  public calculatePoints(current_points: number, points: number, { group_size = 5, mode = 0 } = { group_size: 5, mode: 0 }): { points: number, games_count: number, points_needed: number }{
+  public calculatePoints(current_points: number, points: number, { group_size = 5, mode = 0 } = { group_size: 5, mode: 0 }): { points: number, games_count: number, points_needed: number } {
     const points_per_game = !mode ? group_size * group_size * 10 : 5 * (group_size - 1) * group_size;
-    
+
     if (points <= current_points) return { points, games_count: 0, points_needed: 0 };
 
     const points_needed = points - current_points;
@@ -97,6 +99,8 @@ export default class HomeClub {
   private async query(query, { data = {}, params = {} } = { data: {}, params: {} }): Promise<any> {
     if (!this.token) throw new Error("Ошибка авторизации");
 
-    return axios.get(`${HomeClub.endpoint}/${query}/`, { params, data, headers: { Cookie: `PVPNET_TOKEN_RU=${this.token}` } }).then(({ data: result }) => result);
+    return axios.get(`${HomeClub.endpoint}/${query}/`, { params, data, headers: { Cookie: `PVPNET_TOKEN_RU=${this.token}` } })
+      .then(({ data: result }) => result)
+      .catch(() => { throw new Error("Ошибка получения данных с сервера"); })
   }
 }
