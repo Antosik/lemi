@@ -164,8 +164,8 @@ export default class Lemi {
 
         case "myclubmembers":
         case "участники": {
-          const count = Number(args[0]) || 10;
-          const stage_index = Number(args[1]) || undefined;
+          const stage_index = Number(args[0]) || undefined;
+          const count = Number(args[1]) || 10;
 
           const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
           const stage = live_season.getStageIdByIndex(stage_index);
@@ -197,8 +197,8 @@ export default class Lemi {
 
         case "myclubstage":
         case "этап": {
-          const count = Number(args[0]) || 10;
-          const stage_index = Number(args[1]) || undefined;
+          const stage_index = Number(args[0]) || undefined;
+          const count = Number(args[1]) || 10;
 
           const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
           const stage = live_season.getStageIdByIndex(stage_index);
@@ -313,8 +313,8 @@ export default class Lemi {
           const result = new RichEmbed()
             .setColor('#0099ff')
             .setTitle(`Доступные команды`)
-            .setDescription(`Используйте префикс ${this.config.prefix} перед командой`)
-            .addField(`• \`seasoninfo/сезон\``, `Отображает общую информацию о действующем сезоне.`)
+            .setDescription(`Используйте префикс \`${this.config.prefix}\` перед командой`)
+            .addField(`• \`seasoninfo/сезон\``, `Отображает общую информацию о текущем сезоне.`)
             .addField(`• \`topseason/топсезона [количество мест]\``, `Показывает топ сезона.`)
             .addField(`• \`searchclub/поиск [название]\``, `Поиск по клубам (Топ-500). Чем полнее название, тем лучше.`)
             .addField(`• \`myclub/клуб\``, `Отображает информацию о вашем клубе.`)
