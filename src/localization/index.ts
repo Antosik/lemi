@@ -6,6 +6,11 @@ const locale = {
     singularGenitive: "{{count}} игры",
     pluralGenitive: "{{count}} игр"
   }),
+  gameToPlay: getLocaleFn({
+    singularNominative: "{{count}} игру",
+    singularGenitive: "{{count}} игры",
+    pluralGenitive: "{{count}} игр"
+  }),
   player: getLocaleFn({
     singularNominative: "{{count}} игрок",
     singularGenitive: "{{count}} игрока",
