@@ -332,7 +332,11 @@ export default class Lemi {
           return consts.commandNotFound;
       }
     } catch (e) {
-      return e.message;
+      const result = new RichEmbed()
+        .setColor('#ff9900')
+        .setTitle(`Произошла ошибка :c`)
+        .setDescription(`${e.message}`)
+      return result;
     }
   }
 }

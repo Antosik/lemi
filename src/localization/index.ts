@@ -54,6 +54,7 @@ export const consts = {
   invalidPlayerCount: "Количество игроков может быть от 2 до 5",
   invalidTopPosition: "Неверная позиция в топе",
   errorGettingTopPosition: "Ошибка получения клуба в топе",
+  clubNotSelected: "Вы не выбрали клуб",
 
   authError: "Ошибка авторизации",
   requestError: "Ошибка получения данных с сервера"

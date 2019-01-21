@@ -19,7 +19,11 @@ export default class ClubsAPI {
   private async query(query, { data = {}, params = {}, headers = {} } = { data: {}, params: {}, headers: {} }): Promise<any> {
     return axios.get(`${ClubsAPI.endpoint}/${query}/`, { params, data, headers })
       .then(({ data: result }) => result)
-      .catch(() => { throw new Error(consts.requestError); })
+      .catch((e) => {
+        if (e.response && e.response.data && e.response.data.detail && e.response.data.detail == "club not selected") throw new Error(consts.clubNotSelected);
+        if (e.response.status === 401) throw new Error(consts.authError);
+        throw new Error(consts.requestError);
+      })
   }
 
   private getAuthCookie() {

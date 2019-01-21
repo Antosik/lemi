@@ -112,6 +112,6 @@ export default class HomeClub {
 
     return axios.get(`${HomeClub.endpoint}/${query}/`, { params, data, headers: { Cookie: `PVPNET_TOKEN_RU=${this.token}` } })
       .then(({ data: result }) => result)
-      .catch(() => { throw new Error(consts.requestError); })
+      .catch((e) => { new Error(consts.requestError); })
   }
 }
