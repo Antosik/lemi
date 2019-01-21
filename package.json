@@ -17,9 +17,11 @@
     "axios": "^0.18.0",
     "co": "^4.6.0",
     "date-fns": "^2.0.0-alpha.27",
-    "discord.js": "^11.4.2"
+    "discord.js": "^11.4.2",
+    "dotenv": "^6.2.0"
   },
   "devDependencies": {
+    "@types/dotenv": "^6.1.0",
     "@types/node": "^10.9.4",
     "nodemon": "^1.18.3",
     "prettier": "^1.14.2",
