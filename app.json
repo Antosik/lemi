@@ -12,7 +12,7 @@
       "required": true
     },
     "LEMI_PREFIX": {
-      "description": "Token League of Legends",
+      "description": "Префикс для команд",
       "value": "le!"
     }
   },
