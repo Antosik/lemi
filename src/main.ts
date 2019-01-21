@@ -9,3 +9,12 @@ const client = new Lemi({
 });
 
 client.run();
+
+require("http")
+  .createServer(function (req, res) {
+    res.writeHead(302, {
+      'Location': 'https://github.com/Antosik/lemi'
+    });
+    res.end();
+  })
+  .listen(process.env.PORT || 5000);

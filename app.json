@@ -1,0 +1,25 @@
+{
+  "name": "Lemi",
+  "description": "Бот для Discord'a, позволяющий быстро получить информацию о Клубах в League of Legends",
+  "repository": "https://github.com/Antosik/lemi",
+  "env": {
+    "LOL_TOKEN": {
+      "description": "Token League of Legends (https://github.com/Antosik/lemi#получение-tokena-lola)",
+      "required": false
+    },
+    "DISCORD_TOKEN": {
+      "description": "Token Discord'a (https://github.com/Antosik/lemi#получение-tokena-discorda)",
+      "required": true
+    },
+    "LEMI_PREFIX": {
+      "description": "Префикс для команд",
+      "value": "le!"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "keywords": ["discord", "bot", "league of legends"]
+}

@@ -1,6 +1,8 @@
 # Lemi
 Бот для [Discord](https://discordapp.com/)'a, позволяющий быстро получить информацию о [Клубах](https://clubs.ru.leagueoflegends.com) в [League of Legends](https://ru.leagueoflegends.com/ru/)
 
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Antosik/lemi)
+
 ## Оглавление
 * [Доступные команды](#доступные-команды)
 * [Установка](#установка)
@@ -81,6 +83,15 @@
 * :tada:  
 *Примечание: Переодически процедуру получения токена нужно повторять, так как авторизация сбрасывается через некоторое время (неделю-две)*
 
+### Загрузка бота на Heroku
+* Зарегистрируйтесь на [Heroku](https://id.heroku.com/login) и авторизируйтесь
+* Нажмите на кнопку ниже ↓  
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Antosik/lemi)
+* Введите название приложения, введите данные, полученные ранее (token'ы Discord'a и LoL'a), а также префикс для команд 
+* Нажмите на кнопку `Deploy app`
+* :tada:
+
+## Разное
 
 ### Disclaimer
 League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.
