@@ -1,6 +1,11 @@
 # Lemi
 Бот для [Discord](https://discordapp.com/)'a, позволяющий быстро получить информацию о [Клубах](https://clubs.ru.leagueoflegends.com) в [League of Legends](https://ru.leagueoflegends.com/ru/)
 
+## Оглавление
+* [Доступные команды](#доступные-команды)
+* [Установка](#установка)
+
+
 ## Доступные команды
 ### Команды, работающие без token'a LoL'a
 - `seasoninfo/сезон` - Отображает общую информацию о текущем сезоне  
@@ -47,3 +52,35 @@
     - `расчет сезон 1 2 aram` - хотим занять 1 место в сезоне, играя в party из 2 человек играя только в ARAM xD
 
 
+## Установка 
+
+### Получение Token'a Discord'a
+* Пройдите на [портал разработчиков](https://discordapp.com/developers/applications/) Discord'a
+* Создайте новое приложение (`Create an application`) и перейдите во вкладку *Bot*, нажмите `Add bot`
+* Нажмите кнопку `Copy` - вы получили token :tada:
+
+Чтобы добавить бота на свой сервер, вам нужно перейти по ссылке вида `https://discordapp.com/api/oauth2/authorize?client_id=CLIENT_ID&scope=bot&permissions=26688`, где `CLIENT_ID` - Client ID вашего приложения (скопируйте его во вкладке *General Information*)
+Затем выберите сервер, куда вы хотите его добавить и - готово!
+
+
+### Получение Token'a LoL'a
+* Пройдите на сайт [Клубов](https://clubs.ru.leagueoflegends.com) и авторизируйтесь на сайте
+* Откройте консоль разработчика (в браузере), нажав `Ctrl+Shift+I` или `F12`
+* Далее по браузерам:
+  * Chrome
+    * Перейдите во вкладку `Application`
+    * Откройте в левой панельке вкладку `Cookies`
+  * Firefox
+    * Перейдите во вкладку `Хранилище`
+    * Откройте в левой панельке вкладку `Cookies` / `Куки`
+  * Chrome
+    * Перейдите во вкладку `Отладчик`
+    * Откройте в левой панельке вкладку `Файлы cookie`
+* Выберите сайт клубов `https://clubs.ru.leagueoflegends.com`
+* Найдите в списке `PVPNET_TOKEN_RU` и скопируйте значение справа от него
+* :tada:  
+*Примечание: Переодически процедуру получения токена нужно повторять, так как авторизация сбрасывается через некоторое время (неделю-две)*
+
+
+### Disclaimer
+League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.
