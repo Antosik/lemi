@@ -223,7 +223,7 @@ export default class Lemi {
             .setFooter(now);
 
           stage_clubs
-            .filter(stage_club => stage_club.rank < count)
+            .filter(stage_club => stage_club.rank <= count)
             .forEach(stage_club => {
               const title = underlineIF(boldIF(`${stage_club.rank}. ${stage_club.club.lol_name}`, stage_club.rank <= 3), homeclub.id === stage_club.club.id);
               const description = `${stage_club.points}pt - ${format("player", stage_club.club.members_count)}`;
@@ -318,8 +318,8 @@ export default class Lemi {
             .addField(`• \`topseason/топсезона [количество мест]\``, `Показывает топ сезона.`)
             .addField(`• \`searchclub/поиск [название]\``, `Поиск по клубам (Топ-500). Чем полнее название, тем лучше.`)
             .addField(`• \`myclub/клуб\``, `Отображает информацию о вашем клубе.`)
-            .addField(`• \`myclubstage/этап [количество клубов] [номер этапа (1-3)]\``, `Показывает топ этапа вашего клуба.`)
-            .addField(`• \`myclubmembers/участники [количество участников] [номер этапа (1-3)]\``, `Отображает информацию об очках, заработанных участниками вашего клуба.`)
+            .addField(`• \`myclubstage/этап [номер этапа (1-3)] [количество клубов]\``, `Показывает топ этапа вашего клуба.`)
+            .addField(`• \`myclubmembers/участники [номер этапа (1-3)] [количество участников]\``, `Отображает информацию об очках, заработанных участниками вашего клуба.`)
             .addField(`• \`myclubcalc/расчет [season/stage] [место в топе] [игроков в группе (2-5)] [aram]\``, `Отображает количество игр, которые нужно выиграть участниками вашего клуба для достижения желаего места в сезоне/этапе.`)
             .addField(`• \`help/команды\``, `Показывает данное сообщение`)
             .setFooter(`Made with <3 by @Antosik#6224`);
