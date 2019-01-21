@@ -6,6 +6,10 @@
 ## Оглавление
 * [Доступные команды](#доступные-команды)
 * [Установка](#установка)
+  * Получение ключей
+    * [Discord'a](#получение-tokena-discorda)
+    * [LoL'a](#получение-tokena-lola) *(опционально)*
+  * [Установка на сервер Heroku](#загрузка-бота-на-heroku)
 
 
 ## Доступные команды
@@ -61,7 +65,7 @@
 * Создайте новое приложение (`Create an application`) и перейдите во вкладку *Bot*, нажмите `Add bot`
 * Нажмите кнопку `Copy` - вы получили token :tada:
 
-Чтобы добавить бота на свой сервер, вам нужно перейти по ссылке вида `https://discordapp.com/api/oauth2/authorize?client_id=CLIENT_ID&scope=bot&permissions=26688`, где `CLIENT_ID` - Client ID вашего приложения (скопируйте его во вкладке *General Information*)
+Чтобы добавить бота на свой сервер, вам нужно перейти по ссылке вида `https://discordapp.com/api/oauth2/authorize?client_id=CLIENT_ID&scope=bot&permissions=26688`, где `CLIENT_ID` - Client ID вашего приложения (скопируйте его во вкладке *General Information*).  
 Затем выберите сервер, куда вы хотите его добавить и - готово!
 
 
