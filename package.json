@@ -1,16 +1,15 @@
 {
-  "name": "lol-clubs-bot",
+  "name": "lemi",
   "version": "0.0.1",
-  "description": "Bot for clubs in league of legends",
+  "description": "Bot for Clubs in League of Legends",
   "author": "Antosik",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node -r tsconfig-paths/register src/main.ts",
-    "start:dev": "nodemon",
-    "prestart:prod": "rimraf dist && tsc",
-    "start:prod": "node dist/main.js",
+    "start": "node dist/main.js",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "format": "prettier --write \"src/**/*.ts\"",
+    "postinstall": "npm run build",
+    "build": "tsc --sourceMap false",
     "watch": "tsc -w"
   },
   "dependencies": {
