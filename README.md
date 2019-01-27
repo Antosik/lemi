@@ -6,6 +6,7 @@
 ## Оглавление
 * **[Доступные команды](https://github.com/Antosik/lemi/wiki/Команды)**
 * **[Установка бота](https://github.com/Antosik/lemi/wiki/Установка)**
+* [Попробовать бота](https://discordapp.com/oauth2/authorize?client_id=534298396874375179&scope=bot&permissions=26688)
 
 ## Разное
 
