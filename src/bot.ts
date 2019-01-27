@@ -1,5 +1,6 @@
 import { Client, Guild, Message, RichEmbed, DMChannel, GroupDMChannel } from "discord.js";
-import { format as formatDate } from "date-fns";
+import { format as formatDate, formatDistance } from "date-fns";
+import { ru } from 'date-fns/locale'
 
 import { boldIF, underlineIF } from "./helpers";
 import format, { consts } from "./localization";
@@ -117,7 +118,7 @@ export default class Lemi {
             .setColor('#0099ff')
             .setURL(`https://clubs.ru.leagueoflegends.com/rating?ssid=${live_season.id}&stid=0`)
             .setTitle(`Информация о сезоне "${live_season.title}"`)
-          
+
           if (live_season.isEnded()) {
             result.setDescription(`**Сезон окончен!** (Даты сезона: ${start_date} - ${end_date})`)
           } else {
@@ -344,6 +345,41 @@ export default class Lemi {
           return `Чтобы достигнуть желаемого ${wanted} места в сезоне, нужно заработать ${format("point", points_needed)}, выиграв **${format("gameToPlay", games_count)}** (составом из ${format("player", group_size)} игроков)`;
         }
 
+        case "time":
+        case "время": {
+          let type = args[0] || "stage";
+
+          if (type !== "stage" && type !== "season" && type !== "сезон" && type !== "этап") type = "stage";
+
+          const live_season = await this.clubs.getLiveSeason();
+          if (live_season.isEnded()) {
+            if (type === "stage" || type === "этап") {
+              return consts.noActiveStage;
+            }
+            return consts.noActiveSeason;
+          }
+
+          if (type === "stage" || type === "этап") {
+            if (!live_season.current_stage) return consts.noActiveStage;
+
+            const end_date = live_season.current_stage.end_date;
+            const distance = formatDistance(end_date, new Date(), {
+              locale: ru
+            });
+
+            return `${consts.timeToStageEnd}: ${distance}`;
+          }
+
+          if (live_season.end_date < new Date()) return consts.noActiveSeason;
+          
+          const end_date = live_season.end_date;
+          const distance = formatDistance(end_date, new Date(), {
+            locale: ru
+          });
+
+          return `${consts.timeToSeasonEnd}: ${distance}`;
+        }
+
         case "help":
         case "commands":
         case "помощь":
@@ -355,6 +391,7 @@ export default class Lemi {
             .addField(`• \`seasoninfo/сезон\``, `Отображает общую информацию о текущем сезоне.`)
             .addField(`• \`topseason/топсезона [количество мест]\``, `Показывает топ сезона.`)
             .addField(`• \`searchclub/поиск [название]\``, `Поиск по клубам (Топ-500). Чем полнее название, тем лучше.`)
+            .addField(`• \`time/время [season/stage]\``, `Показывает оставшееся время до конца сезона/этапа`)
             .addField(`• \`myclub/клуб\``, `Отображает информацию о вашем клубе.`)
             .addField(`• \`myclubstage/этап [номер этапа (1-3)] [количество клубов]\``, `Показывает топ этапа вашего клуба.`)
             .addField(`• \`myclubmembers/участники [номер этапа (1-3)] [количество участников]\``, `Отображает информацию об очках, заработанных участниками вашего клуба.`)

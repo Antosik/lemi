@@ -57,6 +57,9 @@ export const consts = {
   errorGettingTopPosition: "Ошибка получения клуба в топе",
   clubNotSelected: "Вы не выбрали клуб",
 
+  timeToSeasonEnd: "До конца сезона осталось",
+  timeToStageEnd: "До конца этапа осталось",
+
   authError: "Ошибка авторизации",
   requestError: "Ошибка получения данных с сервера"
 }
