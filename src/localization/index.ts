@@ -41,6 +41,7 @@ const locale = {
 export const consts = {
   noEnoughPt: "Недостаточно очков для участия в этапе!",
   noActiveSeason: "Нет активных сезонов!",
+  noActiveStage: "Нет активных этапов!",
   seasonNotFound: "Сезон не найден!",
   stageNotFound: "Этап не найден!",
   commandNotFound: "Извините, данная команда не найдена",

@@ -117,7 +117,12 @@ export default class Lemi {
             .setColor('#0099ff')
             .setURL(`https://clubs.ru.leagueoflegends.com/rating?ssid=${live_season.id}&stid=0`)
             .setTitle(`Информация о сезоне "${live_season.title}"`)
-            .setDescription(`Даты сезона: ${start_date} - ${end_date}`)
+          
+          if (live_season.isEnded()) {
+            result.setDescription(`**Сезон окончен!** (Даты сезона: ${start_date} - ${end_date})`)
+          } else {
+            result.setDescription(`Даты сезона: ${start_date} - ${end_date}`)
+          }
 
           stages.forEach(stage => {
             const start_date = formatDate(stage.start_date, "dd.MM.yyyy");
@@ -137,18 +142,22 @@ export default class Lemi {
           const stage_index = Number(args[0]) || undefined;
 
           const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
+
           const stage = live_season.getStageIdByIndex(stage_index);
-          if (!stage) {
-            return consts.stageNotFound;
+          let stage_data: { number: number, place: string } = undefined;
+
+          if (stage) {
+            const stage_clubs = await homeclub.getStageClubs(stage.id);
+            const homeclub_stage = stage_clubs.find(stage_club => stage_club.club.id === homeclub.id);
+            const stage_place = homeclub_stage && homeclub_stage.id ? `#${homeclub_stage.rank}` : consts.noPlaceInTop;
+
+            stage_data = { number: stage.number, place: stage_place };
           }
 
-          const [stage_clubs, homeclub_season] = await Promise.all([homeclub.getStageClubs(stage.id), homeclub.getSeason()]);
-          const homeclub_stage = stage_clubs.find(stage_club => stage_club.club.id === homeclub.id);
-
+          const homeclub_season = await homeclub.getSeason();
           const description = `Владелец - ${homeclub.owner_name} | ${format("participient", homeclub.members_count)}`;
           const points = `${homeclub_season.points}pt`;
           const season_place = `#${homeclub_season.rank}`;
-          const stage_place = homeclub_stage && homeclub_stage.id ? `#${homeclub_stage.rank}` : consts.noPlaceInTop;
 
           const result = new RichEmbed()
             .setColor('#0099ff')
@@ -157,7 +166,10 @@ export default class Lemi {
             .setDescription(description)
             .addField(`Общее количество очков`, points)
             .addField(`Место в сезоне`, season_place, true)
-            .addField(`Место в ${stage.number} этапе`, stage_place, true)
+
+          if (stage_data) {
+            result.addField(`Место в ${stage_data.number} этапе`, stage_data.place, true);
+          }
 
           return result;
         }
@@ -168,6 +180,10 @@ export default class Lemi {
           const count = Number(args[1]) || 10;
 
           const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
+          if (!stage_index && live_season.isEnded()) {
+            return consts.noActiveStage;
+          }
+
           const stage = live_season.getStageIdByIndex(stage_index);
           if (!stage) {
             return consts.stageNotFound;
@@ -201,6 +217,10 @@ export default class Lemi {
           const count = Number(args[1]) || 10;
 
           const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
+          if (!stage_index && live_season.isEnded()) {
+            return consts.noActiveStage;
+          }
+
           const stage = live_season.getStageIdByIndex(stage_index);
           if (!stage) {
             return consts.stageNotFound;
@@ -252,22 +272,35 @@ export default class Lemi {
           if (clubs.length === 1) {
             const [club] = clubs;
 
-            const { id: season_id, current_stage: { id: stage_id, number: stage_index } } = live_season;
+            const { id: season_id, current_stage } = live_season;
             const { club: { id: club_id } } = club;
-            const club_stage = await this.clubs.getClubStage(club_id, season_id, stage_id);
+
+            let stage_data: { number: number, place: string } = undefined;
+
+            if (current_stage) {
+              const { id: stage_id, number } = current_stage;
+
+              const club_stage = await this.clubs.getClubStage(club_id, season_id, stage_id);
+              const stage_place = club_stage.rank ? `#${club_stage.rank} (${format("game", club_stage.games)})` : `Недостаточно очков - ${club_stage.points}/1000`;
+
+              stage_data = { number, place: stage_place };
+            }
 
             const description = `Владелец - ${club.club.owner.summoner_name} | ${format("participient", club.club.members_count)}`;
             const points = `${club.points}pt`;
             const season_place = `#${club.rank} (${format("game", club.games)})`;
-            const stage_place = club_stage.rank ? `#${club_stage.rank} (${format("game", club_stage.games)})` : `Недостаточно очков - ${club_stage.points}/1000`;
 
             const result = new RichEmbed()
               .setColor('#0099ff')
               .setTitle(`Клуб "${club.club.lol_name}"`)
               .setDescription(description)
               .addField(`Общее количество очков`, points)
-              .addField(`Место в сезоне`, season_place, true)
-              .addField(`Место в ${stage_index} этапе`, stage_place, true)
+              .addField(`Место в сезоне`, season_place, true);
+
+            if (stage_data) {
+              result.addField(`Место в ${stage_data.number} этапе`, stage_data.place, true);
+            }
+
             return result;
           }
 
@@ -289,8 +322,13 @@ export default class Lemi {
           const top = Number(args[1]) || 1;
           const group_size = Number(args[2]) || 5;
           let mode = args[3] === "aram" ? 1 : 0;
+
           if (type !== "stage" && type !== "season" && type !== "сезон" && type !== "этап") type = "stage";
+
           const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
+          if (live_season.isEnded()) {
+            return consts.noActiveStage;
+          }
 
           if (type === "stage" || type === "этап") {
             const { current_stage: { id: stage_id } } = live_season;
@@ -327,11 +365,11 @@ export default class Lemi {
           return result;
         }
 
-
         default:
           return consts.commandNotFound;
       }
     } catch (e) {
+      console.error(e);
       const result = new RichEmbed()
         .setColor('#ff9900')
         .setTitle(`Произошла ошибка :c`)

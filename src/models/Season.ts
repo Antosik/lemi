@@ -82,7 +82,7 @@ export class LiveSeason extends Season {
   constructor(data: ICurrentSeason) {
     super(data);
 
-    this.current_stage = new Stage(data.current_stage);
+    this.current_stage = data.current_stage ? new Stage(data.current_stage) : null;
     this.stages = data.stages.map(stage => new Stage(stage));
   }
 
@@ -93,5 +93,9 @@ export class LiveSeason extends Season {
     }
 
     return this.current_stage;
+  }
+
+  public isEnded(): boolean {
+    return this.stages.every(stage => !stage.is_live);
   }
 }
