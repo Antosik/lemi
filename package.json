@@ -1,13 +1,10 @@
 {
   "name": "lemi",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Bot for Clubs in League of Legends",
-  "author": "Antosik",
-  "license": "MIT",
   "scripts": {
     "start": "node dist/main.js",
     "lint": "tslint -p tsconfig.json -c tslint.json",
-    "format": "prettier --write \"src/**/*.ts\"",
     "postinstall": "npm run build",
     "build": "tsc --sourceMap false",
     "watch": "tsc -w"
@@ -23,12 +20,16 @@
     "@types/dotenv": "^6.1.0",
     "@types/node": "^10.9.4",
     "nodemon": "^1.18.3",
-    "prettier": "^1.14.2",
     "rimraf": "^2.6.2",
-    "ts-loader": "^4.4.2",
-    "ts-node": "^7.0.1",
-    "tsconfig-paths": "^3.5.0",
-    "tslint": "5.11.0",
-    "typescript": "^3.0.1"
-  }
+    "tslint": "^5.12.1",
+    "typescript": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "author": "Antosik",
+  "license": "MIT",
+  "repository": "Antosik/lemi",
+  "homepage": "https://github.com/Antosik/lemi",
+  "bugs": "https://github.com/Antosik/lemi/issues"
 }
