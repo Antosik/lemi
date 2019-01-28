@@ -18,12 +18,16 @@ export default class Lemi {
   private clubs: ClubsClient;
 
   constructor(config: ILemiConfig) {
+    if (!config.discord_token) {
+      throw new Error("No discord token passed!");
+    }
+
     this.config = config;
     this.client = undefined;
     this.clubs = undefined;
   }
 
-  public run() {
+  public async run() {
     if (this.client) {
       this.client.destroy();
     }
@@ -31,7 +35,15 @@ export default class Lemi {
     this.client = this.initDiscord();
     this.clubs = this.initClubs();
 
-    this.client.login(this.config.discord_token);
+    return this.client.login(this.config.discord_token);
+  }
+
+  public async stop() {
+    if (this.client) {
+      await this.client.destroy();
+    }
+
+    this.clubs = undefined;
   }
 
   private initDiscord() {
