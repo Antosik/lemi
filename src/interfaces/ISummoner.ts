@@ -3,7 +3,7 @@ export interface ISummoner {
   lol_account_id: number;
   summoner_name: string;
   avatar: string;
-  current_club: number
+  current_club: number;
 }
 
 export interface IStageSummoner {
@@ -13,7 +13,7 @@ export interface IStageSummoner {
   games: number;
   rank: number;
   joined: Date;
-  left: null;
+  left?: string;
   stage: number;
-  club: number
+  club: number;
 }

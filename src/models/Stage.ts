@@ -1,6 +1,6 @@
-import { IStage } from "../interfaces/IStage";
 import { parse } from "date-fns";
 
+import { IStage } from "../interfaces/IStage";
 
 export default class Stage {
   public readonly id: number;

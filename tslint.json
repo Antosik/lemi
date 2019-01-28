@@ -1,55 +1,55 @@
 {
-    "defaultSeverity": "error",
-    "extends": [
-        "tslint:recommended"
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "rules": {
+    "class-name": true,
+    "comment-format": [
+      true,
+      "check-space"
     ],
-    "jsRules": {
-        "no-unused-expression": true
-    },
-    "rules": {
-        "trailing-comma": false,
-        "eofline": false,
-        "quotemark": [
-            true,
-            "double"
-        ],
-        "indent": false,
-        "member-access": [
-            false
-        ],
-        "ordered-imports": [
-            false
-        ],
-        "max-line-length": [
-            false,
-        ],
-        "member-ordering": [
-            false
-        ],
-        "curly": false,
-        "interface-name": [
-            false
-        ],
-        "array-type": [
-            false
-        ],
-        "no-empty-interface": false,
-        "no-empty": false,
-        "arrow-parens": false,
-        "object-literal-sort-keys": false,
-        "no-unused-expression": false,
-        "max-classes-per-file": [
-            false
-        ],
-        "variable-name": [
-            false
-        ],
-        "one-line": [
-            false
-        ],
-        "one-variable-per-declaration": [
-            false
-        ]
-    },
-    "rulesDirectory": []
+    "indent": [
+      true,
+      "spaces"
+    ],
+    "one-line": [
+      true,
+      "check-open-brace",
+      "check-whitespace"
+    ],
+    "quotemark": [
+      true,
+      "double",
+      "avoid-escape"
+    ],
+    "semicolon": [
+      true,
+      "always",
+      "ignore-bound-class-methods"
+    ],
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-module",
+      "check-separator",
+      "check-type"
+    ],
+    "max-line-length": [
+      false
+    ],
+    "variable-name": [
+      false
+    ],
+    "trailing-comma": false,
+    "no-internal-module": true,
+    "no-trailing-whitespace": true,
+    "no-var-keyword": true,
+    "no-null-keyword": true,
+    "prefer-const": true,
+    "object-literal-sort-keys": false,
+    "no-console": false
+  }
 }

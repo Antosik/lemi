@@ -1,6 +1,7 @@
+import * as dotenv from "dotenv";
 import Lemi from "./bot";
 
-require("dotenv").config();
+dotenv.config();
 
 const client = new Lemi({
   lol_token: process.env.LOL_TOKEN,

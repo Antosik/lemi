@@ -3,12 +3,6 @@
     "module": "commonjs",
     "target": "es6",
 
-    "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "noImplicitAny": false,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "noLib": false,
     "removeComments": true,
     "sourceMap": true,
     

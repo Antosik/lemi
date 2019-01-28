@@ -21,20 +21,20 @@ function declension(scheme: ILocaleScheme, count: number) {
 
   // 1, 21, 31, ...
   if (mod10 === 1 && mod100 !== 11) {
-    return scheme.singularNominative.replace('{{count}}', count.toString())
+    return scheme.singularNominative.replace("{{count}}", count.toString());
 
     // 2, 3, 4, 22, 23, 24, 32 ...
   } else if ((mod10 >= 2 && mod10 <= 4) && (mod100 < 10 || mod100 > 20)) {
-    return scheme.singularGenitive.replace('{{count}}', count.toString())
+    return scheme.singularGenitive.replace("{{count}}", count.toString());
 
     // 5, 6, 7, 8, 9, 10, 11, ...
   } else {
-    return scheme.pluralGenitive.replace('{{count}}', count.toString())
+    return scheme.pluralGenitive.replace("{{count}}", count.toString());
   }
 }
 
 export function getLocaleFn(scheme: ILocaleScheme) {
-  return function (count: number) {
-    return declension(scheme, count)
-  }
+  return (count: number) => {
+    return declension(scheme, count);
+  };
 }

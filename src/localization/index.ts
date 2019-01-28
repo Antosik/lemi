@@ -36,7 +36,7 @@ const locale = {
     singularGenitive: "{{count}} участника",
     pluralGenitive: "{{count}} участников"
   }),
-}
+};
 
 export const consts = {
   noEnoughPt: "Недостаточно очков для участия в этапе!",
@@ -62,8 +62,10 @@ export const consts = {
 
   authError: "Ошибка авторизации",
   requestError: "Ошибка получения данных с сервера"
-}
+};
 
-export default function format(token, count: number): string {
-  return locale[token](count)
+export default function format(token: string, count: number): string {
+  if (!locale[token]) { return ""; }
+
+  return locale[token](count);
 }
