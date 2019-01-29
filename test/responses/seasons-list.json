@@ -1,0 +1,67 @@
+{
+  "next": null,
+  "page": 1,
+  "per_page": 20,
+  "results": [
+    {
+      "id": 11,
+      "rules": 1,
+      "start_date": "2018-08-06",
+      "end_date": "2018-08-27",
+      "title": "Август 2018",
+      "is_open": true,
+      "is_closed": true,
+      "status": 4
+    },
+    {
+      "id": 12,
+      "rules": 1,
+      "start_date": "2018-09-03",
+      "end_date": "2018-09-24",
+      "title": "Сентябрь 2018",
+      "is_open": true,
+      "is_closed": true,
+      "status": 4
+    },
+    {
+      "id": 13,
+      "rules": 1,
+      "start_date": "2018-10-01",
+      "end_date": "2018-10-22",
+      "title": "Октябрь 2018",
+      "is_open": true,
+      "is_closed": true,
+      "status": 4
+    },
+    {
+      "id": 14,
+      "rules": 1,
+      "start_date": "2018-11-05",
+      "end_date": "2018-11-26",
+      "title": "Ноябрь 2018",
+      "is_open": true,
+      "is_closed": true,
+      "status": 4
+    },
+    {
+      "id": 15,
+      "rules": 1,
+      "start_date": "2018-12-03",
+      "end_date": "2018-12-24",
+      "title": "Декабрь 2018",
+      "is_open": true,
+      "is_closed": true,
+      "status": 4
+    },
+    {
+      "id": 1,
+      "rules": 1,
+      "start_date": "2019-01-07",
+      "end_date": "2019-01-28",
+      "title": "Январь 2019",
+      "is_open": true,
+      "is_closed": true,
+      "status": 3
+    }
+  ]
+}

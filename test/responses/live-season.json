@@ -1,0 +1,51 @@
+{
+  "id": 1,
+  "rules": {
+    "id": 1,
+    "club_limit": 100,
+    "stage_count": 3,
+    "stage_duration": 7,
+    "user_points": 200,
+    "club_points": 1000,
+    "referral_points": 5
+  },
+  "start_date": "2019-01-07",
+  "end_date": "2019-01-28",
+  "title": "Январь 2019",
+  "is_open": true,
+  "is_closed": true,
+  "status": 1,
+  "current_stage": null,
+  "stages": [
+    {
+      "id": 1,
+      "season": 1,
+      "start_date": "2019-01-07",
+      "end_date": "2019-01-14",
+      "number": 1,
+      "is_open": true,
+      "is_closed": true,
+      "status": 4
+    },
+    {
+      "id": 2,
+      "season": 1,
+      "start_date": "2019-01-14",
+      "end_date": "2019-01-21",
+      "number": 2,
+      "is_open": true,
+      "is_closed": true,
+      "status": 4
+    },
+    {
+      "id": 3,
+      "season": 1,
+      "start_date": "2019-01-21",
+      "end_date": "2019-01-28",
+      "number": 3,
+      "is_open": true,
+      "is_closed": true,
+      "status": 3
+    }
+  ]
+}

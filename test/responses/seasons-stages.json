@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "season": 1,
+    "start_date": "2019-01-07",
+    "end_date": "2019-01-14",
+    "number": 1,
+    "is_open": true,
+    "is_closed": true,
+    "status": 4
+  },
+  {
+    "id": 2,
+    "season": 1,
+    "start_date": "2019-01-14",
+    "end_date": "2019-01-21",
+    "number": 2,
+    "is_open": true,
+    "is_closed": true,
+    "status": 4
+  },
+  {
+    "id": 3,
+    "season": 1,
+    "start_date": "2019-01-21",
+    "end_date": "2019-01-28",
+    "number": 3,
+    "is_open": true,
+    "is_closed": true,
+    "status": 3
+  }
+]
