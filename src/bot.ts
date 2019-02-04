@@ -182,7 +182,7 @@ export default class Lemi {
           const homeclub_season = await homeclub.getSeason();
           const description = `Владелец - ${homeclub.owner_name} | ${format("participient", homeclub.members_count)}`;
           const points = `${homeclub_season.points}pt`;
-          const season_place = `#${homeclub_season.rank}`;
+          const season_place = homeclub_season.rank ? `#${homeclub_season.rank}` : consts.noPlaceInTop;
 
           const result = new RichEmbed()
             .setColor("#0099ff")
