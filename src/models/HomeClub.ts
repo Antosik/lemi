@@ -91,7 +91,7 @@ export default class HomeClub {
     }
 
     const { rank: current_place, points: current_points } = await this.getSeason();
-    if (current_place <= top) {
+    if (current_place !== 0 && current_place <= top) {
       return { top, games_count: 0, points_needed: 0 };
     }
 

@@ -40,7 +40,7 @@ export default class ClubsAPI {
     }
 
     const club: ISeasonsClub = await this.query(`contest/season/${season.id}/clubs/current`, { headers: { Cookie } });
-    return !club.id ? undefined : new HomeClub(club.club, season.id, this.token);
+    return !club && !club.club && !club.club.id ? undefined : new HomeClub(club.club, season.id, this.token);
   }
 
   public async getClubStage(club_id: number, season_id: number, stage_id: number): Promise<IStageClub> {
