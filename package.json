@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Bot for Clubs in League of Legends",
   "scripts": {
-    "start": "node dist/main.js",
+    "start": "nodemon dist/main.js",
     "build": "tsc --sourceMap false",
     "watch": "tsc -w",
     "postinstall": "npm run build",
