@@ -44,24 +44,24 @@ export const consts = {
   noActiveStage: "Нет активных этапов!",
   seasonNotFound: "Сезон не найден!",
   stageNotFound: "Этап не найден!",
-  commandNotFound: "Извините, данная команда не найдена",
-  noPlaceInTop: "Нет места",
+  commandNotFound: "Извините, данная команда не найдена.",
+  noPlaceInTop: "Нет места.",
 
-  clubNameInvalid: "Введите название клуба",
-  clubNameLength: "Имя клуба должно быть больше 2 символов",
-  clubNotFound: "Клубов с таким названием не найдено",
+  clubNameInvalid: "Введите название клуба!",
+  clubNameLength: "Имя клуба должно быть больше 2 символов!",
+  clubNotFound: "Клубов с таким названием не найдено.",
 
   calcEnoughGames: "Вы уже достигли желаемого места в этапе, так держать!",
-  invalidPlayerCount: "Количество игроков может быть от 2 до 5",
-  invalidTopPosition: "Неверная позиция в топе",
-  errorGettingTopPosition: "Ошибка получения клуба в топе",
-  clubNotSelected: "Вы не выбрали клуб",
+  invalidPlayerCount: "Количество игроков может быть от 2 до 5!",
+  invalidTopPosition: "Неверная позиция в топе.",
+  errorGettingTopPosition: "Ошибка получения клуба в топе.",
+  clubNotSelected: "Вы не выбрали клуб! Выберите его [тут](https://clubs.ru.leagueoflegends.com/new).",
 
   timeToSeasonEnd: "До конца сезона осталось",
   timeToStageEnd: "До конца этапа осталось",
 
-  authError: "Ошибка авторизации",
-  requestError: "Ошибка получения данных с сервера"
+  authError: "Ошибка авторизации.",
+  requestError: "Ошибка получения данных с сервера."
 };
 
 export default function format(token: string, count: number): string {
