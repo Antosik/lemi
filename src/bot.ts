@@ -416,7 +416,7 @@ export default class Lemi {
               locale: ru
             });
 
-            return `${consts.timeToStageEnd}: ${distance}`;
+            return `${consts.timeToStageEnd}: **${distance}**`;
           } else {
             if (live_season.end_date < new Date()) {
               return consts.noActiveSeason;
@@ -427,7 +427,7 @@ export default class Lemi {
               locale: ru
             });
 
-            return `${consts.timeToSeasonEnd}: ${distance}`;
+            return `${consts.timeToSeasonEnd}: **${distance}**`;
           }
         }
 
