@@ -2,7 +2,7 @@ import { format as formatDate, formatDistance } from "date-fns";
 import { ru } from "date-fns/locale";
 import { Client, DMChannel, GroupDMChannel, Guild, Message, RichEmbed } from "discord.js";
 
-import { boldIF, underlineIF } from "./helpers";
+import { boldIF } from "./helpers";
 import format, { consts } from "./localization";
 import ClubsClient from "./lol";
 
@@ -58,7 +58,7 @@ export default class Lemi {
   }
 
   private initClubs() {
-    const client = new ClubsClient(this.config.lol_token);
+    const client = new ClubsClient();
     return client;
   }
 
@@ -162,130 +162,6 @@ export default class Lemi {
           return result;
         }
 
-        case "myclub":
-        case "клуб": {
-          const stage_index = Number(args[0]) || undefined;
-
-          const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
-
-          const stage = live_season.getStageIdByIndex(stage_index);
-          let stage_data: { number: number, place: string };
-
-          if (stage) {
-            const stage_clubs = await homeclub.getStageClubs(stage.id);
-            const homeclub_stage = stage_clubs.find((stage_club) => stage_club.club.id === homeclub.id);
-            const stage_place = homeclub_stage && homeclub_stage.id ? `#${homeclub_stage.rank}` : consts.noPlaceInTop;
-
-            stage_data = { number: stage.number, place: stage_place };
-          }
-
-          const homeclub_season = await homeclub.getSeason();
-          const description = `Владелец - ${homeclub.owner_name} | ${format("participient", homeclub.members_count)}`;
-          const points = `${homeclub_season.points}pt`;
-          const season_place = homeclub_season.rank ? `#${homeclub_season.rank}` : consts.noPlaceInTop;
-
-          const result = new RichEmbed()
-            .setColor("#0099ff")
-            .setURL(`https://clubs.ru.leagueoflegends.com/progress`)
-            .setTitle(`Клуб "${homeclub.name}"`)
-            .setDescription(description)
-            .addField(`Общее количество очков`, points)
-            .addField(`Место в сезоне`, season_place, true);
-
-          if (stage_data) {
-            result.addField(`Место в ${stage_data.number} этапе`, stage_data.place, true);
-          }
-
-          return result;
-        }
-
-        case "myclubmembers":
-        case "участники": {
-          const stage_index = Number(args[0]) || undefined;
-          const count = Number(args[1]) || 10;
-
-          const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
-          if (!stage_index && live_season.isEnded()) {
-            return consts.noActiveStage;
-          }
-
-          const stage = live_season.getStageIdByIndex(stage_index);
-          if (!stage) {
-            return consts.stageNotFound;
-          }
-
-          const members = await homeclub.getStageMembers(stage.id, count);
-
-          const start_date = formatDate(stage.start_date, "dd.MM.yyyy");
-          const end_date = formatDate(stage.end_date, "dd.MM.yyyy");
-          const now = formatDate(new Date(), "HH:mm:ss dd.MM.yyyy");
-
-          const result = new RichEmbed()
-            .setColor("#0099ff")
-            .setURL(`https://clubs.ru.leagueoflegends.com/club/member`)
-            .setTitle(`Рейтинг игроков клуба "${homeclub.name}"`)
-            .setDescription(`Сезон "${live_season.title}". Этап ${stage.number} (${start_date} - ${end_date})`)
-            .setFooter(now);
-
-          members.forEach((member, i) => {
-            const title = boldIF(`${i + 1}. ${member.summoner.summoner_name}`, i < 3);
-            const description = `${member.points}pt - ${format("game", member.games)}`;
-            result.addField(title, description);
-          });
-
-          return result;
-        }
-
-        case "myclubstage":
-        case "этап": {
-          const stage_index = Number(args[0]) || undefined;
-          const count = Number(args[1]) || 10;
-
-          const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
-          if (!stage_index && live_season.isEnded()) {
-            return consts.noActiveStage;
-          }
-
-          const stage = live_season.getStageIdByIndex(stage_index);
-          if (!stage) {
-            return consts.stageNotFound;
-          }
-
-          const stage_clubs = await homeclub.getStageClubs(stage.id);
-          const homeclub_stage = stage_clubs.find((stage_club) => stage_club.club.id === homeclub.id);
-
-          if (!homeclub_stage || !homeclub_stage.id) {
-            return consts.noEnoughPt;
-          }
-
-          const start_date = formatDate(stage.start_date, "dd.MM.yyyy");
-          const end_date = formatDate(stage.end_date, "dd.MM.yyyy");
-          const now = formatDate(new Date(), "HH:mm:ss dd.MM.yyyy");
-
-          const result = new RichEmbed()
-            .setColor("#0099ff")
-            .setURL(`https://clubs.ru.leagueoflegends.com/rating?ssid=${live_season.id}&stid=${stage.id}`)
-            .setTitle(`Рейтинг клубов`)
-            .setDescription(`Сезон "${live_season.title}". Этап ${stage.number} (${start_date} - ${end_date})`)
-            .setFooter(now);
-
-          stage_clubs
-            .filter((stage_club) => stage_club.rank <= count)
-            .forEach((stage_club) => {
-              const title = underlineIF(boldIF(`${stage_club.rank}. ${stage_club.club.lol_name}`, stage_club.rank <= 3), homeclub.id === stage_club.club.id);
-              const description = `${stage_club.points}pt - ${format("player", stage_club.club.members_count)}`;
-              result.addField(title, description);
-            });
-
-          if (homeclub_stage.rank > count) {
-            const title = underlineIF(boldIF(`${homeclub_stage.rank}. ${homeclub_stage.club.lol_name}`, homeclub_stage.rank <= 3), homeclub.id === homeclub_stage.club.id);
-            const description = `${homeclub_stage.points}pt - ${format("player", homeclub_stage.club.members_count)}`;
-            result.addField(title, description);
-          }
-
-          return result;
-        }
-
         case "searchclub":
         case "поиск": {
           const name = args.join(" ").trim();
@@ -305,20 +181,6 @@ export default class Lemi {
           if (clubs.length === 1) {
             const [club] = clubs;
 
-            const { id: season_id, current_stage } = live_season;
-            const { club: { id: club_id } } = club;
-
-            let stage_data: { number: number, place: string };
-
-            if (current_stage) {
-              const { id: stage_id, number } = current_stage;
-
-              const club_stage = await this.clubs.getClubStage(club_id, season_id, stage_id);
-              const stage_place = club_stage.rank ? `#${club_stage.rank} (${format("game", club_stage.games)})` : `Недостаточно очков - ${club_stage.points}/1000`;
-
-              stage_data = { number, place: stage_place };
-            }
-
             const description = `Владелец - ${club.club.owner.summoner_name} | ${format("participient", club.club.members_count)}`;
             const points = `${club.points}pt`;
             const season_place = `#${club.rank} (${format("game", club.games)})`;
@@ -329,10 +191,6 @@ export default class Lemi {
               .setDescription(description)
               .addField(`Общее количество очков`, points)
               .addField(`Место в сезоне`, season_place, true);
-
-            if (stage_data) {
-              result.addField(`Место в ${stage_data.number} этапе`, stage_data.place, true);
-            }
 
             return result;
           } else {
@@ -348,45 +206,6 @@ export default class Lemi {
             });
 
             return result;
-          }
-        }
-
-        case "myclubcalc":
-        case "расчет": {
-          let type = args[0] || "stage";
-          const top = Number(args[1]) || 1;
-          const group_size = Number(args[2]) || 5;
-          const mode = args[3] === "aram" ? 1 : 0;
-
-          if (type !== "stage" && type !== "season" && type !== "сезон" && type !== "этап") {
-            type = "stage";
-          }
-
-          const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
-          if (live_season.isEnded()) {
-            if (type === "stage" || type === "этап") {
-              return consts.noActiveStage;
-            }
-            return consts.noActiveSeason;
-          }
-
-          if (type === "stage" || type === "этап") {
-            const { current_stage: { id: stage_id } } = live_season;
-            const { top: wanted, games_count, points_needed } = await homeclub.calculateStage(stage_id, { top, group_size, mode });
-
-            if (!games_count) {
-              return consts.calcEnoughGames;
-            }
-            if (!wanted) {
-              return `Ваш клуб не участвует в этапе.\nЧтобы участвовать, нужно заработать ${format("point", points_needed)}, выиграв **${format("gameToPlay", games_count)}** (составом из ${format("player", group_size)} игроков)`;
-            }
-            return `Чтобы достигнуть желаемого ${wanted} места в этапе, нужно заработать ${format("point", points_needed)}, выиграв **${format("gameToPlay", games_count)}** (составом из ${format("player", group_size)} игроков)`;
-          } else {
-            const { top: wanted, games_count, points_needed } = await homeclub.calculateSeason({ top, group_size, mode });
-            if (!games_count) {
-              return consts.calcEnoughGames;
-            }
-            return `Чтобы достигнуть желаемого ${wanted} места в сезоне, нужно заработать ${format("point", points_needed)}, выиграв **${format("gameToPlay", games_count)}** (составом из ${format("player", group_size)} игроков)`;
           }
         }
 
@@ -443,10 +262,6 @@ export default class Lemi {
             .addField(`• \`topseason/топсезона [количество мест]\``, `Показывает топ сезона.`)
             .addField(`• \`searchclub/поиск [название]\``, `Поиск по клубам (Топ-500). Чем полнее название, тем лучше.`)
             .addField(`• \`time/время [season/stage]\``, `Показывает оставшееся время до конца сезона/этапа.`)
-            .addField(`• \`myclub/клуб\``, `Отображает информацию о вашем клубе.`)
-            .addField(`• \`myclubstage/этап [номер этапа (1-3)] [количество клубов]\``, `Показывает топ этапа вашего клуба.`)
-            .addField(`• \`myclubmembers/участники [номер этапа (1-3)] [количество участников]\``, `Отображает информацию об очках, заработанных участниками вашего клуба.`)
-            .addField(`• \`myclubcalc/расчет [season/stage] [место в топе] [игроков в группе (2-5)] [aram]\``, `Отображает количество игр, которые нужно выиграть участниками вашего клуба для достижения желаего места в сезоне/этапе.`)
             .addField(`• \`help/команды\``, `Показывает данное сообщение.`)
             .setFooter(`Made with <3 by @Antosik#6224`);
 
