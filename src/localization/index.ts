@@ -52,6 +52,7 @@ export const consts = {
   clubNotFound: "Клубов с таким названием не найдено.",
 
   calcEnoughGames: "Вы уже достигли желаемого места в этапе, так держать!",
+  farmEnoughPoints: "Все игроки нафармили очки, так держать!",
   invalidPlayerCount: "Количество игроков может быть от 2 до 5!",
   invalidTopPosition: "Неверная позиция в топе.",
   errorGettingTopPosition: "Ошибка получения клуба в топе.",
