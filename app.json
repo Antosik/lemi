@@ -4,11 +4,11 @@
   "repository": "https://github.com/Antosik/lemi",
   "env": {
     "LOL_TOKEN": {
-      "description": "Token League of Legends (https://github.com/Antosik/lemi#получение-tokena-lola)",
+      "description": "Token Discord'a (https://github.com/Antosik/lemi/wiki/Установка#1-Получение-tokena-lola)",
       "required": false
     },
     "DISCORD_TOKEN": {
-      "description": "Token Discord'a (https://github.com/Antosik/lemi#получение-tokena-discorda)",
+      "description": "Token Discord'a (https://github.com/Antosik/lemi/wiki/Установка#2-Получение-tokena-discorda)",
       "required": true
     },
     "LEMI_PREFIX": {
