@@ -47,6 +47,9 @@ export const consts = {
   commandNotFound: "Извините, данная команда не найдена.",
   noPlaceInTop: "Нет места.",
 
+  playerNameInvalid: "Введите имя игрока!",
+  playerNameLength: "Имя игрока должно быть больше 2 символов!",
+  playerNotFound: "Игроков в вашем клубе с таким именем не найдено.",
   clubNameInvalid: "Введите название клуба!",
   clubNameLength: "Имя клуба должно быть больше 2 символов!",
   clubNotFound: "Клубов с таким названием не найдено.",

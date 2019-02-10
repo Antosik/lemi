@@ -475,6 +475,54 @@ export default class Lemi {
           return result;
         }
 
+        case "myclubmember":
+        case "участник": {
+          const name = args.join(" ").trim();
+          if (!name) {
+            return consts.playerNameInvalid;
+          }
+          if (name.length < 3) {
+            return consts.playerNameLength;
+          }
+
+          const [live_season, homeclub] = await Promise.all([this.clubs.getLiveSeason(), this.clubs.getHomeClub()]);
+
+          const stage = await live_season.getStageIdByIndex();
+          const members = await homeclub.getStageMembers(stage.id, homeclub.members_count);
+
+          const searchRegExp = new RegExp(name, "i");
+          const members_with_name = members.filter((member) => searchRegExp.test(member.summoner.summoner_name));
+
+          if (!members_with_name.length) {
+            return consts.playerNotFound;
+          } else if (members_with_name.length !== 1) {
+            const result = new RichEmbed()
+              .setColor("#0099ff")
+              .setAuthor(`Итоги поиска по участникам:`)
+              .setTitle(`Найдено ${format("participient", members_with_name.length)}`)
+              .setFooter(`Укажите точное имя для получения полной информации`);
+
+            members_with_name.forEach((member, i) => {
+              result
+                .addField(`${i + 1}. ${member.summoner.summoner_name}`, `${format("point", member.points)} | [op.gg](http://op.gg/summoner/userName=${member.summoner.summoner_name})`);
+            });
+
+            return result;
+          } else {
+            const sorted_members = members.sort((a, b) => b.points - a.points);
+            const [member] = members_with_name;
+
+            const result = new RichEmbed()
+              .setColor("#0099ff")
+              .setTitle(`Участник клуба ${homeclub.name} - "${member.summoner.summoner_name}"`)
+              .setThumbnail(member.summoner.avatar)
+              .addField(`Очков за ${stage.number} этап`, `${format("point", member.points)} (#${sorted_members.indexOf(member) + 1} в клубе)`)
+              .addField(`Профиль`, `[op.gg](http://op.gg/summoner/userName=${member.summoner.summoner_name})`);
+
+            return result;
+          }
+        }
+
         case "help":
         case "commands":
         case "помощь":
@@ -492,6 +540,7 @@ export default class Lemi {
             .addField(`• \`myclubmembers/участники [номер этапа (1-3)] [количество участников]\``, `Отображает информацию об очках, заработанных участниками вашего клуба.`)
             .addField(`• \`myclubcalc/расчет [season/stage] [место в топе] [игроков в группе (2-5)] [aram]\``, `Отображает количество игр, которые нужно выиграть участниками вашего клуба для достижения желаего места в сезоне/этапе.`)
             .addField(`• \`myclubfarm/фарм [количество очков] [количество позиций]\``, `Выводит игроков, которые не заработали определенное количество очков.`)
+            .addField(`• \`myclubmember/участник [имя]\``, `Поиск по участникам клуба. Чем полнее ник, тем лучше.`)
             .addField(`• \`help/команды\``, `Показывает данное сообщение.`)
             .setFooter(`Made with <3 by @Antosik#6224`);
 
