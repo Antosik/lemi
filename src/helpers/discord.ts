@@ -6,7 +6,7 @@ export async function createPagedMessage(
   handler: (page: number, reaction: MessageReaction) => any,
   {
     filter = () => true,
-    pages_count
+    pages_count = 10
   }: { filter: CollectorFilter, pages_count: number }
 ) {
   for (let i = 1; i < pages_count + 1 && i < 10; i++) {
