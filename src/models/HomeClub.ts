@@ -45,8 +45,8 @@ export default class HomeClub {
     return stage_clubs;
   }
 
-  public async getStageMembers(stage_id: number, count: number = 25): Promise<IStageSummoner[]> {
-    const { results: stage_members }: { results: IStageSummoner[] } = await this.query(`contest/season/${this.season_id}/stages/${stage_id}/summoners`, { params: { per_page: count } });
+  public async getStageMembers(stage_id: number, count: number = 25, page = 1): Promise<IStageSummoner[]> {
+    const { results: stage_members }: { results: IStageSummoner[] } = await this.query(`contest/season/${this.season_id}/stages/${stage_id}/summoners`, { params: { per_page: count, page } });
     return stage_members;
   }
 

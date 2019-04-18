@@ -2,11 +2,13 @@ import { format as formatDate } from "date-fns";
 import { RichEmbed } from "discord.js";
 
 import { ICommand } from "../interfaces/ICommand";
+import { IStageSummoner } from "../interfaces/ISummoner";
 import format, { consts } from "../localization";
 
-import { boldIF } from "../helpers";
+import { createPagedMessage } from "../helpers/discord";
+import { boldIF } from "../helpers/functions";
 
-module.exports = {
+const members_command = {
   name: "myclubmembers",
   description: "Информацию об очках, заработанных участниками вашего клуба.",
   aliases: ["участники", "members ", "m"],
@@ -14,7 +16,6 @@ module.exports = {
 
   async execute(ctx, message, args) {
     const stage_index: number = Number(args[0]) || undefined;
-    const count: number = Number(args[1]) || 10;
 
     const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
     if (!stage_index && live_season.isEnded()) {
@@ -26,25 +27,56 @@ module.exports = {
       return message.channel.send(consts.stageNotFound);
     }
 
-    const members = await homeclub.getStageMembers(stage.id, count);
+    const count = 25;
+    const pages_count = Math.ceil(homeclub.members_count / count);
 
     const start_date = formatDate(stage.start_date, "dd.MM.yyyy");
     const end_date = formatDate(stage.end_date, "dd.MM.yyyy");
     const now = formatDate(new Date(), "HH:mm:ss dd.MM.yyyy");
-
-    const result = new RichEmbed()
+    const template = new RichEmbed()
       .setColor("#0099ff")
       .setURL(`https://clubs.ru.leagueoflegends.com/club/member`)
       .setTitle(`Рейтинг игроков клуба "${homeclub.name}"`)
       .setDescription(`Сезон "${live_season.title}". Этап ${stage.number} (${start_date} - ${end_date})`)
-      .setFooter(now);
+      .setFooter(pages_count > 1 ? `Страница 1 • ${now}` : now);
 
-    members.forEach((member, i) => {
-      const title = boldIF(`${i + 1}. ${member.summoner.summoner_name}`, i < 3);
-      const description = `${member.points}pt - ${format("game", member.games)}`;
-      result.addField(title, description);
-    });
+    let members = await homeclub.getStageMembers(stage.id, count);
+    let result = formatMembers(template, members);
 
-    await message.channel.send(result);
+    const members_message_r = await message.channel.send(result);
+    const members_message = Array.isArray(members_message_r) ? members_message_r[0] : members_message_r;
+
+    if (pages_count > 1) {
+      await createPagedMessage(
+        members_message,
+        async (page, reaction) => {
+          const index_start = (page - 1) * count + 1;
+
+          members = await homeclub.getStageMembers(stage.id, count, page);
+          result = formatMembers(template, members, index_start);
+          result.setFooter(`Страница ${page} • ${now}`);
+          await members_message.edit(result);
+        },
+        {
+          filter: (r, user) => user.id === message.author.id,
+          pages_count
+        }
+      );
+    }
+
+    function formatMembers(embed: RichEmbed, summoners: IStageSummoner[], index_start = 1) {
+      const res = new RichEmbed(embed);
+      res.fields = [];
+
+      summoners.forEach((member, i) => {
+        const title = boldIF(`${i + index_start}. ${member.summoner.summoner_name}`, i + index_start < 4);
+        const description = `${member.points}pt - ${format("game", member.games)}`;
+        res.addField(title, description);
+      });
+
+      return res;
+    }
   }
 } as ICommand;
+
+module.exports = members_command;
