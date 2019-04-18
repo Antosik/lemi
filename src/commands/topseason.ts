@@ -11,7 +11,7 @@ import { boldIF } from "../helpers/functions";
 module.exports = {
   name: "topseason",
   description: "Топ сезона.",
-  aliases: ["топсезона", "seasontop", "st"],
+  aliases: ["топсезона", "seasontop", "sst"],
   usage: "topseason/топсезона",
 
   async execute(ctx, message, args) {
