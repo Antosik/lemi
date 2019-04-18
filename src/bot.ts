@@ -4,7 +4,7 @@ import { Collection as DiscordCollection, DMChannel, GroupDMChannel, Guild, Mess
 import * as fs from "fs";
 import * as path from "path";
 
-import { boldIF, underlineIF } from "./helpers";
+import { boldIF, underlineIF } from "./helpers/functions";
 import { DiscordClient, ICommand } from "./interfaces/ICommand";
 import format, { consts } from "./localization";
 import ClubsClient from "./lol";

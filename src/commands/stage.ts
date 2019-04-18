@@ -4,7 +4,7 @@ import { RichEmbed } from "discord.js";
 import { ICommand } from "../interfaces/ICommand";
 import format, { consts } from "../localization";
 
-import { boldIF, underlineIF } from "../helpers";
+import { boldIF, underlineIF } from "../helpers/functions";
 
 module.exports = {
   name: "myclubstage",
