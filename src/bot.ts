@@ -1,12 +1,9 @@
-import { format as formatDate, formatDistance } from "date-fns";
-import { ru } from "date-fns/locale";
 import { Collection as DiscordCollection, DMChannel, GroupDMChannel, Guild, Message, RichEmbed } from "discord.js";
 import * as fs from "fs";
 import * as path from "path";
 
-import { boldIF, underlineIF } from "./helpers/functions";
 import { DiscordClient, ICommand } from "./interfaces/ICommand";
-import format, { consts } from "./localization";
+import { consts } from "./localization";
 import ClubsClient from "./lol";
 
 export interface ILemiConfig {
