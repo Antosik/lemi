@@ -11,8 +11,8 @@ import { boldIF } from "../helpers/functions";
 const members_command = {
   name: "myclubmembers",
   description: "Информацию об очках, заработанных участниками вашего клуба.",
-  aliases: ["участники", "members ", "m"],
-  usage: "members/участники [номер этапа (1-3)] [количество участников]",
+  aliases: ["участники", "members", "m"],
+  usage: "members/участники [номер этапа (1-3)]",
 
   async execute(ctx, message, args) {
     const stage_index: number = Number(args[0]) || undefined;
