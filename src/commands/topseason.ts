@@ -11,13 +11,15 @@ module.exports = {
   description: "Топ сезона.",
   aliases: ["топсезона", "seasontop", "st"],
   usage: "topseason/топсезона [количество мест]",
+
   async execute(ctx, message, args) {
+    const count: number = Number(args[0]) || 10;
+
     const live_season = await ctx.clubs.getLiveSeason();
     if (!live_season) {
       return message.channel.send(consts.noActiveSeason);
     }
 
-    const count = Number(args[0]) || 10;
     const top10 = await live_season.getTopN(count);
 
     const start_date = formatDate(live_season.start_date, "dd.MM.yyyy");

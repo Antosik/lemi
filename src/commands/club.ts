@@ -8,8 +8,9 @@ module.exports = {
   description: "Информация о вашем клубе.",
   aliases: ["клуб", "club", "c"],
   usage: "club/клуб",
+
   async execute(ctx, message, args) {
-    const stage_index = Number(args[0]) || undefined;
+    const stage_index: number = Number(args[0]) || undefined;
 
     const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
 

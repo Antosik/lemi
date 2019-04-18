@@ -11,9 +11,10 @@ module.exports = {
   description: "Топ этапа вашего клуба.",
   aliases: ["этап", "stage", "topstage", "st"],
   usage: "stage/этап [номер этапа (1-3)] [количество клубов]",
+
   async execute(ctx, message, args) {
-    const stage_index = Number(args[0]) || undefined;
-    const count = Number(args[1]) || 10;
+    const stage_index: number = Number(args[0]) || undefined;
+    const count: number = Number(args[1]) || 10;
 
     const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
     if (!stage_index && live_season.isEnded()) {

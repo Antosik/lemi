@@ -11,9 +11,10 @@ module.exports = {
   description: "Игроки, которые не заработали определенное количество очков.",
   aliases: ["фарм", "farm", "f"],
   usage: "farm/фарм [количество очков] [количество позиций]",
+
   async execute(ctx, message, args) {
-    const points = Number(args[0]) || 200;
-    const count = Number(args[1]);
+    const points: number = Number(args[0]) || 200;
+    const count: number = Number(args[1]);
 
     const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
     if (live_season.isEnded()) {

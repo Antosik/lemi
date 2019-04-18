@@ -7,6 +7,7 @@ module.exports = {
   description: "Доступные команды.",
   aliases: ["commands", "помощь", "команды", "h"],
   usage: "help/commands/помощь/команды",
+
   async execute(ctx, message, args) {
     const result = new RichEmbed()
       .setColor("#0099ff")

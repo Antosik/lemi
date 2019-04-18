@@ -1,7 +1,7 @@
 import { formatDistance } from "date-fns";
 import { ru } from "date-fns/locale";
 
-import { isSeason, isStage } from "../interfaces/IArgument";
+import { ESeasonArgs, EStageArgs, isSeason, isStage } from "../interfaces/IArgument";
 import { ICommand } from "../interfaces/ICommand";
 import { consts } from "../localization";
 
@@ -10,11 +10,12 @@ module.exports = {
   description: "Оставшееся время до конца сезона/этапа.",
   aliases: ["время", "t"],
   usage: "time/время [season/stage]",
+
   async execute(ctx, message, args) {
-    let type = args[0] || "stage";
+    let type: string = args[0] || EStageArgs.en;
 
     if (!isSeason(type) && !isStage(type)) {
-      type = "stage";
+      type = EStageArgs.en;
     }
 
     const live_season = await ctx.clubs.getLiveSeason();

@@ -8,8 +8,9 @@ module.exports = {
   description: "Поиск по клубам (Топ-500 сезона). Чем полнее название, тем лучше.",
   aliases: ["поиск", "search", "se"],
   usage: "search/поиск [название]",
+
   async execute(ctx, message, args) {
-    const name = args.join(" ").trim();
+    const name: string = args.join(" ").trim();
     if (!name) {
       return message.channel.send(consts.clubNameInvalid);
     }

@@ -11,6 +11,7 @@ module.exports = {
   description: "Общая информация о текущем сезоне.",
   aliases: ["сезон", "season", "ss"],
   usage: "season/сезон",
+
   async execute(ctx, message, args) {
     const live_season = await ctx.clubs.getLiveSeason();
     if (!live_season) {

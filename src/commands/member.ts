@@ -8,8 +8,9 @@ module.exports = {
   description: "Поиск по участникам клуба. Чем полнее ник, тем лучше.",
   aliases: ["участник", "member", "m1"],
   usage: "member/участник [никнейм]",
+
   async execute(ctx, message, args) {
-    const name = args.join(" ").trim();
+    const name: string = args.join(" ").trim();
     if (!name) {
       return message.channel.send(consts.playerNameInvalid);
     }
