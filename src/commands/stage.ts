@@ -30,7 +30,10 @@ module.exports = {
     const homeclub_stage = stage_clubs.find((stage_club) => stage_club.club.id === homeclub.id);
 
     if (!homeclub_stage || !homeclub_stage.id) {
-      return message.channel.send(consts.noEnoughPt);
+      const group_size = 5;
+      const { games_count, points_needed } = await homeclub.calculateStage(stage.id, { group_size });
+      const result_not = `Ваш клуб не участвует в этапе.\nЧтобы участвовать, нужно заработать ${format("point", points_needed)}, выиграв **${format("gameToPlay", games_count)}** (составом из ${format("player", group_size)})`;
+      return message.channel.send(result_not);
     }
 
     const start_date = formatDate(stage.start_date, "dd.MM.yyyy");
