@@ -97,7 +97,7 @@ export default class HomeClub {
 
     const page = Math.ceil(top / 10);
     const { results: season_clubs }: { results: ISeasonsClub[] } = await this.query(`contest/season/${this.season_id}/clubs`, { params: { per_page: 10, page } });
-    const club_on_place = season_clubs[top % 10];
+    const club_on_place = season_clubs[(top - 1) % 10];
     if (!club_on_place) {
       throw new Error(consts.errorGettingTopPosition);
     }
