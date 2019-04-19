@@ -45,12 +45,14 @@ module.exports = {
       const sorted_members = members.sort((a, b) => b.points - a.points);
       const [member] = members_with_name;
 
+      const opgg_profile = `[op.gg](http://ru.op.gg/summoner/userName=${member.summoner.summoner_name})`;
+      const log_profile = `[leagueofgraphs](https://www.leagueofgraphs.com/ru/summoner/ru/${member.summoner.summoner_name})`;
       const result = new RichEmbed()
         .setColor("#0099ff")
         .setTitle(`Участник клуба ${homeclub.name} - "${member.summoner.summoner_name}"`)
         .setThumbnail(member.summoner.avatar)
         .addField(`Очков за ${stage.number} этап`, `${format("point", member.points)} (#${sorted_members.indexOf(member) + 1} в клубе)`)
-        .addField(`Профиль`, `[op.gg](http://op.gg/summoner/userName=${member.summoner.summoner_name})`);
+        .addField(`Профиль`, `${opgg_profile} • ${log_profile}`);
 
       return message.channel.send(result);
     }
