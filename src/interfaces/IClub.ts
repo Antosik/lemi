@@ -1,3 +1,5 @@
+import { IRewardCondition } from "./IReward";
+
 export interface IClubOwner {
   id: number;
   lol_account_id: number;
@@ -19,7 +21,7 @@ export interface IClub {
 export interface IParticipatingClub {
   id: number;
   club: IClub;
-  rank_reward: IRankReward;
+  rank_reward: IRewardCondition;
   points: number;
   games: number;
   rank: number;
@@ -34,19 +36,4 @@ export interface ISeasonsClub extends IParticipatingClub {
 export interface IStageClub extends IParticipatingClub {
   stage: number;
   group: number;
-}
-
-export interface IReward {
-  id: number;
-  description: string;
-  reward_type: number;
-  rules: number;
-}
-
-export interface IRankReward {
-  id: number;
-  reward: IReward;
-  min: number;                     // bottom corner of place
-  max: number;                     // top corner of place
-  reward_value: number;            // count of rewards
 }
