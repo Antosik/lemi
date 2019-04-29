@@ -12,10 +12,11 @@ module.exports = {
   name: "myclubstage",
   description: "Топ этапа вашего клуба.",
   aliases: ["этап", "stage", "topstage", "st"],
-  usage: "stage/этап [номер этапа (1-3)]",
+  usage: "stage/этап [номер этапа (1-3)] [количество позиций]",
 
   async execute(ctx, message, args) {
     const stage_index: number = Number(args[0]) || undefined;
+    const count: number = Number(args[1]) || 10;
 
     const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
     if (!stage_index && live_season.isEnded()) {
@@ -48,7 +49,6 @@ module.exports = {
       .setDescription(`Сезон "${live_season.title}". Этап ${stage.number} (${start_date} - ${end_date})`)
       .setFooter(now);
 
-    const count = 10;
     const pages_count = Math.ceil(stage_clubs.length / count);
     let stage_clubs_slice = stage_clubs.slice(0, count);
     let result = formatStage(template, stage_clubs_slice);

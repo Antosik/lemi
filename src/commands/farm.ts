@@ -12,10 +12,11 @@ module.exports = {
   name: "myclubfarm",
   description: "Игроки, которые не заработали определенное количество очков.",
   aliases: ["фарм", "farm", "f"],
-  usage: "farm/фарм [количество очков]",
+  usage: "farm/фарм [количество очков] [количество позиций]",
 
   async execute(ctx, message, args) {
     const points: number = Number(args[0]) || 200;
+    const count: number = Number(args[1]) || 10;
 
     const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
     if (live_season.isEnded()) {
@@ -41,7 +42,6 @@ module.exports = {
       .setDescription(`Сезон "${live_season.title}". Этап ${stage.number} (${start_date} - ${end_date})`)
       .setFooter(now);
 
-    const count = 10;
     const pages_count = Math.ceil(deficiency.length / count);
     let deficiency_slice = deficiency.slice(0, count);
     let result = formatDeficiencyMembers(template, deficiency_slice);
