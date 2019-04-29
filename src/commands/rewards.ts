@@ -7,7 +7,7 @@ import { boldIF, capitalizeFirstLetter } from "../helpers/functions";
 
 module.exports = {
   name: "rewards",
-  description: "Количество игр, которые нужно выиграть участниками вашего клуба для достижения желаего места в сезоне.",
+  description: "Награды, полученные в ходе сезона",
   aliases: ["награды", "r"],
   usage: "rewards/награды",
 
