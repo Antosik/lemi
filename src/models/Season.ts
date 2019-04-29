@@ -1,4 +1,3 @@
-import axios from "axios";
 import co from "co";
 import { parse } from "date-fns";
 
@@ -6,13 +5,12 @@ import { ISeasonsClub } from "../interfaces/IClub";
 import { ISeason } from "../interfaces/ISeason";
 import { IStage } from "../interfaces/IStage";
 
+import apiCall from "../helpers/clubs-api";
 import { consts } from "../localization";
 
 import Stage from "./Stage";
 
 export default class Season {
-  public static readonly endpoint = "https://clubs.ru.leagueoflegends.com/api/contest/season";
-
   public readonly id: number;
   public readonly title: string;
   public readonly start_date: Date;
@@ -50,7 +48,7 @@ export default class Season {
   }
 
   protected async query(query: string, { data = {}, params = {}, headers = {} } = { data: {}, params: {}, headers: {} }): Promise<any> {
-    return axios.get(`${Season.endpoint}/${query}/`, { params, data, headers })
+    return apiCall(`/contest/season/${query}/`, { params, data, headers })
       .then(({ data: result }) => result)
       .catch(() => {
         throw new Error(consts.requestError);

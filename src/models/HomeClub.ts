@@ -1,14 +1,11 @@
-import axios from "axios";
-
 import { IClub, ISeasonsClub, IStageClub } from "../interfaces/IClub";
 import { IReward } from "../interfaces/IReward";
 import { IStageSummoner } from "../interfaces/ISummoner";
 
+import apiCall from "../helpers/clubs-api";
 import { consts } from "../localization";
 
 export default class HomeClub {
-  public static readonly endpoint = "https://clubs.ru.leagueoflegends.com/api";
-
   public readonly id: number;
   public readonly name: string;
 
@@ -155,7 +152,7 @@ export default class HomeClub {
       throw new Error(consts.authError);
     }
 
-    return axios.get(`${HomeClub.endpoint}/${query}/`, { params, data, headers: { Cookie: `PVPNET_TOKEN_RU=${this.token}` } })
+    return apiCall(`/${query}/`, { params, data, headers: { Cookie: `PVPNET_TOKEN_RU=${this.token}` } })
       .then(({ data: result }) => result)
       .catch((e) => {
         throw new Error(consts.requestError);
