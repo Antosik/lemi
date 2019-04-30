@@ -72,6 +72,11 @@ export default class HomeClub {
     return stage_members;
   }
 
+  public async getInviteLink(): Promise<string> {
+    const { referral_link }: { referral_link: string } = await this.query(`invites/me`);
+    return referral_link;
+  }
+
   public async calculateStage(stage_id: number, { top = 1, group_size = 5, mode = 0 } = { top: 1, group_size: 5, mode: 0 }): Promise<{ top: number, games_count: number, points_needed: number }> {
     if (top < 1 || top > 25) {
       throw new Error(consts.invalidTopPosition);

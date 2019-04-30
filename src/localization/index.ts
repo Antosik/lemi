@@ -60,6 +60,7 @@ export const consts = {
   invalidTopPosition: "Неверная позиция в топе.",
   errorGettingTopPosition: "Ошибка получения клуба в топе.",
   clubNotSelected: "Вы не выбрали клуб! Выберите его [тут](https://clubs.ru.leagueoflegends.com/new).",
+  linkSeasonInactive: "В данный момент ваша ссылка неактивна, вы сможете приглашать новых участников после начала нового сезона.",
 
   timeToSeasonEnd: "До конца сезона осталось",
   timeToStageEnd: "До конца этапа осталось",
