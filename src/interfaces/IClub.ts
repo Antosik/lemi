@@ -10,7 +10,7 @@ export interface IClubOwner {
 
 export interface IClub {
   id: number;
-  owner: IClubOwner;
+  owner?: IClubOwner;
   lol_club_key: string;
   lol_name: string;
   is_hiring: boolean;

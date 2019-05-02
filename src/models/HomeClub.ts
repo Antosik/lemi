@@ -26,9 +26,14 @@ export default class HomeClub {
     this.id = data.id;
     this.name = data.lol_name.trim();
 
-    this.owner_id = data.owner.lol_account_id;
-    this.owner_name = data.owner.summoner_name.trim();
-    this.owner_avatar = data.owner.avatar;
+    this.owner_id = -1;
+    this.owner_name = "???";
+    this.owner_avatar = "???";
+    if (data.owner) {
+      this.owner_id = data.owner.lol_account_id;
+      this.owner_name = data.owner.summoner_name.trim();
+      this.owner_avatar = data.owner.avatar;
+    }
 
     this.seasons_count = data.seasons_count;
     this.members_count = data.members_count;
