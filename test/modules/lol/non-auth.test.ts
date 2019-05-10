@@ -22,7 +22,7 @@ describe("Clubs API tests: non-needed auth tests", () => {
     done();
   });
 
-  describe("get season info", async () => {
+  describe("get season info", () => {
     beforeEach(() => {
       nock("https://clubs.ru.leagueoflegends.com/api/contest")
         .persist()
@@ -37,7 +37,7 @@ describe("Clubs API tests: non-needed auth tests", () => {
       nock("https://clubs.ru.leagueoflegends.com/api/contest")
         .persist()
         .get(`/season/${season.id}/clubs/`)
-        .query({ per_page: 3 })
+        .query({ per_page: 3, page: 1 })
         .reply(200, require("../../responses/seasons-clubs.json"));
       const top = await season.getTopN(3);
 

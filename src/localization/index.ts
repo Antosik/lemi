@@ -36,6 +36,11 @@ const locale = {
     singularGenitive: "{{count}} участника",
     pluralGenitive: "{{count}} участников"
   }),
+  season: getLocaleFn({
+    singularNominative: "{{count}} сезон",
+    singularGenitive: "{{count}} сезона",
+    pluralGenitive: "{{count}} сезонов"
+  }),
 };
 
 export const consts = {
@@ -47,15 +52,20 @@ export const consts = {
   commandNotFound: "Извините, данная команда не найдена.",
   noPlaceInTop: "Нет места.",
 
+  playerNameInvalid: "Введите имя игрока!",
+  playerNameLength: "Имя игрока должно быть больше 2 символов!",
+  playerNotFound: "Игроков в вашем клубе с таким именем не найдено.",
   clubNameInvalid: "Введите название клуба!",
   clubNameLength: "Имя клуба должно быть больше 2 символов!",
   clubNotFound: "Клубов с таким названием не найдено.",
 
   calcEnoughGames: "Вы уже достигли желаемого места в этапе, так держать!",
+  farmEnoughPoints: "Все игроки нафармили очки, так держать!",
   invalidPlayerCount: "Количество игроков может быть от 2 до 5!",
   invalidTopPosition: "Неверная позиция в топе.",
   errorGettingTopPosition: "Ошибка получения клуба в топе.",
   clubNotSelected: "Вы не выбрали клуб! Выберите его [тут](https://clubs.ru.leagueoflegends.com/new).",
+  linkSeasonInactive: "В данный момент ваша ссылка неактивна, вы сможете приглашать новых участников после начала нового сезона.",
 
   timeToSeasonEnd: "До конца сезона осталось",
   timeToStageEnd: "До конца этапа осталось",
