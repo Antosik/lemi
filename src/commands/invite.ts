@@ -7,7 +7,7 @@ import { consts } from "../localization";
 
 module.exports = {
   name: "myclubinvite",
-  description: "Возвращает ссылку - приглашение в ваш клуб",
+  description: "Возвращает ссылку-приглашение в ваш клуб",
   aliases: ["приглашение", "инвайт", "invite", "inv"],
   usage: "invite/инвайт",
 

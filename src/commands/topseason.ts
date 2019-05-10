@@ -10,7 +10,7 @@ import { boldIF } from "../helpers/functions";
 
 module.exports = {
   name: "topseason",
-  description: "Топ сезона.",
+  description: "Топ текущего сезона.",
   aliases: ["топсезона", "seasontop", "sst"],
   usage: "topseason/топсезона [количество позиций]",
 

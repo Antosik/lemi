@@ -3,7 +3,7 @@ import format, { consts } from "../localization";
 
 module.exports = {
   name: "myclubcalcseason",
-  description: "Количество игр, которые нужно выиграть участниками вашего клуба для достижения желаего места в сезоне.",
+  description: "Количество игр, которое нужно выиграть участниками вашего клуба для достижения желаемого места в сезоне.",
   aliases: ["расчетс", "calcseason", "calcss"],
   usage: "calcseason/расчетс [место в топе] [игроков в группе (2-5)] [aram]",
 

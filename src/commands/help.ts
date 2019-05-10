@@ -4,7 +4,7 @@ import { ICommand } from "../interfaces/ICommand";
 
 module.exports = {
   name: "help",
-  description: "Доступные команды.",
+  description: "Выводит данное сообщение (доступные команды)",
   aliases: ["commands", "помощь", "команды", "h"],
   usage: "help/commands/помощь/команды",
 

@@ -10,7 +10,7 @@ import { boldIF } from "../helpers/functions";
 
 module.exports = {
   name: "myclubfarm",
-  description: "Игроки, которые не заработали определенное количество очков.",
+  description: "Выводит игроков, не заработавших заданное количество очков",
   aliases: ["фарм", "farm", "f"],
   usage: "farm/фарм [количество очков] [количество позиций]",
 
