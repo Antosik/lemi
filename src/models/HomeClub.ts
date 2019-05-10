@@ -50,6 +50,10 @@ export default class HomeClub {
 
   public async getRewardsSeason(): Promise<{ reason: string, count: number }> {
     const [rewards_data]: IReward[] = await this.query(`contest/season/${this.season_id}/clubseasonrewards`);
+    if (!rewards_data) {
+      return undefined;
+    }
+
     const reward = { reason: rewards_data.reward_condition.description, count: rewards_data.reward_condition.reward_value };
     return reward;
   }
