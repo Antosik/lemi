@@ -26,7 +26,8 @@ module.exports = {
     }
 
     const homeclub_season = await homeclub.getSeason();
-    const description = `Владелец - ${homeclub.owner_name} | ${format("participient", homeclub.members_count)}`;
+    const seasons_count = homeclub.seasons_count ? `${format("season", homeclub.seasons_count)}` : "новый клуб";
+    const description = `Владелец - ${homeclub.owner_name} | ${format("participient", homeclub.members_count)} | ${seasons_count}`;
     const points = `${homeclub_season.points}pt`;
     const season_place = homeclub_season.rank ? `#${homeclub_season.rank}` : consts.noPlaceInTop;
 

@@ -41,7 +41,8 @@ module.exports = {
         stage_data = { number, place: stage_place };
       }
 
-      const description = `Владелец - ${club.club.owner.summoner_name} | ${format("participient", club.club.members_count)}`;
+      const seasons_count = club.club.seasons_count ? `${format("season", club.club.seasons_count)}` : "новый клуб";
+      const description = `Владелец - ${club.club.owner.summoner_name} | ${format("participient", club.club.members_count)} | ${seasons_count}`;
       const points = `${club.points}pt`;
       const season_place = `#${club.rank} (${format("game", club.games)})`;
 
@@ -65,8 +66,9 @@ module.exports = {
         .setFooter(`Укажите точное название для получения полной информации`);
 
       clubs.forEach((club, i) => {
+        const seasons_count = club.club.seasons_count ? `${format("season", club.club.seasons_count)}` : "новый клуб";
         result
-          .addField(`${i + 1}. ${club.club.lol_name}`, `#${club.rank} в сезоне, ${club.points}pt`);
+          .addField(`${i + 1}. ${club.club.lol_name} (*${seasons_count}*)`, `#${club.rank} в сезоне, ${club.points}pt`);
       });
 
       return message.channel.send(result);

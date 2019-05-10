@@ -80,8 +80,9 @@ module.exports = {
 
       clubs.forEach((club, i) => {
         const title = underlineIF(boldIF(`${club.rank}. ${club.club.lol_name}`, club.rank <= 3), homeclub.id === club.club.id);
+        const seasons_count = club.club.seasons_count ? format("season", club.club.seasons_count) : "новый клуб";
         const description = `${club.points}pt - ${format("player", club.club.members_count)}`;
-        res.addField(title, description);
+        res.addField(`${title} (*${seasons_count}*)`, description);
       });
 
       return res;

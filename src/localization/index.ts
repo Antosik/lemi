@@ -36,6 +36,11 @@ const locale = {
     singularGenitive: "{{count}} участника",
     pluralGenitive: "{{count}} участников"
   }),
+  season: getLocaleFn({
+    singularNominative: "{{count}} сезон",
+    singularGenitive: "{{count}} сезона",
+    pluralGenitive: "{{count}} сезонов"
+  }),
 };
 
 export const consts = {
