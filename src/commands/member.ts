@@ -1,6 +1,8 @@
 import { RichEmbed } from "discord.js";
 
 import { ICommand } from "../interfaces/ICommand";
+
+import { isValidURL } from "../helpers/functions";
 import format, { consts } from "../localization";
 
 module.exports = {
@@ -50,9 +52,12 @@ module.exports = {
       const result = new RichEmbed()
         .setColor("#0099ff")
         .setTitle(`Участник клуба ${homeclub.name} - "${member.summoner.summoner_name}"`)
-        .setThumbnail(member.summoner.avatar)
         .addField(`Очков за ${stage.number} этап`, `${format("point", member.points)} (#${sorted_members.indexOf(member) + 1} в клубе)`)
         .addField(`Профиль`, `${opgg_profile} • ${log_profile}`);
+
+      if (isValidURL(member.summoner.avatar)) {
+        result.setThumbnail(member.summoner.avatar);
+      }
 
       return message.channel.send(result);
     }

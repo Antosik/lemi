@@ -1,6 +1,8 @@
 import { RichEmbed } from "discord.js";
 
 import { ICommand } from "../interfaces/ICommand";
+
+import { isValidURL } from "../helpers/functions";
 import { consts } from "../localization";
 
 module.exports = {
@@ -16,6 +18,10 @@ module.exports = {
     }
 
     const link = await homeclub.getInviteLink();
+    if (!isValidURL(link)) {
+      throw new Error("Invalid invite link returned");
+    }
+
     const result = new RichEmbed()
       .setColor("#0099ff")
       .setTitle(`Приглашение в клуб ${homeclub.name}`)
