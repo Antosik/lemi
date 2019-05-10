@@ -1,1 +1,1 @@
-declare module 'co';
+declare module "co";

@@ -1,11 +1,9 @@
-import axios from "axios";
-
-import { ISeasonsClub, IStageClub } from "./interfaces/IClub";
 import { ICurrentSeason, ISeason } from "./interfaces/ISeason";
 
 import LiveSeason from "./models/LiveSeason";
 import Season from "./models/Season";
 
+import apiCall from "./helpers/clubs-api";
 import { consts } from "./localization";
 
 export default class ClubsAPI {
@@ -22,7 +20,7 @@ export default class ClubsAPI {
   }
 
   private async query(query: string, { data = {}, params = {}, headers = {} } = { data: {}, params: {}, headers: {} }): Promise<any> {
-    return axios.get(`${ClubsAPI.endpoint}/${query}/`, { params, data, headers })
+    return apiCall(`/${query}/`, { params, data, headers })
       .then(({ data: result }) => result)
       .catch((e) => {
         if (e.response && e.response.data && e.response.data.detail && e.response.data.detail === "club not selected") {

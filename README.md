@@ -7,6 +7,7 @@
 * **[Доступные команды](https://github.com/Antosik/lemi/wiki/Команды)**
 * **[Установка бота](https://github.com/Antosik/lemi/wiki/Установка)**
 * [Попробовать бота](https://discordapp.com/oauth2/authorize?client_id=542718594052784138&scope=bot&permissions=18432)
+* [Пост на форуме](https://boards.ru.leagueoflegends.com/ru/c/general/uMEufEUA-discord-)
 
 ## Разное
 
