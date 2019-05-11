@@ -1,4 +1,3 @@
-import axios from "axios";
 import co from "co";
 import { parse } from "date-fns";
 
@@ -6,13 +5,12 @@ import { ISeasonsClub } from "../interfaces/IClub";
 import { ISeason } from "../interfaces/ISeason";
 import { IStage } from "../interfaces/IStage";
 
+import apiCall from "../helpers/clubs-api";
 import { consts } from "../localization";
 
 import Stage from "./Stage";
 
 export default class Season {
-  public static readonly endpoint = "https://clubs.ru.leagueoflegends.com/api/contest/season";
-
   public readonly id: number;
   public readonly title: string;
   public readonly start_date: Date;
@@ -32,8 +30,8 @@ export default class Season {
     return stages.map((stage) => new Stage(stage));
   }
 
-  public async getTopN(count: number = 10): Promise<ISeasonsClub[]> {
-    const { results: seasons_clubs }: { results: ISeasonsClub[] } = await this.query(`${this.id}/clubs`, { params: { per_page: count } });
+  public async getTopN(count: number = 10, page: number = 1): Promise<ISeasonsClub[]> {
+    const { results: seasons_clubs }: { results: ISeasonsClub[] } = await this.query(`${this.id}/clubs`, { params: { per_page: count, page } });
     return seasons_clubs;
   }
 
@@ -50,7 +48,7 @@ export default class Season {
   }
 
   protected async query(query: string, { data = {}, params = {}, headers = {} } = { data: {}, params: {}, headers: {} }): Promise<any> {
-    return axios.get(`${Season.endpoint}/${query}/`, { params, data, headers })
+    return apiCall(`/contest/season/${query}/`, { params, data, headers })
       .then(({ data: result }) => result)
       .catch(() => {
         throw new Error(consts.requestError);
@@ -58,7 +56,7 @@ export default class Season {
   }
 
   private * clubSearcher(name: string) {
-    const searchRegExp = new RegExp(name, "i");
+    const searchRegExp = new RegExp(`["']?${name.replace(/["']/g, "")}["']?`, "i");
     let currentPage = 1;
     let result: ISeasonsClub[] = [];
 

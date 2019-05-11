@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es6",
+    "target": "es2017",
 
     "removeComments": true,
     "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
     
     "outDir": "./dist",
     "baseUrl": "./src"

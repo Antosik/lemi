@@ -1,13 +1,11 @@
-import axios from "axios";
-
 import { IClub, ISeasonsClub, IStageClub } from "../interfaces/IClub";
+import { IReward } from "../interfaces/IReward";
 import { IStageSummoner } from "../interfaces/ISummoner";
 
+import apiCall from "../helpers/clubs-api";
 import { consts } from "../localization";
 
 export default class HomeClub {
-  public static readonly endpoint = "https://clubs.ru.leagueoflegends.com/api";
-
   public readonly id: number;
   public readonly name: string;
 
@@ -28,9 +26,14 @@ export default class HomeClub {
     this.id = data.id;
     this.name = data.lol_name.trim();
 
-    this.owner_id = data.owner.lol_account_id;
-    this.owner_name = data.owner.summoner_name.trim();
-    this.owner_avatar = data.owner.avatar;
+    this.owner_id = -1;
+    this.owner_name = "???";
+    this.owner_avatar = "???";
+    if (data.owner) {
+      this.owner_id = data.owner.lol_account_id;
+      this.owner_name = data.owner.summoner_name.trim();
+      this.owner_avatar = data.owner.avatar;
+    }
 
     this.seasons_count = data.seasons_count;
     this.members_count = data.members_count;
@@ -45,9 +48,42 @@ export default class HomeClub {
     return stage_clubs;
   }
 
-  public async getStageMembers(stage_id: number, count: number = 25): Promise<IStageSummoner[]> {
-    const { results: stage_members }: { results: IStageSummoner[] } = await this.query(`contest/season/${this.season_id}/stages/${stage_id}/summoners`, { params: { per_page: count } });
+  public async getRewardsSeason(): Promise<{ reason: string, count: number }> {
+    const [rewards_data]: IReward[] = await this.query(`contest/season/${this.season_id}/clubseasonrewards`);
+    if (!rewards_data) {
+      return undefined;
+    }
+
+    const reward = { reason: rewards_data.reward_condition.description, count: rewards_data.reward_condition.reward_value };
+    return reward;
+  }
+
+  public async getRewardsStages(): Promise<Map<number, Array<{ reason: string, count: number }>>> {
+    const rewards_data: IReward[] = await this.query(`contest/season/${this.season_id}/clubstagerewards`);
+
+    const rewards = new Map();
+    rewards_data.forEach((reward_data) => {
+      const stage_id = reward_data.club.stage;
+      if (rewards.has(stage_id)) {
+        const reward = { reason: reward_data.reward_condition.description, count: reward_data.reward_condition.reward_value };
+        rewards.set(stage_id, [...rewards.get(stage_id), reward]);
+      } else {
+        const reward = { reason: reward_data.reward_condition.description, count: reward_data.reward_condition.reward_value };
+        rewards.set(stage_id, [reward]);
+      }
+    });
+
+    return rewards;
+  }
+
+  public async getStageMembers(stage_id: number, count: number = 25, page = 1): Promise<IStageSummoner[]> {
+    const { results: stage_members }: { results: IStageSummoner[] } = await this.query(`contest/season/${this.season_id}/stages/${stage_id}/summoners`, { params: { per_page: count, page } });
     return stage_members;
+  }
+
+  public async getInviteLink(): Promise<string> {
+    const { referral_link }: { referral_link: string } = await this.query(`invites/me`);
+    return referral_link;
   }
 
   public async calculateStage(stage_id: number, { top = 1, group_size = 5, mode = 0 } = { top: 1, group_size: 5, mode: 0 }): Promise<{ top: number, games_count: number, points_needed: number }> {
@@ -97,7 +133,7 @@ export default class HomeClub {
 
     const page = Math.ceil(top / 10);
     const { results: season_clubs }: { results: ISeasonsClub[] } = await this.query(`contest/season/${this.season_id}/clubs`, { params: { per_page: 10, page } });
-    const club_on_place = season_clubs[top % 10];
+    const club_on_place = season_clubs[(top - 1) % 10];
     if (!club_on_place) {
       throw new Error(consts.errorGettingTopPosition);
     }
@@ -130,7 +166,7 @@ export default class HomeClub {
       throw new Error(consts.authError);
     }
 
-    return axios.get(`${HomeClub.endpoint}/${query}/`, { params, data, headers: { Cookie: `PVPNET_TOKEN_RU=${this.token}` } })
+    return apiCall(`/${query}/`, { params, data, headers: { Cookie: `PVPNET_TOKEN_RU=${this.token}` } })
       .then(({ data: result }) => result)
       .catch((e) => {
         throw new Error(consts.requestError);
