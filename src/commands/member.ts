@@ -56,7 +56,7 @@ module.exports = {
         .addField(`Профиль`, `${opgg_profile} • ${log_profile}`);
 
       if (isValidURL(member.summoner.avatar)) {
-        result.setThumbnail(member.summoner.avatar);
+        result.setThumbnail(encodeURI(member.summoner.avatar));
       }
 
       return message.channel.send(result);
