@@ -8,6 +8,7 @@
 * **[Установка бота](https://github.com/Antosik/lemi/wiki/Установка)**
 * [Попробовать бота](https://discordapp.com/oauth2/authorize?client_id=542718594052784138&scope=bot&permissions=387136)
 * [Пост на форуме](https://boards.ru.leagueoflegends.com/ru/c/general/uMEufEUA-discord-)
+* [Пост на форуме с обновлением 1.2](https://boards.ru.leagueoflegends.com/ru/c/general/E9z1LK3Q-discord-i-lemi-v12)
 
 ## Разное
 
