@@ -1,6 +1,6 @@
 {
   "name": "lemi",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Bot for Clubs in League of Legends",
   "scripts": {
     "start": "node dist/main.js",
