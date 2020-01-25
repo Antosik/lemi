@@ -1,5 +1,5 @@
 {
-  "next": "https://clubs.ru.leagueoflegends.com/api/contest/season/16/clubs/?page=2",
+  "next": "https://clubs.lcu.ru.leagueoflegends.com/api/contest/season/16/clubs/?page=2",
   "page": 1,
   "per_page": 20,
   "results": [

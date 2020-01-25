@@ -9,12 +9,12 @@ describe("Clubs API: homeclub tests", () => {
   const api = new ClubsAPI(process.env.LOL_TOKEN);
   const Cookie = `PVPNET_TOKEN_RU=${process.env.LOL_TOKEN}`;
 
-  nock("https://clubs.ru.leagueoflegends.com/api/contest")
+  nock("https://clubs.lcu.ru.leagueoflegends.com/api/contest")
     .persist()
     .get(`/season/current/`)
     .reply(200, require("../../responses/live-season.json"));
 
-  nock("https://clubs.ru.leagueoflegends.com/api/contest")
+  nock("https://clubs.lcu.ru.leagueoflegends.com/api/contest")
     .persist()
     .get(/\/season\/(\d+)\/clubs\/current\//, {}, { reqheaders: { Cookie } })
     .reply(200, require("../../responses/homeclub.json"));

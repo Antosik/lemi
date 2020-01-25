@@ -33,7 +33,7 @@ module.exports = {
 
     const result = new RichEmbed()
       .setColor("#0099ff")
-      .setURL(`https://clubs.ru.leagueoflegends.com/progress`)
+      .setURL(`https://clubs.lcu.ru.leagueoflegends.com/progress`)
       .setTitle(`Клуб "${homeclub.name}"`)
       .setDescription(description)
       .addField(`Общее количество очков`, points)

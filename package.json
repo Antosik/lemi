@@ -1,6 +1,6 @@
 {
   "name": "lemi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Bot for Clubs in League of Legends",
   "scripts": {
     "start": "node dist/main.js",
@@ -8,7 +8,7 @@
     "watch": "tsc -w",
     "postinstall": "npm run build",
     "lint": "tslint -p tsconfig.json -c tslint.json",
-    "jest": "jest  --setupFiles dotenv/config",
+    "jest": "jest --setupFiles dotenv/config",
     "test": "npm run lint && npm run jest"
   },
   "dependencies": {

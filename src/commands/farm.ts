@@ -37,7 +37,7 @@ module.exports = {
     const now = formatDate(new Date(), "HH:mm:ss dd.MM.yyyy");
     const template = new RichEmbed()
       .setColor("#0099ff")
-      .setURL(`https://clubs.ru.leagueoflegends.com/club/member`)
+      .setURL(`https://clubs.lcu.ru.leagueoflegends.com/club/member`)
       .setTitle(`Игроки клуба "${homeclub.name}", не заработавшие ${points}pt`)
       .setDescription(`Сезон "${live_season.title}". Этап ${stage.number} (${start_date} - ${end_date})`)
       .setFooter(now);

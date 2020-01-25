@@ -44,7 +44,7 @@ describe("Clubs API: auth tests", () => {
       const season_id = 1;
       const stage_id = 1;
 
-      nock("https://clubs.ru.leagueoflegends.com/api/contest")
+      nock("https://clubs.lcu.ru.leagueoflegends.com/api/contest")
         .persist()
         .get(`/season/${season_id}/clubs/${club_id}/stages/`)
         .reply(200, require("../../responses/club-stages.json"));

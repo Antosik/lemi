@@ -24,7 +24,7 @@ module.exports = {
     const now = formatDate(new Date(), "HH:mm:ss dd.MM.yyyy");
     const template = new RichEmbed()
       .setColor("#0099ff")
-      .setURL(`https://clubs.ru.leagueoflegends.com/rating?ssid=${live_season.id}&stid=0`)
+      .setURL(`https://clubs.lcu.ru.leagueoflegends.com/rating?ssid=${live_season.id}&stid=0`)
       .setTitle(`Рейтинг клубов`)
       .setDescription(`Сезон "${live_season.title}" (${start_date} - ${end_date})`)
       .setFooter(`Страница 1 • ${now}`);

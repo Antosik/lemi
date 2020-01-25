@@ -4,7 +4,7 @@ import { ICacheLike } from "axios-extensions/lib/cacheAdapterEnhancer";
 import * as LRUCache from "lru-cache";
 
 function createClubsAPIAxiosInstance() {
-  const endpoint = "https://clubs.ru.leagueoflegends.com/api";
+  const endpoint = "https://clubs.lcu.ru.leagueoflegends.com/api";
 
   const cache = new LRUCache({
     max: 100,

@@ -44,7 +44,7 @@ module.exports = {
 
     const template = new RichEmbed()
       .setColor("#0099ff")
-      .setURL(`https://clubs.ru.leagueoflegends.com/rating?ssid=${live_season.id}&stid=${stage.id}`)
+      .setURL(`https://clubs.lcu.ru.leagueoflegends.com/rating?ssid=${live_season.id}&stid=${stage.id}`)
       .setTitle(`Рейтинг клубов`)
       .setDescription(`Сезон "${live_season.title}". Этап ${stage.number} (${start_date} - ${end_date})`)
       .setFooter(now);
