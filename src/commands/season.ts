@@ -25,7 +25,6 @@ module.exports = {
 
     const result = new RichEmbed()
       .setColor("#0099ff")
-      .setURL(`https://clubs.lcu.ru.leagueoflegends.com/rating?ssid=${live_season.id}&stid=0`)
       .setTitle(`Информация о сезоне "${live_season.title}"`);
 
     if (live_season.isEnded()) {
