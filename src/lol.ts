@@ -57,7 +57,7 @@ export default class ClubsAPI {
         if (e.response && e.response.data && e.response.data.detail && e.response.data.detail === "club not selected") {
           throw new Error(consts.clubNotSelected);
         }
-        if (e.response.status === 401) {
+        if (e.response && e.response.status === 401) {
           throw new Error(consts.authError);
         }
         throw new Error(consts.requestError);
