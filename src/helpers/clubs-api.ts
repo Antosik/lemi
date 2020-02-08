@@ -1,7 +1,10 @@
+// tslint:disable no-var-requires
+
 import axios, { AxiosPromise } from "axios";
 import { cacheAdapterEnhancer, throttleAdapterEnhancer } from "axios-extensions";
 import { ICacheLike } from "axios-extensions/lib/cacheAdapterEnhancer";
-import * as LRUCache from "lru-cache";
+const LRUCache = require("lru-cache");
+const axiosHttpAdapter = require("axios/lib/adapters/http");
 
 function createClubsAPIAxiosInstance() {
   const endpoint = "https://clubs.lcu.ru.leagueoflegends.com/api";
@@ -13,7 +16,7 @@ function createClubsAPIAxiosInstance() {
 
   const adapter = throttleAdapterEnhancer(
     cacheAdapterEnhancer(
-      axios.defaults.adapter, { enabledByDefault: true, cacheFlag: "useCache", defaultCache: cache }
+      axiosHttpAdapter, { enabledByDefault: true, cacheFlag: "useCache", defaultCache: cache }
     ),
     { threshold: 2 * 1000 }
   );
