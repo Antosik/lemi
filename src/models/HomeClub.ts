@@ -40,7 +40,14 @@ export default class HomeClub extends ClubsAPICaller {
   }
 
   public async getSeason(): Promise<ISeasonsClub> {
-    return this.query(`contest/season/${this.season_id}/clubs/current`);
+    const data = await this.query(`contest/season/${this.season_id}/clubs/current`);
+    if (data.points) {
+      return data;
+    }
+
+    const rating = await this.query(`contest/season/${this.season_id}/userseasonrating`, {}, 2);
+    const points_sum = rating.reduce((acc, el) => acc + el.points, 0);
+    return { ...data, points: points_sum };
   }
 
   public async getStageClubs(stage_id: number, count: number = 25): Promise<IStageClub[]> {
