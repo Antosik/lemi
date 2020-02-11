@@ -20,7 +20,6 @@ module.exports = {
     const now = formatDate(new Date(), "HH:mm:ss dd.MM.yyyy");
     const template = new RichEmbed()
       .setColor("#0099ff")
-      .setURL(`https://clubs.ru.leagueoflegends.com/progress`)
       .setTitle(`Награды клуба "${homeclub.name}"`)
       .setDescription(`Сезон "${live_season.title}".`)
       .setFooter(now);

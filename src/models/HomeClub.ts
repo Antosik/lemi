@@ -2,10 +2,10 @@ import { IClub, ISeasonsClub, IStageClub } from "../interfaces/IClub";
 import { IReward } from "../interfaces/IReward";
 import { IStageSummoner } from "../interfaces/ISummoner";
 
-import apiCall from "../helpers/clubs-api";
 import { consts } from "../localization";
+import { ClubsAPICaller } from "../helpers/clubs-api";
 
-export default class HomeClub {
+export default class HomeClub extends ClubsAPICaller {
   public readonly id: number;
   public readonly name: string;
 
@@ -20,7 +20,7 @@ export default class HomeClub {
   private readonly season_id: number;
 
   constructor(data: IClub, season_id: number, token: string = "") {
-    this.token = token;
+    super(token);
     this.season_id = season_id;
 
     this.id = data.id;
@@ -40,7 +40,14 @@ export default class HomeClub {
   }
 
   public async getSeason(): Promise<ISeasonsClub> {
-    return this.query(`contest/season/${this.season_id}/clubs/current`);
+    const data = await this.query(`contest/season/${this.season_id}/clubs/current`);
+    if (data.points) {
+      return data;
+    }
+
+    const rating = await this.query(`contest/season/${this.season_id}/userseasonrating`, {}, 2);
+    const points_sum = rating.reduce((acc, el) => acc + el.points, 0);
+    return { ...data, points: points_sum };
   }
 
   public async getStageClubs(stage_id: number, count: number = 25): Promise<IStageClub[]> {
@@ -159,17 +166,5 @@ export default class HomeClub {
     const games_count = Math.ceil(points_needed / points_per_game);
 
     return { points, games_count, points_needed };
-  }
-
-  private async query(query: string, { data = {}, params = {} } = { data: {}, params: {} }): Promise<any> {
-    if (!this.token) {
-      throw new Error(consts.authError);
-    }
-
-    return apiCall(`/${query}/`, { params, data, headers: { Cookie: `PVPNET_TOKEN_RU=${this.token}` } })
-      .then(({ data: result }) => result)
-      .catch((e) => {
-        throw new Error(consts.requestError);
-      });
   }
 }

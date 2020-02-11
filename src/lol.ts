@@ -5,24 +5,18 @@ import HomeClub from "./models/HomeClub";
 import LiveSeason from "./models/LiveSeason";
 import Season from "./models/Season";
 
-import apiCall from "./helpers/clubs-api";
+import { ClubsAPICaller } from "./helpers/clubs-api";
 import { consts } from "./localization";
 
-export default class ClubsAPI {
-  private token = "";
-
-  constructor(token = "") {
-    this.token = token;
-  }
-
+export default class ClubsAPI extends ClubsAPICaller {
   public async getSeasons(): Promise<Season[]> {
     const { results: seasons }: { results: ISeason[] } = await this.query("contest/season");
-    return seasons.map((season) => new Season(season));
+    return seasons.map((season) => new Season(season, this._token));
   }
 
   public async getLiveSeason(): Promise<LiveSeason | undefined> {
     const season: ICurrentSeason = await this.query("contest/season/current");
-    return !season.id ? undefined : new LiveSeason(season);
+    return !season.id ? undefined : new LiveSeason(season, this._token);
   }
 
   public async getHomeClub(): Promise<HomeClub> {
@@ -36,8 +30,8 @@ export default class ClubsAPI {
       throw new Error(consts.noActiveSeason);
     }
 
-    const club: ISeasonsClub = await this.query(`contest/season/${season.id}/clubs/current`, { headers: { Cookie } });
-    return !club && !club.club && !club.club.id ? undefined : new HomeClub(club.club, season.id, this.token);
+    const club: ISeasonsClub = await this.query(`contest/season/${season.id}/clubs/current`);
+    return !club && !club.club && !club.club.id ? undefined : new HomeClub(club.club, season.id, this._token);
   }
 
   public async getClubStage(club_id: number, season_id: number, stage_id: number): Promise<IStageClub> {
@@ -46,25 +40,7 @@ export default class ClubsAPI {
       throw new Error(consts.authError);
     }
 
-    const { results: stages }: { results: IStageClub[] } = await this.query(`contest/season/${season_id}/clubs/${club_id}/stages`, { headers: { Cookie } });
+    const { results: stages }: { results: IStageClub[] } = await this.query(`contest/season/${season_id}/clubs/${club_id}/stages`);
     return stages.find((stage) => stage.stage === stage_id);
-  }
-
-  private async query(query: string, { data = {}, params = {}, headers = {} } = { data: {}, params: {}, headers: {} }): Promise<any> {
-    return apiCall(`/${query}/`, { params, data, headers })
-      .then(({ data: result }) => result)
-      .catch((e) => {
-        if (e.response && e.response.data && e.response.data.detail && e.response.data.detail === "club not selected") {
-          throw new Error(consts.clubNotSelected);
-        }
-        if (e.response.status === 401) {
-          throw new Error(consts.authError);
-        }
-        throw new Error(consts.requestError);
-      });
-  }
-
-  private getAuthCookie() {
-    return this.token ? `PVPNET_TOKEN_RU=${this.token}` : "";
   }
 }

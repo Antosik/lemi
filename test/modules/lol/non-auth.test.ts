@@ -9,7 +9,7 @@ describe("Clubs API tests: non-needed auth tests", () => {
   const api = new ClubsAPI(process.env.LOL_TOKEN);
 
   test("get seasons list", async (done) => {
-    nock("https://clubs.ru.leagueoflegends.com/api/contest")
+    nock("https://clubs.lcu.ru.leagueoflegends.com/api/contest")
       .persist()
       .get(`/season/`)
       .reply(200, require("../../responses/seasons-list.json"));
@@ -24,7 +24,7 @@ describe("Clubs API tests: non-needed auth tests", () => {
 
   describe("get season info", () => {
     beforeEach(() => {
-      nock("https://clubs.ru.leagueoflegends.com/api/contest")
+      nock("https://clubs.lcu.ru.leagueoflegends.com/api/contest")
         .persist()
         .get(`/season/`)
         .reply(200, require("../../responses/seasons-list.json"));
@@ -34,7 +34,7 @@ describe("Clubs API tests: non-needed auth tests", () => {
       const seasons = await api.getSeasons();
       const season = seasons[seasons.length - 1];
 
-      nock("https://clubs.ru.leagueoflegends.com/api/contest")
+      nock("https://clubs.lcu.ru.leagueoflegends.com/api/contest")
         .persist()
         .get(`/season/${season.id}/clubs/`)
         .query({ per_page: 3, page: 1 })
@@ -52,7 +52,7 @@ describe("Clubs API tests: non-needed auth tests", () => {
       const seasons = await api.getSeasons();
       const season = seasons[seasons.length - 1];
 
-      nock("https://clubs.ru.leagueoflegends.com/api/contest")
+      nock("https://clubs.lcu.ru.leagueoflegends.com/api/contest")
         .persist()
         .get(`/season/${season.id}/stages/`)
         .reply(200, require("../../responses/seasons-stages.json"));
@@ -66,7 +66,7 @@ describe("Clubs API tests: non-needed auth tests", () => {
   });
 
   test("get live season", async (done) => {
-    nock("https://clubs.ru.leagueoflegends.com/api/contest")
+    nock("https://clubs.lcu.ru.leagueoflegends.com/api/contest")
       .persist()
       .get(`/season/current/`)
       .reply(200, require("../../responses/live-season.json"));

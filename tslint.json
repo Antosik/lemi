@@ -50,6 +50,7 @@
     "no-null-keyword": true,
     "prefer-const": true,
     "object-literal-sort-keys": false,
-    "no-console": false
+    "no-console": false,
+    "array-type": false
   }
 }
