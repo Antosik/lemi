@@ -64,7 +64,7 @@ export const consts = {
   invalidPlayerCount: "Количество игроков может быть от 2 до 5!",
   invalidTopPosition: "Неверная позиция в топе.",
   errorGettingTopPosition: "Ошибка получения клуба в топе.",
-  clubNotSelected: "Вы не выбрали клуб! Выберите его [тут](https://clubs.lcu.ru.leagueoflegends.com/new).",
+  clubNotSelected: "Вы не выбрали клуб! Выберите его в игровом клиенте во вкладке \"Главная - Гильдии\".",
   linkSeasonInactive: "В данный момент ваша ссылка неактивна, вы сможете приглашать новых участников после начала нового сезона.",
 
   timeToSeasonEnd: "До конца сезона осталось",
