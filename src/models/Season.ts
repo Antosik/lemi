@@ -5,19 +5,20 @@ import { ISeasonsClub } from "../interfaces/IClub";
 import { ISeason } from "../interfaces/ISeason";
 import { IStage } from "../interfaces/IStage";
 
-import apiCall from "../helpers/clubs-api";
-import { consts } from "../localization";
+import { ClubsAPICaller } from "../helpers/clubs-api";
 
 import Stage from "./Stage";
 
-export default class Season {
+export default class Season extends ClubsAPICaller {
   public readonly id: number;
   public readonly title: string;
   public readonly start_date: Date;
   public readonly end_date: Date;
   public readonly is_live: boolean;
 
-  constructor(data: ISeason) {
+  constructor(data: ISeason, token?: string) {
+    super(token);
+
     this.id = data.id;
     this.title = data.title.trim();
     this.start_date = parse(data.start_date, "yyyy-MM-dd", new Date(data.start_date));
@@ -26,12 +27,12 @@ export default class Season {
   }
 
   public async getStages(): Promise<Stage[]> {
-    const stages: IStage[] = await this.query(`${this.id}/stages`);
+    const stages: IStage[] = await this.query(`contest/season/${this.id}/stages`);
     return stages.map((stage) => new Stage(stage));
   }
 
   public async getTopN(count: number = 10, page: number = 1): Promise<ISeasonsClub[]> {
-    const { results: seasons_clubs }: { results: ISeasonsClub[] } = await this.query(`${this.id}/clubs`, { params: { per_page: count, page } });
+    const { results: seasons_clubs }: { results: ISeasonsClub[] } = await this.query(`contest/season/${this.id}/clubs`, { params: { per_page: count, page } });
     return seasons_clubs;
   }
 
@@ -45,14 +46,6 @@ export default class Season {
     }
 
     return results;
-  }
-
-  protected async query(query: string, { data = {}, params = {}, headers = {} } = { data: {}, params: {}, headers: {} }): Promise<any> {
-    return apiCall(`/contest/season/${query}/`, { params, data, headers })
-      .then(({ data: result }) => result)
-      .catch(() => {
-        throw new Error(consts.requestError);
-      });
   }
 
   private * clubSearcher(name: string) {
@@ -72,7 +65,7 @@ export default class Season {
   }
 
   private async getClubsPage(number = 1): Promise<{ nextPage: number, clubs: ISeasonsClub[] }> {
-    const { results: clubs, next }: { results: ISeasonsClub[], next: string } = await this.query(`${this.id}/clubs`, { params: { per_page: 50, page: number } });
+    const { results: clubs, next }: { results: ISeasonsClub[], next: string } = await this.query(`contest/season/${this.id}/clubs`, { params: { per_page: 50, page: number } });
     return { nextPage: Boolean(next) ? number + 1 : 0, clubs };
   }
 }

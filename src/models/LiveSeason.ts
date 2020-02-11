@@ -7,8 +7,8 @@ export default class LiveSeason extends Season {
   public readonly current_stage: Stage;
   public readonly stages: Stage[];
 
-  constructor(data: ICurrentSeason) {
-    super(data);
+  constructor(data: ICurrentSeason, token: string) {
+    super(data, token);
 
     this.current_stage = data.current_stage ? new Stage(data.current_stage) : undefined;
     this.stages = data.stages.map((stage) => new Stage(stage));
