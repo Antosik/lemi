@@ -1,9 +1,9 @@
 interface ILocaleScheme {
   const?: string;
   one?: string;
-  singularNominative?: string;
-  singularGenitive?: string;
-  pluralGenitive?: string;
+  singularNominative: string;
+  singularGenitive: string;
+  pluralGenitive: string;
 }
 
 

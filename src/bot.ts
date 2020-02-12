@@ -13,9 +13,9 @@ export interface ILemiConfig {
 }
 
 export default class Lemi {
-  public clubs: ClubsClient;
   private config: ILemiConfig;
-  private client: DiscordClient;
+  public clubs?: ClubsClient;
+  private client?: DiscordClient;
   private commands: DiscordCollection<string, ICommand>;
 
   constructor(config: ILemiConfig) {
@@ -29,7 +29,7 @@ export default class Lemi {
     this.commands = new DiscordCollection<string, ICommand>();
   }
 
-  public async run(): Promise<any> {
+  public async run(): Promise<unknown> {
     if (this.client) {
       this.client.destroy();
     }
@@ -83,6 +83,10 @@ export default class Lemi {
   }
 
   private onReady(): void {
+    if (!this.client) {
+      throw new Error(consts.unexpectedError);
+    }
+
     console.log(`Bot has started, with ${this.client.users.size} users, in ${this.client.channels.size} channels of ${this.client.guilds.size} guilds.`);
     this.client.user.setActivity("League of Legends");
   }
@@ -93,7 +97,7 @@ export default class Lemi {
     console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
   }
 
-  private async onMessage(message: Message): Promise<void> {
+  private _filterMessage(message: Message): Message | undefined {
     if (message.channel instanceof DMChannel || message.channel instanceof GroupDMChannel) {
       return;
     }
@@ -103,21 +107,36 @@ export default class Lemi {
     if (!message.content.startsWith(this.config.prefix)) {
       return;
     }
+    return message;
+  }
 
-    const args = message.content.slice(this.config.prefix.length).trim().split(/ +/g);
-    const commandName = args.shift().toLowerCase();
+  private _parseMessage(message: string): { command: ICommand | undefined, args: string[] } {
+    const args = message.slice(this.config.prefix.length).trim().split(/ +/g);
 
-    console.log(commandName, args);
-
-    const command = this.commands.get(commandName)
-      || this.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
-
-    if (!command) {
-      await message.channel.send(consts.commandNotFound);
-      return;
+    const commandText = args.shift();
+    if (!commandText) {
+      throw new Error(consts.unexpectedError);
     }
 
+    const commandName = commandText.toLowerCase();
+    const command = this.commands.get(commandName)
+      || this.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName) || false);
+
+    return { command, args };
+  }
+
+  private async onMessage(msg: Message): Promise<void> {
+    const message = this._filterMessage(msg);
+    if (!message) { return; }
+
     try {
+      const { command, args } = this._parseMessage(message.content);
+
+      if (!command) {
+        await message.channel.send(consts.commandNotFound);
+        return;
+      }
+
       await command.execute(this, message, args);
     } catch (error) {
       console.error(error);

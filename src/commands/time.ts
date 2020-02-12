@@ -12,6 +12,10 @@ module.exports = {
   usage: "time/время [season/stage]",
 
   async execute(ctx, message, args) {
+    if (!ctx.clubs) {
+      throw new Error(consts.unexpectedError);
+    }
+
     let type: string = args[0] || EStageArgs.en;
 
     if (!isSeason(type) && !isStage(type)) {
@@ -19,7 +23,7 @@ module.exports = {
     }
 
     const live_season = await ctx.clubs.getLiveSeason();
-    if (live_season.isEnded()) {
+    if (live_season === undefined || live_season.isEnded()) {
       if (isStage(type)) {
         return message.channel.send(consts.noActiveStage);
       }

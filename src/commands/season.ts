@@ -13,6 +13,10 @@ module.exports = {
   usage: "season/сезон",
 
   async execute(ctx, message) {
+    if (!ctx.clubs) {
+      throw new Error(consts.unexpectedError);
+    }
+
     const live_season = await ctx.clubs.getLiveSeason();
     if (!live_season) {
       return message.channel.send(consts.noActiveSeason);
@@ -43,6 +47,6 @@ module.exports = {
       result.addField(title, description);
     });
 
-    await message.channel.send(result);
+    return message.channel.send(result);
   }
 } as ICommand;

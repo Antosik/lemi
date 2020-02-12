@@ -19,9 +19,9 @@ describe("Lemi tests", () => {
 
     test("correct init", async (done) => {
       const lemi = new Lemi({
-        lol_token: process.env.LOL_TOKEN,
-        discord_token: process.env.DISCORD_TOKEN,
-        prefix: process.env.LEMI_PREFIX
+        lol_token: process.env.LOL_TOKEN || "",
+        discord_token: process.env.DISCORD_TOKEN || "",
+        prefix: process.env.LEMI_PREFIX || ""
       });
       const token = await lemi.run();
 

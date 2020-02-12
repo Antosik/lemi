@@ -7,6 +7,7 @@ export const capitalizeFirstLetter = (string: string): string => string.charAt(0
 
 export const isValidURL = (s: string): boolean => {
   try {
+    // @ts-ignore
     const _ = new URL(s);
     return true;
   } catch (err) {

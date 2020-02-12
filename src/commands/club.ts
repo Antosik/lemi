@@ -10,12 +10,19 @@ module.exports = {
   usage: "club/клуб",
 
   async execute(ctx, message, args) {
-    const stage_index: number = Number(args[0]) || undefined;
+    if (!ctx.clubs) {
+      throw new Error(consts.unexpectedError);
+    }
+
+    const stage_index: number | undefined = Number(args[0]) || undefined;
 
     const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
+    if (homeclub === undefined) {
+      return message.channel.send(consts.clubNotSelected);
+    }
 
-    const stage = live_season.getStageIdByIndex(stage_index);
-    let stage_data: { number: number, place: string };
+    const stage = live_season?.getStageIdByIndex(stage_index);
+    let stage_data: { number: number, place: string } | undefined;
 
     if (stage) {
       const stage_clubs = await homeclub.getStageClubs(stage.id);
@@ -42,6 +49,6 @@ module.exports = {
       result.addField(`Место в ${stage_data.number} этапе`, stage_data.place, true);
     }
 
-    await message.channel.send(result);
+    return message.channel.send(result);
   }
 } as ICommand;

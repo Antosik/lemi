@@ -97,6 +97,7 @@
                 "checksVoidReturn": false
             }
         ],
+        "@typescript-eslint/ban-ts-ignore": "off",
         // other options
         "@typescript-eslint/prefer-for-of": "error",
         "@typescript-eslint/prefer-function-type": "error",

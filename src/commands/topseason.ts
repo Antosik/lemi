@@ -3,7 +3,7 @@ import { RichEmbed } from "discord.js";
 
 import { ISeasonsClub } from "../interfaces/IClub";
 import { ICommand } from "../interfaces/ICommand";
-import format from "../localization";
+import format, { consts } from "../localization";
 
 import { createPagedMessage } from "../helpers/discord";
 import { boldIF } from "../helpers/functions";
@@ -29,9 +29,16 @@ module.exports = {
   usage: "topseason/топсезона [количество позиций]",
 
   async execute(ctx, message, args) {
+    if (!ctx.clubs) {
+      throw new Error(consts.unexpectedError);
+    }
+
     const count: number = Number(args[0]) || 10;
 
     const live_season = await ctx.clubs.getLiveSeason();
+    if (live_season === undefined || live_season.isEnded()) {
+      return message.channel.send(consts.noActiveSeason);
+    }
 
     const start_date = formatDate(live_season.start_date, "dd.MM.yyyy");
     const end_date = formatDate(live_season.end_date, "dd.MM.yyyy");
@@ -57,10 +64,11 @@ module.exports = {
         await top_message.edit(result);
       },
       {
-        filter: (r, user) => user.id === message.author.id,
+        filter: (_, user) => user.id === message.author.id,
         pages_count: 10
       }
     );
 
+    return;
   },
 } as ICommand;

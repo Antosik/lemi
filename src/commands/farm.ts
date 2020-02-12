@@ -29,15 +29,22 @@ module.exports = {
   usage: "farm/фарм [количество очков] [количество позиций]",
 
   async execute(ctx, message, args) {
+    if (!ctx.clubs) {
+      throw new Error(consts.unexpectedError);
+    }
+
     const points: number = Number(args[0]) || 200;
     const count: number = Number(args[1]) || 10;
 
     const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
-    if (live_season.isEnded()) {
+    if (live_season === undefined || live_season.isEnded() || live_season.current_stage === undefined) {
       return message.channel.send(consts.noActiveStage);
     }
+    if (homeclub === undefined) {
+      return message.channel.send(consts.clubNotSelected);
+    }
 
-    const stage = live_season.getStageIdByIndex();
+    const stage = live_season.current_stage;
 
     const members = await homeclub.getStageMembers(stage.id, homeclub.members_count);
     const deficiency = members.filter((member) => member.points < points).sort((a, b) => a.points - b.points);
@@ -74,11 +81,12 @@ module.exports = {
           await deficiency_message.edit(result);
         },
         {
-          filter: (r, user) => user.id === message.author.id,
+          filter: (_, user) => user.id === message.author.id,
           pages_count
         }
       );
     }
 
+    return;
   }
 } as ICommand;

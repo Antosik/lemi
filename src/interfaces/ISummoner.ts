@@ -17,3 +17,12 @@ export interface IStageSummoner {
   stage: number;
   club: number;
 }
+
+export interface ISummonerSeasonRating {
+  id: number;
+  points: number;
+  games: number;
+  club: number;
+  summoner: ISummoner;
+  season: number;
+}

@@ -28,12 +28,19 @@ const members_command = {
   usage: "members/участники [номер этапа (1-3)] [количество позиций]",
 
   async execute(ctx, message, args) {
-    const stage_index: number = Number(args[0]) || undefined;
+    if (!ctx.clubs) {
+      throw new Error(consts.unexpectedError);
+    }
+
+    const stage_index: number | undefined = Number(args[0]) || undefined;
     const count: number = Number(args[1]) || 25;
 
     const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
-    if (!stage_index && live_season.isEnded()) {
+    if (live_season === undefined || (!stage_index && live_season.isEnded())) {
       return message.channel.send(consts.noActiveStage);
+    }
+    if (homeclub === undefined) {
+      return message.channel.send(consts.clubNotSelected);
     }
 
     const stage = live_season.getStageIdByIndex(stage_index);
@@ -70,12 +77,13 @@ const members_command = {
           await members_message.edit(result);
         },
         {
-          filter: (r, user) => user.id === message.author.id,
+          filter: (_, user) => user.id === message.author.id,
           pages_count
         }
       );
     }
 
+    return;
   }
 } as ICommand;
 

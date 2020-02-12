@@ -19,7 +19,7 @@ export default class ClubsAPI extends ClubsAPICaller {
     return !season.id ? undefined : new LiveSeason(season, this._token);
   }
 
-  public async getHomeClub(): Promise<HomeClub> {
+  public async getHomeClub(): Promise<HomeClub | undefined> {
     const Cookie = this.getAuthCookie();
     if (!Cookie) {
       throw new Error(consts.authError);
@@ -31,10 +31,10 @@ export default class ClubsAPI extends ClubsAPICaller {
     }
 
     const club: ISeasonsClub = await this.query(`contest/season/${season.id}/clubs/current`);
-    return !club && !club.club && !club.club.id ? undefined : new HomeClub(club.club, season.id, this._token);
+    return club?.club?.id ? new HomeClub(club.club, season.id, this._token) : undefined;
   }
 
-  public async getClubStage(club_id: number, season_id: number, stage_id: number): Promise<IStageClub> {
+  public async getClubStage(club_id: number, season_id: number, stage_id: number): Promise<IStageClub | undefined> {
     const Cookie = this.getAuthCookie();
     if (!Cookie) {
       throw new Error(consts.authError);

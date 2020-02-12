@@ -1,6 +1,6 @@
 import { IClub, ISeasonsClub, IStageClub } from "../interfaces/IClub";
 import { IReward } from "../interfaces/IReward";
-import { IStageSummoner } from "../interfaces/ISummoner";
+import { IStageSummoner, ISummonerSeasonRating } from "../interfaces/ISummoner";
 
 import { consts } from "../localization";
 import { ClubsAPICaller } from "../helpers/clubs-api";
@@ -44,8 +44,8 @@ export default class HomeClub extends ClubsAPICaller {
       return data;
     }
 
-    const rating = await this.query(`contest/season/${this.season_id}/userseasonrating`, {}, 2);
-    const points_sum = rating.reduce((acc, el) => acc + el.points, 0);
+    const rating: ISummonerSeasonRating[] = await this.query(`contest/season/${this.season_id}/userseasonrating`, {}, 2);
+    const points_sum = rating.reduce<number>((acc, el) => acc + el.points, 0);
     return { ...data, points: points_sum };
   }
 
@@ -54,13 +54,13 @@ export default class HomeClub extends ClubsAPICaller {
     return stage_clubs;
   }
 
-  public async getRewardsSeason(): Promise<{ reason: string, count: number }> {
+  public async getRewardsSeason(): Promise<{ reason: string, count: number } | undefined> {
     const [rewards_data]: IReward[] = await this.query(`contest/season/${this.season_id}/clubseasonrewards`);
     if (!rewards_data) {
       return undefined;
     }
 
-    const reward = { reason: rewards_data.reward_condition.description, count: rewards_data.reward_condition.reward_value };
+    const reward = { reason: rewards_data.reward_condition.description || "???", count: rewards_data.reward_condition.reward_value };
     return reward;
   }
 
@@ -97,7 +97,12 @@ export default class HomeClub extends ClubsAPICaller {
 
     const stage_clubs = await this.getStageClubs(stage_id);
     if (stage_clubs.length) {
-      const { rank: current_place, points: current_points } = stage_clubs.find((stage_club) => stage_club.club.id === this.id);
+      const homeclub_position = stage_clubs.find((stage_club) => stage_club.club.id === this.id);
+      if (!homeclub_position) {
+        throw new Error(consts.errorGettingTopPosition);
+      }
+
+      const { rank: current_place, points: current_points } = homeclub_position;
 
       if (current_place <= top) { return { top, games_count: 0, points_needed: 0 }; }
       const club_on_place = stage_clubs[top - 1];

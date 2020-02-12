@@ -1,9 +1,8 @@
-// tslint:disable no-var-requires
-
 import axios, { AxiosPromise, AxiosInstance } from "axios";
 import { cacheAdapterEnhancer, throttleAdapterEnhancer } from "axios-extensions";
 import { ICacheLike } from "axios-extensions/lib/cacheAdapterEnhancer";
 import LRUCache = require("lru-cache");
+// @ts-ignore
 import axiosHttpAdapter = require("axios/lib/adapters/http");
 
 import { consts } from "../localization";
@@ -12,7 +11,7 @@ function createClubsAPIAxiosInstance(endpoint: string): AxiosInstance {
   const cache = new LRUCache({
     max: 100,
     maxAge: 60e3 * 5
-  }) as ICacheLike<AxiosPromise<any>>;
+  }) as ICacheLike<AxiosPromise<unknown>>;
 
   const adapter = throttleAdapterEnhancer(
     cacheAdapterEnhancer(
@@ -34,7 +33,7 @@ export class ClubsAPICaller {
 
   protected _token: string;
 
-  constructor(token?: string) {
+  constructor(token: string = "") {
     this._token = token;
   }
 

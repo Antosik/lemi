@@ -43,7 +43,7 @@ const locale: { [key: string]: LocaleFn } = {
   }),
 };
 
-export const consts: { [key: string]: string } = {
+export const consts = {
   noEnoughPt: "Недостаточно очков для участия в этапе!",
   noActiveSeason: "Нет активных сезонов!",
   noActiveStage: "Нет активных этапов!",

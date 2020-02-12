@@ -4,7 +4,7 @@ import Stage from "./Stage";
 import { ICurrentSeason } from "../interfaces/ISeason";
 
 export default class LiveSeason extends Season {
-  public readonly current_stage: Stage;
+  public readonly current_stage?: Stage;
   public readonly stages: Stage[];
 
   constructor(data: ICurrentSeason, token: string) {
@@ -14,7 +14,7 @@ export default class LiveSeason extends Season {
     this.stages = data.stages.map((stage) => new Stage(stage));
   }
 
-  public getStageIdByIndex(stage_index?: number): Stage {
+  public getStageIdByIndex(stage_index?: number): Stage | undefined {
     if (stage_index) {
       const stage = this.stages.find(({ number }) => number === stage_index);
       return stage;
