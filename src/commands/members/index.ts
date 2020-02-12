@@ -1,25 +1,13 @@
 import { format as formatDate } from "date-fns";
 import { RichEmbed } from "discord.js";
 
-import { ICommand } from "../interfaces/ICommand";
-import { IStageSummoner } from "../interfaces/ISummoner";
-import format, { consts } from "../localization";
+import { ICommand } from "../../interfaces/ICommand";
+import { consts } from "../../localization";
 
-import { createPagedMessage } from "../helpers/discord";
-import { boldIF } from "../helpers/functions";
+import { createPagedMessage } from "../../helpers/discord";
 
-function formatMembers(embed: RichEmbed, summoners: IStageSummoner[], index_start = 1): RichEmbed {
-  const res = new RichEmbed(embed);
-  res.fields = [];
+import { generateMembersEmbed } from "./embed";
 
-  summoners.forEach((member, i) => {
-    const title = boldIF(`${i + index_start}. ${member.summoner.summoner_name}`, i + index_start < 4);
-    const description = `${member.points}pt - ${format("game", member.games)}`;
-    res.addField(title, description);
-  });
-
-  return res;
-}
 
 const members_command = {
   name: "myclubmembers",
@@ -60,7 +48,7 @@ const members_command = {
       .setFooter(pages_count > 1 ? `Страница 1 • ${now}` : now);
 
     let members = await homeclub.getStageMembers(stage.id, count);
-    let result = formatMembers(template, members);
+    let result = generateMembersEmbed(template, members);
 
     const members_message_r = await message.channel.send(result);
     const members_message = Array.isArray(members_message_r) ? members_message_r[0] : members_message_r;
@@ -72,7 +60,7 @@ const members_command = {
           const index_start = (page - 1) * count + 1;
 
           members = await homeclub.getStageMembers(stage.id, count, page);
-          result = formatMembers(template, members, index_start);
+          result = generateMembersEmbed(template, members, index_start);
           result.setFooter(`Страница ${page} • ${now}`);
           await members_message.edit(result);
         },

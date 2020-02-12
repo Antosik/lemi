@@ -1,5 +1,7 @@
-import { ICommand } from "../interfaces/ICommand";
-import format, { consts } from "../localization";
+import { ICommand } from "../../interfaces/ICommand";
+import { consts } from "../../localization";
+
+import { generateCalcStagePart, generateCalcStageNotPart } from "./text";
 
 module.exports = {
   name: "myclubcalc",
@@ -25,17 +27,16 @@ module.exports = {
     }
 
     const { id: stage_id } = live_season.current_stage;
-    const { top: wanted, games_count, points_needed } = await homeclub.calculateStage(stage_id, { top, group_size, mode });
+    const { top: wanted_place, games_count, points_needed } = await homeclub.calculateStage(stage_id, { top, group_size, mode });
 
     if (!games_count) {
       return message.channel.send(consts.calcEnoughGames);
     }
-    if (!wanted) {
-      const result_not = `Ваш клуб не участвует в этапе.\nЧтобы участвовать, нужно заработать ${format("point", points_needed)}, выиграв **${format("gameToPlay", games_count)}** (составом из ${format("player", group_size)})`;
-      return message.channel.send(result_not);
-    }
 
-    const result = `Чтобы достигнуть желаемого ${wanted} места в этапе, нужно заработать ${format("point", points_needed)}, выиграв **${format("gameToPlay", games_count)}** (составом из ${format("player", group_size)})`;
-    return message.channel.send(result);
+    const result_message = wanted_place ?
+      generateCalcStagePart({ wanted_place, games_count, group_size, points_needed }) :
+      generateCalcStageNotPart({ points_needed, games_count, group_size });
+
+    return message.channel.send(result_message);
   }
 } as ICommand;

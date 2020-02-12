@@ -1,9 +1,9 @@
 import { formatDistance } from "date-fns";
 import { ru } from "date-fns/locale";
 
-import { EStageArgs, isSeason, isStage } from "../interfaces/IArgument";
-import { ICommand } from "../interfaces/ICommand";
-import { consts } from "../localization";
+import { EStageArgs, isSeason, isStage } from "../../interfaces/IArgument";
+import { ICommand } from "../../interfaces/ICommand";
+import { consts } from "../../localization";
 
 module.exports = {
   name: "time",

@@ -74,9 +74,9 @@ export default class Lemi {
 
   private loadCommands(): DiscordCollection<string, ICommand> {
     const commands = new DiscordCollection<string, ICommand>();
-    const commandFiles = fs.readdirSync(path.resolve(__dirname, "./commands")).filter((file) => file.endsWith(".js"));
-    for (const file of commandFiles) {
-      const command: ICommand = require(`./commands/${file}`); // eslint-disable-line @typescript-eslint/no-var-requires
+    const commandDirs = fs.readdirSync(path.resolve(__dirname, "commands"));
+    for (const dir of commandDirs) {
+      const command: ICommand = require(path.resolve(__dirname, "commands", dir)); // eslint-disable-line @typescript-eslint/no-var-requires
       commands.set(command.name, command);
     }
     return commands;

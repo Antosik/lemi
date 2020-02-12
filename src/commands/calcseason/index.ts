@@ -1,5 +1,7 @@
-import { ICommand } from "../interfaces/ICommand";
-import format, { consts } from "../localization";
+import { ICommand } from "../../interfaces/ICommand";
+import { consts } from "../../localization";
+
+import { generateCalcseasonText } from "./text";
 
 module.exports = {
   name: "myclubcalcseason",
@@ -29,7 +31,7 @@ module.exports = {
       return message.channel.send(consts.calcEnoughGames);
     }
 
-    const result = `Чтобы достигнуть желаемого ${wanted} места в сезоне, нужно заработать ${format("point", points_needed)}, выиграв **${format("gameToPlay", games_count)}** (составом из ${format("player", group_size)})`;
-    return message.channel.send(result);
+    const result_message = generateCalcseasonText({ wanted, points_needed, games_count, group_size });
+    return message.channel.send(result_message);
   }
 } as ICommand;

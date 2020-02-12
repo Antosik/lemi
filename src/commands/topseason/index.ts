@@ -1,26 +1,13 @@
 import { format as formatDate } from "date-fns";
 import { RichEmbed } from "discord.js";
 
-import { ISeasonsClub } from "../interfaces/IClub";
-import { ICommand } from "../interfaces/ICommand";
-import format, { consts } from "../localization";
+import { ICommand } from "../../interfaces/ICommand";
+import { consts } from "../../localization";
 
-import { createPagedMessage } from "../helpers/discord";
-import { boldIF } from "../helpers/functions";
+import { createPagedMessage } from "../../helpers/discord";
 
-function formatTop(embed: RichEmbed, clubs: ISeasonsClub[]): RichEmbed {
-  const res = new RichEmbed(embed);
-  res.fields = [];
+import { generateTopseasonEmbed } from "./embed";
 
-  clubs.forEach((club) => {
-    const title = boldIF(`${club.rank}. ${club.club.lol_name}`, club.rank <= 3);
-    const seasons_count = club.club.seasons_count ? format("season", club.club.seasons_count) : "новый клуб";
-    const description = `${club.points}pt - ${format("player", club.club.members_count)}`;
-    res.addField(`${title} (*${seasons_count}*)`, description);
-  });
-
-  return res;
-}
 
 module.exports = {
   name: "topseason",
@@ -50,7 +37,7 @@ module.exports = {
       .setFooter(`Страница 1 • ${now}`);
 
     let top10 = await live_season.getTopN(count);
-    let result = formatTop(template, top10);
+    let result = generateTopseasonEmbed(template, top10);
 
     const top_message_r = await message.channel.send(result);
     const top_message = Array.isArray(top_message_r) ? top_message_r[0] : top_message_r;
@@ -59,7 +46,7 @@ module.exports = {
       top_message,
       async (page) => {
         top10 = await live_season.getTopN(count, page);
-        result = formatTop(template, top10);
+        result = generateTopseasonEmbed(template, top10);
         result.setFooter(`Страница ${page} • ${now}`);
         await top_message.edit(result);
       },
