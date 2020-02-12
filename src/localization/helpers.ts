@@ -6,7 +6,8 @@ interface ILocaleScheme {
   pluralGenitive?: string;
 }
 
-function declension(scheme: ILocaleScheme, count: number) {
+
+function declension(scheme: ILocaleScheme, count: number): string {
   if (scheme.const) {
     return scheme.const;
   }
@@ -33,8 +34,10 @@ function declension(scheme: ILocaleScheme, count: number) {
   }
 }
 
-export function getLocaleFn(scheme: ILocaleScheme) {
-  return (count: number) => {
+export type LocaleFn = (count: number) => string;
+
+export function getLocaleFn(scheme: ILocaleScheme): LocaleFn {
+  return (count: number): string => {
     return declension(scheme, count);
   };
 }

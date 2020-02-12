@@ -29,7 +29,7 @@ export default class Lemi {
     this.commands = new DiscordCollection<string, ICommand>();
   }
 
-  public async run() {
+  public async run(): Promise<any> {
     if (this.client) {
       this.client.destroy();
     }
@@ -41,7 +41,7 @@ export default class Lemi {
     return this.client.login(this.config.discord_token);
   }
 
-  public async stop() {
+  public async stop(): Promise<void> {
     if (this.client) {
       await this.client.destroy();
     }
@@ -57,7 +57,7 @@ export default class Lemi {
     return new DiscordCollection(this.commands);
   }
 
-  private initDiscord() {
+  private initDiscord(): DiscordClient {
     const client = new DiscordClient();
 
     client.on("ready", () => this.onReady());
@@ -68,41 +68,39 @@ export default class Lemi {
     return client;
   }
 
-  private initClubs() {
-    const client = new ClubsClient(this.config.lol_token);
-
-    return client;
+  private initClubs(): ClubsClient {
+    return new ClubsClient(this.config.lol_token);
   }
 
   private loadCommands(): DiscordCollection<string, ICommand> {
     const commands = new DiscordCollection<string, ICommand>();
     const commandFiles = fs.readdirSync(path.resolve(__dirname, "./commands")).filter((file) => file.endsWith(".js"));
     for (const file of commandFiles) {
-      const command: ICommand = require(`./commands/${file}`);
+      const command: ICommand = require(`./commands/${file}`); // eslint-disable-line @typescript-eslint/no-var-requires
       commands.set(command.name, command);
     }
     return commands;
   }
 
-  private onReady() {
+  private onReady(): void {
     console.log(`Bot has started, with ${this.client.users.size} users, in ${this.client.channels.size} channels of ${this.client.guilds.size} guilds.`);
-    this.client.user.setActivity(`League of Legends`);
+    this.client.user.setActivity("League of Legends");
   }
-  private onGuildCreate(guild: Guild) {
+  private onGuildCreate(guild: Guild): void {
     console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
   }
-  private onGuildDelete(guild: Guild) {
+  private onGuildDelete(guild: Guild): void {
     console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
   }
 
-  private async onMessage(message: Message) {
+  private async onMessage(message: Message): Promise<void> {
     if (message.channel instanceof DMChannel || message.channel instanceof GroupDMChannel) {
       return;
     }
     if (message.author.bot) {
       return;
     }
-    if (message.content.indexOf(this.config.prefix) !== 0) {
+    if (!message.content.startsWith(this.config.prefix)) {
       return;
     }
 
@@ -125,7 +123,7 @@ export default class Lemi {
       console.error(error);
       const result = new RichEmbed()
         .setColor("#ff9900")
-        .setTitle(`Произошла ошибка :c`)
+        .setTitle("Произошла ошибка :c")
         .setDescription(`${error.message}`);
       await message.channel.send(result);
     }

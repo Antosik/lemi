@@ -22,7 +22,7 @@ module.exports = {
 
     const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
 
-    const stage = await live_season.getStageIdByIndex();
+    const stage = live_season.getStageIdByIndex();
     const members = await homeclub.getStageMembers(stage.id, homeclub.members_count);
 
     const searchRegExp = new RegExp(name, "i");
@@ -33,9 +33,9 @@ module.exports = {
     } else if (members_with_name.length !== 1) {
       const result = new RichEmbed()
         .setColor("#0099ff")
-        .setAuthor(`Итоги поиска по участникам:`)
+        .setAuthor("Итоги поиска по участникам:")
         .setTitle(`Найдено ${format("participient", members_with_name.length)}`)
-        .setFooter(`Укажите точное имя для получения полной информации`);
+        .setFooter("Укажите точное имя для получения полной информации");
 
       members_with_name.forEach((member, i) => {
         result
@@ -53,7 +53,7 @@ module.exports = {
         .setColor("#0099ff")
         .setTitle(`Участник клуба ${homeclub.name} - "${member.summoner.summoner_name}"`)
         .addField(`Очков за ${stage.number} этап`, `${format("point", member.points)} (#${sorted_members.indexOf(member) + 1} в клубе)`)
-        .addField(`Профиль`, `${opgg_profile} • ${log_profile}`);
+        .addField("Профиль", `${opgg_profile} • ${log_profile}`);
 
       if (isValidURL(member.summoner.avatar)) {
         result.setThumbnail(encodeURI(member.summoner.avatar));

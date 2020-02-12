@@ -1,14 +1,14 @@
 // tslint:disable no-var-requires
 
-import axios, { AxiosPromise } from "axios";
+import axios, { AxiosPromise, AxiosInstance } from "axios";
 import { cacheAdapterEnhancer, throttleAdapterEnhancer } from "axios-extensions";
 import { ICacheLike } from "axios-extensions/lib/cacheAdapterEnhancer";
-const LRUCache = require("lru-cache");
-const axiosHttpAdapter = require("axios/lib/adapters/http");
+import LRUCache = require("lru-cache");
+import axiosHttpAdapter = require("axios/lib/adapters/http");
 
 import { consts } from "../localization";
 
-function createClubsAPIAxiosInstance(endpoint) {
+function createClubsAPIAxiosInstance(endpoint: string): AxiosInstance {
   const cache = new LRUCache({
     max: 100,
     maxAge: 60e3 * 5
@@ -55,7 +55,7 @@ export class ClubsAPICaller {
       });
   }
 
-  protected getAuthCookie() {
+  protected getAuthCookie(): string {
     return this._token ? `PVPNET_TOKEN_RU=${this._token}` : "";
   }
 }

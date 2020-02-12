@@ -11,7 +11,7 @@ module.exports = {
   aliases: ["награды", "r"],
   usage: "rewards/награды",
 
-  async execute(ctx, message, args) {
+  async execute(ctx, message) {
     const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
     const stages = live_season.stages.map((stage) => stage.id);
 

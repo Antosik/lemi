@@ -48,13 +48,13 @@ export default class Season extends ClubsAPICaller {
     return results;
   }
 
-  private * clubSearcher(name: string) {
+  private async clubSearcher(name: string): Promise<ISeasonsClub[]> {
     const searchRegExp = new RegExp(`["']?${name.replace(/["']/g, "")}["']?`, "i");
     let currentPage = 1;
     let result: ISeasonsClub[] = [];
 
     do {
-      const { nextPage, clubs }: { nextPage: number, clubs: ISeasonsClub[] } = yield this.getClubsPage(currentPage);
+      const { nextPage, clubs } = await this.getClubsPage(currentPage);
       const clubsFound = clubs.filter((club) => searchRegExp.test(club.club.lol_name));
 
       result = result.concat(clubsFound);

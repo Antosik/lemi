@@ -8,6 +8,20 @@ import format, { consts } from "../localization";
 import { createPagedMessage } from "../helpers/discord";
 import { boldIF, underlineIF } from "../helpers/functions";
 
+function formatStage(embed: RichEmbed, clubs: IStageClub[], homeClubId: number): RichEmbed {
+  const res = new RichEmbed(embed);
+  res.fields = [];
+
+  clubs.forEach((club) => {
+    const title = underlineIF(boldIF(`${club.rank}. ${club.club.lol_name}`, club.rank <= 3), homeClubId === club.club.id);
+    const seasons_count = club.club.seasons_count ? format("season", club.club.seasons_count) : "новый клуб";
+    const description = `${club.points}pt - ${format("player", club.club.members_count)}`;
+    res.addField(`${title} (*${seasons_count}*)`, description);
+  });
+
+  return res;
+}
+
 module.exports = {
   name: "myclubstage",
   description: "Топ этапа вашего клуба.",
@@ -44,13 +58,13 @@ module.exports = {
 
     const template = new RichEmbed()
       .setColor("#0099ff")
-      .setTitle(`Рейтинг клубов`)
+      .setTitle("Рейтинг клубов")
       .setDescription(`Сезон "${live_season.title}". Этап ${stage.number} (${start_date} - ${end_date})`)
       .setFooter(now);
 
     const pages_count = Math.ceil(stage_clubs.length / count);
     let stage_clubs_slice = stage_clubs.slice(0, count);
-    let result = formatStage(template, stage_clubs_slice);
+    let result = formatStage(template, stage_clubs_slice, homeclub.id);
 
     const stage_clubs_message_r = await message.channel.send(result);
     const stage_clubs_message = Array.isArray(stage_clubs_message_r) ? stage_clubs_message_r[0] : stage_clubs_message_r;
@@ -58,11 +72,9 @@ module.exports = {
     if (pages_count > 1) {
       await createPagedMessage(
         stage_clubs_message,
-        async (page, reaction) => {
-          const index_start = (page - 1) * count + 1;
-
+        async (page) => {
           stage_clubs_slice = stage_clubs.slice((page - 1) * count, page * count);
-          result = formatStage(template, stage_clubs_slice, index_start);
+          result = formatStage(template, stage_clubs_slice, homeclub.id);
           result.setFooter(`Страница ${page} • ${now}`);
           await stage_clubs_message.edit(result);
         },
@@ -73,18 +85,5 @@ module.exports = {
       );
     }
 
-    function formatStage(embed: RichEmbed, clubs: IStageClub[], index_start = 1): RichEmbed {
-      const res = new RichEmbed(embed);
-      res.fields = [];
-
-      clubs.forEach((club, i) => {
-        const title = underlineIF(boldIF(`${club.rank}. ${club.club.lol_name}`, club.rank <= 3), homeclub.id === club.club.id);
-        const seasons_count = club.club.seasons_count ? format("season", club.club.seasons_count) : "новый клуб";
-        const description = `${club.points}pt - ${format("player", club.club.members_count)}`;
-        res.addField(`${title} (*${seasons_count}*)`, description);
-      });
-
-      return res;
-    }
   }
 } as ICommand;

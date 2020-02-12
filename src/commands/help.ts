@@ -8,12 +8,12 @@ module.exports = {
   aliases: ["commands", "помощь", "команды", "h"],
   usage: "help/commands/помощь/команды",
 
-  async execute(ctx, message, args) {
+  async execute(ctx, message) {
     const result = new RichEmbed()
       .setColor("#0099ff")
-      .setTitle(`Доступные команды`)
+      .setTitle("Доступные команды")
       .setDescription(`Используйте префикс \`${ctx.getPrefix()}\` перед командой.`)
-      .setFooter(`Made with <3 by @Antosik#6224`);
+      .setFooter("Made with <3 by @Antosik#6224");
 
     const commands = ctx.getAvailableCommands();
     for (const command of commands.values()) {

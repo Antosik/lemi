@@ -1,7 +1,7 @@
 import { formatDistance } from "date-fns";
 import { ru } from "date-fns/locale";
 
-import { ESeasonArgs, EStageArgs, isSeason, isStage } from "../interfaces/IArgument";
+import { EStageArgs, isSeason, isStage } from "../interfaces/IArgument";
 import { ICommand } from "../interfaces/ICommand";
 import { consts } from "../localization";
 

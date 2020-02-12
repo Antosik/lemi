@@ -16,7 +16,6 @@ export default class HomeClub extends ClubsAPICaller {
   public readonly seasons_count: number;
   public readonly members_count: number;
 
-  private readonly token: string;
   private readonly season_id: number;
 
   constructor(data: IClub, season_id: number, token: string = "") {
@@ -86,11 +85,6 @@ export default class HomeClub extends ClubsAPICaller {
   public async getStageMembers(stage_id: number, count: number = 25, page = 1): Promise<IStageSummoner[]> {
     const { results: stage_members }: { results: IStageSummoner[] } = await this.query(`contest/season/${this.season_id}/stages/${stage_id}/summoners`, { params: { per_page: count, page } });
     return stage_members;
-  }
-
-  public async getInviteLink(): Promise<string> {
-    const { referral_link }: { referral_link: string } = await this.query(`invites/me`);
-    return referral_link;
   }
 
   public async calculateStage(stage_id: number, { top = 1, group_size = 5, mode = 0 } = { top: 1, group_size: 5, mode: 0 }): Promise<{ top: number, games_count: number, points_needed: number }> {

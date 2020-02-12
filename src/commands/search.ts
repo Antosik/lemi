@@ -50,8 +50,8 @@ module.exports = {
         .setColor("#0099ff")
         .setTitle(`Клуб "${club.club.lol_name}"`)
         .setDescription(description)
-        .addField(`Общее количество очков`, points)
-        .addField(`Место в сезоне`, season_place, true);
+        .addField("Общее количество очков", points)
+        .addField("Место в сезоне", season_place, true);
 
       if (stage_data) {
         result.addField(`Место в ${stage_data.number} этапе`, stage_data.place, true);
@@ -63,7 +63,7 @@ module.exports = {
         .setColor("#0099ff")
         .setAuthor(`Итоги поиска по клубам ("${name}"):`)
         .setTitle(`Найдено ${format("club", clubs.length)}`)
-        .setFooter(`Укажите точное название для получения полной информации`);
+        .setFooter("Укажите точное название для получения полной информации");
 
       clubs.forEach((club, i) => {
         const seasons_count = club.club.seasons_count ? `${format("season", club.club.seasons_count)}` : "новый клуб";

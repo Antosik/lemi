@@ -8,6 +8,19 @@ import format, { consts } from "../localization";
 import { createPagedMessage } from "../helpers/discord";
 import { boldIF } from "../helpers/functions";
 
+function formatMembers(embed: RichEmbed, summoners: IStageSummoner[], index_start = 1): RichEmbed {
+  const res = new RichEmbed(embed);
+  res.fields = [];
+
+  summoners.forEach((member, i) => {
+    const title = boldIF(`${i + index_start}. ${member.summoner.summoner_name}`, i + index_start < 4);
+    const description = `${member.points}pt - ${format("game", member.games)}`;
+    res.addField(title, description);
+  });
+
+  return res;
+}
+
 const members_command = {
   name: "myclubmembers",
   description: "Информацию об очках, заработанных участниками вашего клуба.",
@@ -48,7 +61,7 @@ const members_command = {
     if (pages_count > 1) {
       await createPagedMessage(
         members_message,
-        async (page, reaction) => {
+        async (page) => {
           const index_start = (page - 1) * count + 1;
 
           members = await homeclub.getStageMembers(stage.id, count, page);
@@ -63,18 +76,6 @@ const members_command = {
       );
     }
 
-    function formatMembers(embed: RichEmbed, summoners: IStageSummoner[], index_start = 1) {
-      const res = new RichEmbed(embed);
-      res.fields = [];
-
-      summoners.forEach((member, i) => {
-        const title = boldIF(`${i + index_start}. ${member.summoner.summoner_name}`, i + index_start < 4);
-        const description = `${member.points}pt - ${format("game", member.games)}`;
-        res.addField(title, description);
-      });
-
-      return res;
-    }
   }
 } as ICommand;
 

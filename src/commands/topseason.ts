@@ -3,10 +3,24 @@ import { RichEmbed } from "discord.js";
 
 import { ISeasonsClub } from "../interfaces/IClub";
 import { ICommand } from "../interfaces/ICommand";
-import format, { consts } from "../localization";
+import format from "../localization";
 
 import { createPagedMessage } from "../helpers/discord";
 import { boldIF } from "../helpers/functions";
+
+function formatTop(embed: RichEmbed, clubs: ISeasonsClub[]): RichEmbed {
+  const res = new RichEmbed(embed);
+  res.fields = [];
+
+  clubs.forEach((club) => {
+    const title = boldIF(`${club.rank}. ${club.club.lol_name}`, club.rank <= 3);
+    const seasons_count = club.club.seasons_count ? format("season", club.club.seasons_count) : "новый клуб";
+    const description = `${club.points}pt - ${format("player", club.club.members_count)}`;
+    res.addField(`${title} (*${seasons_count}*)`, description);
+  });
+
+  return res;
+}
 
 module.exports = {
   name: "topseason",
@@ -24,7 +38,7 @@ module.exports = {
     const now = formatDate(new Date(), "HH:mm:ss dd.MM.yyyy");
     const template = new RichEmbed()
       .setColor("#0099ff")
-      .setTitle(`Рейтинг клубов`)
+      .setTitle("Рейтинг клубов")
       .setDescription(`Сезон "${live_season.title}" (${start_date} - ${end_date})`)
       .setFooter(`Страница 1 • ${now}`);
 
@@ -36,7 +50,7 @@ module.exports = {
 
     await createPagedMessage(
       top_message,
-      async (page, reaction) => {
+      async (page) => {
         top10 = await live_season.getTopN(count, page);
         result = formatTop(template, top10);
         result.setFooter(`Страница ${page} • ${now}`);
@@ -48,18 +62,5 @@ module.exports = {
       }
     );
 
-    function formatTop(embed: RichEmbed, clubs: ISeasonsClub[]): RichEmbed {
-      const res = new RichEmbed(embed);
-      res.fields = [];
-
-      clubs.forEach((club, i) => {
-        const title = boldIF(`${club.rank}. ${club.club.lol_name}`, club.rank <= 3);
-        const seasons_count = club.club.seasons_count ? format("season", club.club.seasons_count) : "новый клуб";
-        const description = `${club.points}pt - ${format("player", club.club.members_count)}`;
-        res.addField(`${title} (*${seasons_count}*)`, description);
-      });
-
-      return res;
-    }
   },
 } as ICommand;

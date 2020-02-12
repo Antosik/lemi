@@ -8,6 +8,20 @@ import format, { consts } from "../localization";
 import { createPagedMessage } from "../helpers/discord";
 import { boldIF } from "../helpers/functions";
 
+function formatDeficiencyMembers(embed: RichEmbed, summoners: IStageSummoner[], pointsNeeded: number, index_start = 1): RichEmbed {
+  const res = new RichEmbed(embed);
+  res.fields = [];
+
+  summoners
+    .forEach((member, i) => {
+      const title = boldIF(`${i + index_start}. ${member.summoner.summoner_name}`, i + index_start < 4);
+      const description = `${member.points}pt - ${format("game", member.games)} (нужно еще ${pointsNeeded - member.points}pt)`;
+      res.addField(title, description);
+    });
+
+  return res;
+}
+
 module.exports = {
   name: "myclubfarm",
   description: "Выводит игроков, не заработавших заданное количество очков",
@@ -23,7 +37,7 @@ module.exports = {
       return message.channel.send(consts.noActiveStage);
     }
 
-    const stage = await live_season.getStageIdByIndex();
+    const stage = live_season.getStageIdByIndex();
 
     const members = await homeclub.getStageMembers(stage.id, homeclub.members_count);
     const deficiency = members.filter((member) => member.points < points).sort((a, b) => a.points - b.points);
@@ -43,7 +57,7 @@ module.exports = {
 
     const pages_count = Math.ceil(deficiency.length / count);
     let deficiency_slice = deficiency.slice(0, count);
-    let result = formatDeficiencyMembers(template, deficiency_slice);
+    let result = formatDeficiencyMembers(template, deficiency_slice, points);
 
     const deficiency_message_r = await message.channel.send(result);
     const deficiency_message = Array.isArray(deficiency_message_r) ? deficiency_message_r[0] : deficiency_message_r;
@@ -51,7 +65,7 @@ module.exports = {
     if (pages_count > 1) {
       await createPagedMessage(
         deficiency_message,
-        async (page, reaction) => {
+        async (page) => {
           const index_start = (page - 1) * count + 1;
 
           deficiency_slice = deficiency.slice((page - 1) * count, page * count);
@@ -66,18 +80,5 @@ module.exports = {
       );
     }
 
-    function formatDeficiencyMembers(embed: RichEmbed, summoners: IStageSummoner[], index_start = 1) {
-      const res = new RichEmbed(embed);
-      res.fields = [];
-
-      summoners
-        .forEach((member, i) => {
-          const title = boldIF(`${i + index_start}. ${member.summoner.summoner_name}`, i + index_start < 4);
-          const description = `${member.points}pt - ${format("game", member.games)} (нужно еще ${points - member.points}pt)`;
-          res.addField(title, description);
-        });
-
-      return res;
-    }
   }
 } as ICommand;

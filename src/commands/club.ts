@@ -35,8 +35,8 @@ module.exports = {
       .setColor("#0099ff")
       .setTitle(`Клуб "${homeclub.name}"`)
       .setDescription(description)
-      .addField(`Общее количество очков`, points)
-      .addField(`Место в сезоне`, season_place, true);
+      .addField("Общее количество очков", points)
+      .addField("Место в сезоне", season_place, true);
 
     if (stage_data) {
       result.addField(`Место в ${stage_data.number} этапе`, stage_data.place, true);

@@ -12,7 +12,7 @@ module.exports = {
   aliases: ["сезон", "season", "ss"],
   usage: "season/сезон",
 
-  async execute(ctx, message, args) {
+  async execute(ctx, message) {
     const live_season = await ctx.clubs.getLiveSeason();
     if (!live_season) {
       return message.channel.send(consts.noActiveSeason);
