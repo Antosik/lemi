@@ -1,5 +1,5 @@
 import { IClub, ISeasonsClub, IStageClub } from "../interfaces/IClub";
-import { IReward } from "../interfaces/IReward";
+import { IReward, IRewardResult } from "../interfaces/IReward";
 import { IStageSummoner, ISummonerSeasonRating } from "../interfaces/ISummoner";
 
 import { consts } from "../localization";
@@ -54,7 +54,7 @@ export default class HomeClub extends ClubsAPICaller {
     return stage_clubs;
   }
 
-  public async getRewardsSeason(): Promise<{ reason: string, count: number } | undefined> {
+  public async getRewardsSeason(): Promise<IRewardResult | undefined> {
     const [rewards_data]: IReward[] = await this.query(`contest/season/${this.season_id}/clubseasonrewards`);
     if (!rewards_data) {
       return undefined;
@@ -64,17 +64,16 @@ export default class HomeClub extends ClubsAPICaller {
     return reward;
   }
 
-  public async getRewardsStages(): Promise<Map<number, Array<{ reason: string, count: number }>>> {
+  public async getRewardsStages(): Promise<Map<number, IRewardResult[]>> {
     const rewards_data: IReward[] = await this.query(`contest/season/${this.season_id}/clubstagerewards`);
 
     const rewards = new Map();
     rewards_data.forEach((reward_data) => {
       const stage_id = reward_data.club.stage;
+      const reward = { reason: reward_data.reward_condition.description, count: reward_data.reward_condition.reward_value };
       if (rewards.has(stage_id)) {
-        const reward = { reason: reward_data.reward_condition.description, count: reward_data.reward_condition.reward_value };
         rewards.set(stage_id, [...rewards.get(stage_id), reward]);
       } else {
-        const reward = { reason: reward_data.reward_condition.description, count: reward_data.reward_condition.reward_value };
         rewards.set(stage_id, [reward]);
       }
     });

@@ -21,3 +21,8 @@ export interface IReward {
   club: IStageClub;
   reward_condition: IRewardCondition;
 }
+
+export interface IRewardResult {
+  reason: string;
+  count: number;
+}
