@@ -6,32 +6,26 @@ export interface ISummonerResponse {
   readonly current_club?: number;
 }
 
-export interface IStageSummonerResponse {
+
+export interface ISummonerRatingResponse {
   readonly id: number;
-  readonly summoner: ISummonerResponse;
   readonly points: number;
   readonly games: number;
+  readonly club: number;
+  readonly summoner: ISummonerResponse;
+}
+
+export interface IStageSummonerResponse extends ISummonerRatingResponse {
   readonly rank: number;
   readonly joined: string;
   readonly left?: string;
   readonly stage: number;
-  readonly club: number;
 }
 
-export interface ISummonerStageRatingResponse {
-  readonly id: number;
-  readonly points: number;
-  readonly games: number;
-  readonly club: number;
-  readonly summoner: ISummonerResponse;
+export interface ISummonerStageRatingResponse extends ISummonerRatingResponse {
   readonly stage: number;
 }
 
-export interface ISummonerSeasonRatingResponse {
-  readonly id: number;
-  readonly points: number;
-  readonly games: number;
-  readonly club: number;
-  readonly summoner: ISummonerResponse;
+export interface ISummonerSeasonRatingResponse extends ISummonerRatingResponse {
   readonly season: number;
 }

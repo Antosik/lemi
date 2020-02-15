@@ -8,8 +8,8 @@ export interface ISortedRequest {
 }
 
 export interface IPagedRequest {
-  per_page: number;
-  page: number;
+  per_page?: number;
+  page?: number;
 }
 
 export interface IPagedResponse<T> {
