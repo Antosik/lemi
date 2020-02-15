@@ -12,5 +12,4 @@ export const mocks = {
 
   getIncomingRequests: (headers: object = {}) =>
     getMainCoreNock(headers).get("/invites/requests/"),
-
 }
