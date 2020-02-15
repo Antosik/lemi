@@ -1,11 +1,11 @@
 import { RichEmbed } from "discord.js";
 
-import { ISeasonsClub } from "../../interfaces/IClub";
-import format from "../../localization";
+import { ISeasonsClubResponse } from "../../clubs-api/interfaces/IClub";
 
+import format from "../../localization";
 import { boldIF } from "../../helpers/functions";
 
-export function generateTopseasonEmbed(embed: RichEmbed, clubs: ISeasonsClub[]): RichEmbed {
+export function generateTopseasonEmbed(embed: RichEmbed, clubs: ISeasonsClubResponse[]): RichEmbed {
   const res = new RichEmbed(embed);
   res.fields = [];
 

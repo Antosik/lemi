@@ -22,19 +22,18 @@ module.exports = {
       return message.channel.send(consts.playerNameLength);
     }
 
-    const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
-    if (live_season === undefined || live_season.isEnded() || live_season.current_stage === undefined) {
+    const live_season = await ctx.clubs.getLiveSeason();
+    if (live_season === undefined || !live_season.isLive() || live_season.current_stage === undefined) {
       return message.channel.send(consts.noActiveStage);
     }
-    if (homeclub === undefined) {
-      return message.channel.send(consts.clubNotSelected);
-    }
 
-    const stage = live_season.current_stage;
-    const members = await homeclub.getStageMembers(stage.id, homeclub.members_count);
+    const live_stage = live_season.current_stage;
+    const homeclub = await live_stage.getClubMe();
+
+    const homeclub_members = await live_stage.getClubMembers(homeclub.club.members_count);
 
     const searchRegExp = new RegExp(name, "i");
-    const members_with_name = members.filter((member) => searchRegExp.test(member.summoner.summoner_name));
+    const members_with_name = homeclub_members.filter((member) => searchRegExp.test(member.summoner.summoner_name));
 
     if (!members_with_name.length) {
       return message.channel.send(consts.playerNotFound);
@@ -44,10 +43,10 @@ module.exports = {
       return message.channel.send(embed);
 
     } else {
-      const sorted_members = members.sort((a, b) => b.points - a.points);
+      const sorted_members = homeclub_members.sort((a, b) => b.points - a.points);
       const [member] = members_with_name;
 
-      const embed = generateFoundOneMemberEmbed(member, { stage_index: stage.number, club_name: homeclub.name, list_index: sorted_members.indexOf(member) + 1 });
+      const embed = generateFoundOneMemberEmbed(member, { stage_index: live_stage.index, list_index: sorted_members.indexOf(member) + 1 });
       return message.channel.send(embed);
     }
   }

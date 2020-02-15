@@ -3,7 +3,6 @@ import { RichEmbed } from "discord.js";
 
 import { ICommand } from "../../interfaces/ICommand";
 import { consts } from "../../localization";
-
 import { createPagedMessage } from "../../helpers/discord";
 
 import { generateTopseasonEmbed } from "./embed";
@@ -23,7 +22,7 @@ module.exports = {
     const count: number = Number(args[0]) || 10;
 
     const live_season = await ctx.clubs.getLiveSeason();
-    if (live_season === undefined || live_season.isEnded()) {
+    if (live_season === undefined || !live_season.isLive()) {
       return message.channel.send(consts.noActiveSeason);
     }
 

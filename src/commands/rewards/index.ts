@@ -14,23 +14,20 @@ module.exports = {
       throw new Error(consts.unexpectedError);
     }
 
-    const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
-    if (live_season === undefined) {
+    const live_season = await ctx.clubs.getLiveSeason();
+    if (live_season === undefined || !live_season.isLive()) {
       return message.channel.send(consts.noActiveSeason);
     }
-    if (homeclub === undefined) {
-      return message.channel.send(consts.clubNotSelected);
-    }
 
-    const stages_ids = live_season.stages.map((stage) => stage.id);
-    const [rewards_season, rewards_stages] = await Promise.all([homeclub.getRewardsSeason(), homeclub.getRewardsStages()]);
+    const homeclub = await live_season.getClub();
+
+    const season_rewards = await live_season.getClubSeasonRewards();
+    const stages_rewards = await live_season.getClubStagesRewards();
 
     const embed = generateRewardsEmbed({
       homeclub,
-      live_season,
-      stages_ids,
-      rewards_season,
-      rewards_stages
+      season_rewards,
+      stages_rewards
     });
 
     return message.channel.send(embed);

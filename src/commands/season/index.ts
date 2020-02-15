@@ -15,15 +15,13 @@ module.exports = {
     }
 
     const live_season = await ctx.clubs.getLiveSeason();
-    if (!live_season) {
+    if (live_season === undefined || !live_season.isLive()) {
       return message.channel.send(consts.noActiveSeason);
     }
 
-    const stages = await live_season.getStages();
-
     const embed = generateSeasonEmbed({
       live_season,
-      stages
+      stages: live_season.stages
     });
 
     return message.channel.send(embed);

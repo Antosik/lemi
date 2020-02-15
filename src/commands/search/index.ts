@@ -1,5 +1,5 @@
 import { ICommand } from "../../interfaces/ICommand";
-import format, { consts } from "../../localization";
+import { consts } from "../../localization";
 
 import { generateFoundOneClubEmbed, generateFoundMultipleClubsEmbed } from "./embed";
 
@@ -33,28 +33,16 @@ module.exports = {
     }
 
     if (clubs.length === 1) {
-      const [club] = clubs;
+      const [club_season] = clubs;
+      const { club: { id: club_id } } = club_season;
 
-      const { id: season_id, current_stage } = live_season;
-      const { club: { id: club_id } } = club;
-
-      let stage_data: { number: number, place: string } | undefined;
-
-      if (current_stage) {
-        const { id: stage_id, number } = current_stage;
-
-        const club_stage = await ctx.clubs.getClubStage(club_id, season_id, stage_id);
-        if (!club_stage) {
-          return undefined;
-        }
-
-        const stage_place = club_stage.rank ? `#${club_stage.rank} (${format("game", club_stage.games)})` : `Недостаточно очков - ${club_stage.points}/1000`;
-        stage_data = { number, place: stage_place };
-      }
+      const live_stage = live_season.current_stage;
+      const club_stage = await live_stage?.getClub(club_id);
 
       const embed = generateFoundOneClubEmbed({
-        club,
-        stage_data
+        club_season,
+        club_stage,
+        stage_index: live_stage?.index
       });
       return message.channel.send(embed);
     } else {

@@ -3,7 +3,6 @@ import { RichEmbed } from "discord.js";
 
 import { ICommand } from "../../interfaces/ICommand";
 import { consts } from "../../localization";
-
 import { createPagedMessage } from "../../helpers/discord";
 
 import { formatDeficiencyMembers } from "./embed";
@@ -23,30 +22,28 @@ module.exports = {
     const points: number = Number(args[0]) || 200;
     const count: number = Number(args[1]) || 10;
 
-    const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
-    if (live_season === undefined || live_season.isEnded() || live_season.current_stage === undefined) {
+    const live_season = await ctx.clubs.getLiveSeason();
+    if (live_season === undefined || !live_season.isLive() || live_season.current_stage === undefined) {
       return message.channel.send(consts.noActiveStage);
     }
-    if (homeclub === undefined) {
-      return message.channel.send(consts.clubNotSelected);
-    }
 
-    const stage = live_season.current_stage;
+    const live_stage = live_season.current_stage;
+    const homeclub = await live_stage.getClubMe();
 
-    const members = await homeclub.getStageMembers(stage.id, homeclub.members_count);
-    const deficiency = members.filter((member) => member.points < points).sort((a, b) => a.points - b.points);
+    const homeclub_members = await live_stage.getClubMembers(homeclub.club.members_count);
 
+    const deficiency = homeclub_members.filter((member) => member.points < points).sort((a, b) => a.points - b.points);
     if (!deficiency.length) {
       return message.channel.send(consts.farmEnoughPoints);
     }
 
-    const start_date = formatDate(stage.start_date, "dd.MM.yyyy");
-    const end_date = formatDate(stage.end_date, "dd.MM.yyyy");
+    const start_date = formatDate(live_stage.start_date, "dd.MM.yyyy");
+    const end_date = formatDate(live_stage.end_date, "dd.MM.yyyy");
     const now = formatDate(new Date(), "HH:mm:ss dd.MM.yyyy");
     const template = new RichEmbed()
       .setColor("#0099ff")
-      .setTitle(`Игроки клуба "${homeclub.name}", не заработавшие ${points}pt`)
-      .setDescription(`Сезон "${live_season.title}". Этап ${stage.number} (${start_date} - ${end_date})`)
+      .setTitle(`Игроки клуба "${homeclub.club.lol_name}", не заработавшие ${points}pt`)
+      .setDescription(`Сезон "${live_season.title}". Этап ${live_stage.index} (${start_date} - ${end_date})`)
       .setFooter(now);
 
     const pages_count = Math.ceil(deficiency.length / count);

@@ -3,11 +3,10 @@ import { RichEmbed } from "discord.js";
 
 import { ICommand } from "../../interfaces/ICommand";
 import { consts } from "../../localization";
-
 import { createPagedMessage } from "../../helpers/discord";
 
-import { generateStageEmbed } from "./embed";
 import { generateCalcStageNotPart } from "../calcstage/text";
+import { generateStageEmbed } from "./embed";
 
 module.exports = {
   name: "myclubstage",
@@ -23,25 +22,21 @@ module.exports = {
     const stage_index: number | undefined = Number(args[0]) || undefined;
     const count: number = Number(args[1]) || 10;
 
-    const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
-    if (live_season === undefined || (!stage_index && live_season.isEnded())) {
+    const live_season = await ctx.clubs.getLiveSeason();
+    if (live_season === undefined || (!stage_index && !live_season.isLive())) {
       return message.channel.send(consts.noActiveStage);
     }
 
-    const stage = live_season?.getStageIdByIndex(stage_index);
-    if (!stage) {
+    const stage = live_season.getStageByIndex(stage_index);
+    if (stage === undefined) {
       return message.channel.send(consts.stageNotFound);
     }
-    if (homeclub === undefined) {
-      return message.channel.send(consts.clubNotSelected);
-    }
 
-    const stage_clubs = await homeclub.getStageClubs(stage.id);
-    const homeclub_stage = stage_clubs.find((stage_club) => stage_club.club.id === homeclub.id);
+    const [homeclub_stage, clubs_stage] = await Promise.all([stage.getClubMe(), stage.getTopN()]);
 
-    if (!homeclub_stage || !homeclub_stage.id) {
+    if (!homeclub_stage.rank) {
       const group_size = 5;
-      const { games_count, points_needed } = await homeclub.calculateStage(stage.id, { group_size });
+      const { games_count, points_needed } = await stage.toGetTopN(1, { group_size });
       const result_not = generateCalcStageNotPart({ points_needed, games_count, group_size });
       return message.channel.send(result_not);
     }
@@ -53,12 +48,12 @@ module.exports = {
     const template = new RichEmbed()
       .setColor("#0099ff")
       .setTitle("Рейтинг клубов")
-      .setDescription(`Сезон "${live_season.title}". Этап ${stage.number} (${start_date} - ${end_date})`)
+      .setDescription(`Сезон "${live_season.title}". Этап ${stage.index} (${start_date} - ${end_date})`)
       .setFooter(now);
 
-    const pages_count = Math.ceil(stage_clubs.length / count);
-    let stage_clubs_slice = stage_clubs.slice(0, count);
-    let result = generateStageEmbed(template, stage_clubs_slice, homeclub.id);
+    const pages_count = Math.ceil(clubs_stage.length / count);
+    let stage_clubs_slice = clubs_stage.slice(0, count);
+    let result = generateStageEmbed(template, stage_clubs_slice, homeclub_stage.id);
 
     const stage_clubs_message_r = await message.channel.send(result);
     const stage_clubs_message = Array.isArray(stage_clubs_message_r) ? stage_clubs_message_r[0] : stage_clubs_message_r;
@@ -67,8 +62,8 @@ module.exports = {
       await createPagedMessage(
         stage_clubs_message,
         async (page) => {
-          stage_clubs_slice = stage_clubs.slice((page - 1) * count, page * count);
-          result = generateStageEmbed(template, stage_clubs_slice, homeclub.id);
+          stage_clubs_slice = clubs_stage.slice((page - 1) * count, page * count);
+          result = generateStageEmbed(template, stage_clubs_slice, homeclub_stage.id);
           result.setFooter(`Страница ${page} • ${now}`);
           await stage_clubs_message.edit(result);
         },

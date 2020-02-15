@@ -16,28 +16,20 @@ module.exports = {
 
     const stage_index: number | undefined = Number(args[0]) || undefined;
 
-    const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
-    if (homeclub === undefined) {
-      return message.channel.send(consts.clubNotSelected);
+    const live_season = await ctx.clubs.getLiveSeason();
+    if (live_season === undefined || !live_season.isLive()) {
+      return message.channel.send(consts.noActiveSeason);
     }
 
-    const stage = live_season?.getStageIdByIndex(stage_index);
-    let stage_data: { number: number, place: string } | undefined;
+    const homeclub_season = await live_season.getClub();
 
-    if (stage) {
-      const stage_clubs = await homeclub.getStageClubs(stage.id);
-      const homeclub_stage = stage_clubs.find((stage_club) => stage_club.club.id === homeclub.id);
-      const stage_place = homeclub_stage && homeclub_stage.id ? `#${homeclub_stage.rank}` : consts.noPlaceInTop;
-
-      stage_data = { number: stage.number, place: stage_place };
-    }
-
-    const homeclub_season = await homeclub.getSeason();
+    const stage = live_season.getStageByIndex(stage_index);
+    const homeclub_stage = await stage?.getClubMe();
 
     const embed = generateClubEmbed({
-      homeclub,
       homeclub_season,
-      stage_data
+      homeclub_stage,
+      stage_index: stage?.index
     });
     return message.channel.send(embed);
   }

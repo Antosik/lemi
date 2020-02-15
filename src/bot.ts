@@ -2,6 +2,8 @@ import { Collection as DiscordCollection, DMChannel, GroupDMChannel, Guild, Mess
 import * as fs from "fs";
 import * as path from "path";
 
+import { ClubsAPIInvoker } from "./clubs-api/helpers/api-invoker";
+
 import { DiscordClient, ICommand } from "./interfaces/ICommand";
 import { consts } from "./localization";
 import ClubsClient from "./lol";
@@ -69,7 +71,8 @@ export default class Lemi {
   }
 
   private initClubs(): ClubsClient {
-    return new ClubsClient(this.config.lol_token);
+    const clubsAPI = new ClubsAPIInvoker(this.config.lol_token);
+    return new ClubsClient(clubsAPI);
   }
 
   private loadCommands(): DiscordCollection<string, ICommand> {
