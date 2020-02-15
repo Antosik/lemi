@@ -1,6 +1,6 @@
 import { getLocaleFn, LocaleFn } from "./helpers";
 
-const locale: { [key: string]: LocaleFn } = {
+export const locale: { [key: string]: LocaleFn } = {
   game: getLocaleFn({
     singularNominative: "{{count}} игра",
     singularGenitive: "{{count}} игры",
