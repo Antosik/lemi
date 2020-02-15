@@ -1,12 +1,12 @@
 import { RichEmbed } from "discord.js";
 
-import { IStageSummoner } from "../../interfaces/ISummoner";
-import format from "../../localization";
+import { IStageSummonerResponse } from "../../clubs-api/interfaces/ISummoner";
 
+import format from "../../localization";
 import { isValidURL } from "../../helpers/functions";
 
 export function generateFoundManyMembersEmbed(
-  members_list: IStageSummoner[]
+  members_list: IStageSummonerResponse[]
 ): RichEmbed {
   const result = new RichEmbed()
     .setColor("#0099ff")
@@ -23,15 +23,15 @@ export function generateFoundManyMembersEmbed(
 }
 
 export function generateFoundOneMemberEmbed(
-  member: IStageSummoner,
-  { stage_index, club_name, list_index }: { stage_index: number, club_name: string, list_index: number }
+  member: IStageSummonerResponse,
+  { stage_index, list_index }: { stage_index: number, list_index: number }
 ): RichEmbed {
   const opgg_profile = `[op.gg](${encodeURI(`http://ru.op.gg/summoner/userName=${member.summoner.summoner_name}`)})`;
   const log_profile = `[leagueofgraphs](${encodeURI(`https://www.leagueofgraphs.com/ru/summoner/ru/${member.summoner.summoner_name}`)})`;
 
   const result = new RichEmbed()
     .setColor("#0099ff")
-    .setTitle(`Участник клуба ${club_name} - "${member.summoner.summoner_name}"`)
+    .setTitle(`Участник клуба - "${member.summoner.summoner_name}"`)
     .addField(`Очков за ${stage_index} этап`, `${format("point", member.points)} (#${list_index} в клубе)`)
     .addField("Профиль", `${opgg_profile} • ${log_profile}`);
 

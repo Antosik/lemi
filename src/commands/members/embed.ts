@@ -1,11 +1,11 @@
 import { RichEmbed } from "discord.js";
 
-import { IStageSummoner } from "../../interfaces/ISummoner";
-import format from "../../localization";
+import { IStageSummonerResponse } from "../../clubs-api/interfaces/ISummoner";
 
+import format from "../../localization";
 import { boldIF } from "../../helpers/functions";
 
-export function generateMembersEmbed(embed: RichEmbed, summoners: IStageSummoner[], index_start = 1): RichEmbed {
+export function generateMembersEmbed(embed: RichEmbed, summoners: IStageSummonerResponse[], index_start = 1): RichEmbed {
   const res = new RichEmbed(embed);
   res.fields = [];
 

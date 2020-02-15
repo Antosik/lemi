@@ -16,22 +16,19 @@ module.exports = {
 
     const top: number = Number(args[0]) || 1;
     const group_size: number = Number(args[1]) || 5;
-    const mode: 0 | 1 = args[2] === "aram" ? 1 : 0;
+    const isARAM: boolean = args[2] === "aram";
 
-    const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
-    if (live_season === undefined || live_season.isEnded()) {
+    const live_season = await ctx.clubs.getLiveSeason();
+    if (live_season === undefined || !live_season.isLive()) {
       return message.channel.send(consts.noActiveSeason);
     }
-    if (homeclub === undefined) {
-      return message.channel.send(consts.clubNotSelected);
-    }
 
-    const { top: wanted, games_count, points_needed } = await homeclub.calculateSeason({ top, group_size, mode });
+    const { games_count, points_needed } = await live_season.toGetTopN(top, { group_size, isARAM });
     if (!games_count) {
       return message.channel.send(consts.calcEnoughGames);
     }
 
-    const result_message = generateCalcseasonText({ wanted, points_needed, games_count, group_size });
+    const result_message = generateCalcseasonText({ wanted: top, points_needed, games_count, group_size });
     return message.channel.send(result_message);
   }
 } as ICommand;

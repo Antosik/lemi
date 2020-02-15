@@ -1,11 +1,16 @@
 import { RichEmbed } from "discord.js";
 
-import { IStageSummoner } from "../../interfaces/ISummoner";
-import format from "../../localization";
+import { IStageSummonerResponse } from "../../clubs-api/interfaces/ISummoner";
 
+import format from "../../localization";
 import { boldIF } from "../../helpers/functions";
 
-export function formatDeficiencyMembers(embed: RichEmbed, summoners: IStageSummoner[], pointsNeeded: number, index_start = 1): RichEmbed {
+export function formatDeficiencyMembers(
+  embed: RichEmbed,
+  summoners: IStageSummonerResponse[],
+  pointsNeeded: number,
+  index_start = 1
+): RichEmbed {
   const res = new RichEmbed(embed);
   res.fields = [];
 

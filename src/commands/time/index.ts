@@ -1,9 +1,10 @@
-import { formatDistance } from "date-fns";
-import { ru } from "date-fns/locale";
+
 
 import { EStageArgs, isSeason, isStage } from "../../interfaces/IArgument";
 import { ICommand } from "../../interfaces/ICommand";
 import { consts } from "../../localization";
+
+import { generateSeasonTime, generateStageTime } from "./text";
 
 module.exports = {
   name: "time",
@@ -23,35 +24,11 @@ module.exports = {
     }
 
     const live_season = await ctx.clubs.getLiveSeason();
-    if (live_season === undefined || live_season.isEnded()) {
-      if (isStage(type)) {
-        return message.channel.send(consts.noActiveStage);
-      }
-      return message.channel.send(consts.noActiveSeason);
-    }
 
-    if (isStage(type)) {
-      if (!live_season.current_stage) {
-        return message.channel.send(consts.noActiveStage);
-      }
+    const result_text = isStage(type)
+      ? generateStageTime(live_season?.current_stage)
+      : generateSeasonTime(live_season);
 
-      const end_date = live_season.current_stage.end_date;
-      const distance = formatDistance(end_date, new Date(), {
-        locale: ru
-      });
-
-      return message.channel.send(`${consts.timeToStageEnd}: **${distance}**`);
-    } else {
-      if (live_season.end_date < new Date()) {
-        return message.channel.send(consts.noActiveSeason);
-      }
-
-      const end_date = live_season.end_date;
-      const distance = formatDistance(end_date, new Date(), {
-        locale: ru
-      });
-
-      return message.channel.send(`${consts.timeToSeasonEnd}: **${distance}**`);
-    }
+    message.channel.send(result_text);
   }
 } as ICommand;

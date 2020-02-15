@@ -16,18 +16,15 @@ module.exports = {
 
     const top: number = Number(args[0]) || 1;
     const group_size: number = Number(args[1]) || 5;
-    const mode: 0 | 1 = args[2] === "aram" ? 1 : 0;
+    const isARAM: boolean = args[2] === "aram";
 
-    const [live_season, homeclub] = await Promise.all([ctx.clubs.getLiveSeason(), ctx.clubs.getHomeClub()]);
-    if (live_season === undefined || live_season.isEnded() || live_season.current_stage === undefined) {
+    const live_season = await ctx.clubs.getLiveSeason();
+    if (live_season === undefined || !live_season.isLive() || live_season.current_stage === undefined) {
       return message.channel.send(consts.noActiveStage);
     }
-    if (homeclub === undefined) {
-      return message.channel.send(consts.clubNotSelected);
-    }
 
-    const { id: stage_id } = live_season.current_stage;
-    const { top: wanted_place, games_count, points_needed } = await homeclub.calculateStage(stage_id, { top, group_size, mode });
+    const live_stage = live_season.current_stage;
+    const { top: wanted_place, games_count, points_needed } = await live_stage.toGetTopN(top, { group_size, isARAM });
 
     if (!games_count) {
       return message.channel.send(consts.calcEnoughGames);

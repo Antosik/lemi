@@ -1,11 +1,11 @@
 import { RichEmbed } from "discord.js";
 
-import { IStageClub } from "../../interfaces/IClub";
-import format from "../../localization";
+import { IStageClubResponse } from "../../clubs-api/interfaces/IClub";
 
+import format from "../../localization";
 import { boldIF, underlineIF } from "../../helpers/functions";
 
-export function generateStageEmbed(embed: RichEmbed, clubs: IStageClub[], homeClubId: number): RichEmbed {
+export function generateStageEmbed(embed: RichEmbed, clubs: IStageClubResponse[], homeClubId: number): RichEmbed {
   const res = new RichEmbed(embed);
   res.fields = [];
 
