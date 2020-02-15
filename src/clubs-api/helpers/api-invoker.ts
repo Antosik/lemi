@@ -15,8 +15,6 @@ export class ClubsAPIInvoker {
     const apiCaller = version === 1 ? ClubsAPIInvoker.v1Axios : ClubsAPIInvoker.v2Axios;
     const Cookie = this.getAuthCookie();
 
-    console.log(query, params, version);
-
     return apiCaller(`/${query}/`, { params, data, headers: { Cookie } })
       .then(({ data: result }) => result)
       .catch((e) => {
