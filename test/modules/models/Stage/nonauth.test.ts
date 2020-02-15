@@ -18,6 +18,8 @@ describe("Clubs - Stage Entity [non-auth]", () => {
   const stage_data = mockStageResponse({ season_id, index: 0, is_live: false });
   const stage = new Stage(stage_data, api);
 
+  const { stage_id } = stage;
+  
   test("getClub", async () => {
     const club_id = chance.natural({ max: 1e5 });
 
@@ -29,7 +31,7 @@ describe("Clubs - Stage Entity [non-auth]", () => {
   });
 
   test("getClubMe", async () => {
-    const req = mocks.getStageClubMe(stage.season_id, stage.stage_id).reply(403);
+    const req = mocks.getStageClubMe(stage.season_id, stage_id).reply(403);
 
     const getClubMeReq = stage.getClubMe();
 
@@ -38,7 +40,7 @@ describe("Clubs - Stage Entity [non-auth]", () => {
   });
 
   test("getClubMembers", async () => {
-    const req = mocks.getStageClubMembers(stage.season_id, stage.stage_id).query(paged).reply(403);
+    const req = mocks.getStageClubMembers(stage.season_id, stage_id).query(paged).reply(403);
 
     const getClubMembersReq = stage.getClubMembers(paged.per_page, paged.page);
 
@@ -47,7 +49,7 @@ describe("Clubs - Stage Entity [non-auth]", () => {
   });
 
   test("getClubMembersRating", async () => {
-    const req = mocks.getStageClubMembersRating(stage.stage_id).reply(403);
+    const req = mocks.getStageClubMembersRating(stage_id).reply(403);
 
     const getClubMembersRatingReq = stage.getClubMembersRating();
 
@@ -56,7 +58,7 @@ describe("Clubs - Stage Entity [non-auth]", () => {
   });
 
   test("getTopN", async () => {
-    const req = mocks.getStageTopClubs(stage.season_id, stage.stage_id).query(paged).reply(403);
+    const req = mocks.getStageTopClubs(stage.season_id, stage_id).query(paged).reply(403);
 
     const getTopNReq = stage.getTopN(paged.per_page, paged.page);
 
@@ -67,8 +69,8 @@ describe("Clubs - Stage Entity [non-auth]", () => {
   test("toGetTopN", async () => {
     const top = chance.natural({ min: 1, max: 20 });
 
-    mocks.getStageClubMe(stage.season_id, stage.stage_id).reply(403);
-    mocks.getStageTopClubs(stage.season_id, stage.stage_id).query({ ...paged, per_page: top }).reply(403);
+    mocks.getStageClubMe(stage.season_id, stage_id).reply(403);
+    mocks.getStageTopClubs(stage.season_id, stage_id).query({ ...paged, per_page: top }).reply(403);
 
     const toGetTopNReq = stage.toGetTopN(top, { group_size: 5, isARAM: true });
 

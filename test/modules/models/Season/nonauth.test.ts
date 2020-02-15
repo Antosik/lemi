@@ -1,5 +1,4 @@
 import { mocks } from "../../../__mocks__/SeasonClubAPI.mock";
-import { mockSeasonsClubResponse } from "../../../__mocks__/responses/IClub.mock";
 import { mockSeasonResponse } from "../../../__mocks__/responses/ISeason.mock";
 
 import { ClubsAPIInvoker } from "../../../../src/clubs-api/helpers/api-invoker";
@@ -7,20 +6,18 @@ import { ClubsAPIInvoker } from "../../../../src/clubs-api/helpers/api-invoker";
 import Season from "../../../../src/models/Season";
 import { consts } from "../../../../src/localization";
 
-describe("Clubs - Season Entity - without auth", () => {
+describe("Clubs - Season Entity [non-auth]", () => {
   const api = new ClubsAPIInvoker();
 
   const season_data = mockSeasonResponse({ is_live: false });
   const season = new Season(season_data, api);
 
-  test("getClub - current", async () => {
-    const random_club = mockSeasonsClubResponse({ season_id: season.season_id });
-    const req = mocks.getSeasonClub(season.season_id, random_club.club.id)
-      .reply(200, random_club);
+  test("getClub - Current", async () => {
+    const req = mocks.getSeasonClubCurrent(season.season_id).reply(403);
 
-    const getClubReq = season.getClub(random_club.club.id);
+    const getClubReq = season.getClub("current");
 
-    await expect(getClubReq).resolves.toBeDefined();
+    await expect(getClubReq).rejects.toThrow(consts.authError);
     expect(req.isDone()).toBeTruthy();
   });
 
@@ -57,7 +54,7 @@ describe("Clubs - Season Entity - without auth", () => {
   test("toGetTopN", async () => {
     mocks.getSeasonClubCurrent(season.season_id).reply(403);
 
-    const toGetTopNReq = season.getClub();
+    const toGetTopNReq = season.toGetTopN(1, { group_size: 5, isARAM: true });
 
     await expect(toGetTopNReq).rejects.toThrow(consts.authError);
   });
