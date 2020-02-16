@@ -15,9 +15,9 @@ export function generateSeasonEmbed(
     .setColor("#0099ff")
     .setTitle(`Информация о сезоне "${live_season.title}"`);
 
-  const season_description = live_season.is_open && !live_season.is_closed ?
-    `**Сезон окончен!** (Даты сезона: ${start_date} - ${end_date})`
-    : `Даты сезона: ${start_date} - ${end_date}`;
+  const season_description = live_season.is_open && !live_season.is_closed
+    ? `Даты сезона: ${start_date} - ${end_date}`
+    : `**Сезон окончен!** (Даты сезона: ${start_date} - ${end_date})`;
 
   result.setDescription(season_description);
 
