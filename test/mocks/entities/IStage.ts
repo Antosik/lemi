@@ -7,8 +7,8 @@ export const mockStageEntity = (
   ...stage_data,
   season_id,
   stage_id: stage_data.id,
-  isLive: () => true,
+  isLive: (): boolean => true,
   index: stage_data.number,
   start_date: new Date(Date.now() - 1e6),
   end_date: new Date()
-})
+});

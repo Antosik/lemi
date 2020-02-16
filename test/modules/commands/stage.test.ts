@@ -1,17 +1,19 @@
 import { Chance } from "chance";
 
 import { generateStageEmbed, generateStageTemplateEmbed } from "../../../src/commands/stage/embed";
-import { mockCurrentSeasonResponse } from "../../__mocks__/responses/ISeason.mock";
-import { mockSeasonEntity } from "../../__mocks__/entities/ISeason";
+import { mockCurrentSeasonResponse } from "../../mocks/responses/ISeason.mock";
+import { mockSeasonEntity } from "../../mocks/entities/ISeason";
 import { RichEmbed } from "discord.js";
-import { mockStageClubResponse } from "../../__mocks__/responses/IClub.mock";
-import { mockMultiple } from "../../__mocks__/responses/helpers";
+import { mockStageClubResponse } from "../../mocks/responses/IClub.mock";
+import { mockMultiple } from "../../mocks/responses/helpers";
 
 const chance = new Chance();
 
-describe("Commands - Stage", () => {
-  describe("Embed generation", () => {
-    test("Template", () => {
+describe("commands - Stage", () => {
+  describe("embed generation", () => {
+    it("template", () => {
+      expect.assertions(3);
+
       const season_data = mockCurrentSeasonResponse();
       const live_season = mockSeasonEntity({ season_data });
       const stage = live_season.stages[0];
@@ -28,11 +30,13 @@ describe("Commands - Stage", () => {
         color: expect.any(Number),
         footer: expect.any(Object)
       });
-      expect(json.description).toContain(`Сезон "${live_season.title}"`)
-      expect(json.description).toContain(`Этап ${stage.index}`)
+      expect(json.description).toContain(`Сезон "${live_season.title}"`);
+      expect(json.description).toContain(`Этап ${stage.index}`);
     });
 
-    test("Stage clubs", () => {
+    it("stage clubs", () => {
+      expect.assertions(2);
+
       const stage_id = chance.natural({ max: 1e4 });
       const clubs = mockMultiple(() => mockStageClubResponse({ stage_id }));
       const homeclub_id = clubs[clubs.length - 1].club.id;

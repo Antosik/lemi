@@ -6,5 +6,5 @@ export function mockPagedResponse<T>(results: T[], params: IPagedRequest = {}): 
     next: "",
     previous: "",
     results
-  }
+  };
 }

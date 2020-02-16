@@ -1,16 +1,18 @@
 import { Chance } from "chance";
 import { RichEmbed } from "discord.js";
 
-import { mockMultiple } from "../../__mocks__/responses/helpers";
-import { mockStageSummonerResponse } from "../../__mocks__/responses/ISummoner.mock";
+import { mockMultiple } from "../../mocks/responses/helpers";
+import { mockStageSummonerResponse } from "../../mocks/responses/ISummoner.mock";
 
 import { generateMembersEmbed } from "../../../src/commands/members/embed";
 
 const chance = new Chance();
 
-describe("Commands - Members", () => {
-  describe("Embed generation", () => {
-    test("Format Members", () => {
+describe("commands - Members", () => {
+  describe("embed generation", () => {
+    it("format Members", () => {
+      expect.assertions(2);
+
       const index_start = chance.natural({ max: 10 });
       const stage_id = chance.natural({ max: 1e4 });
       const summoners = mockMultiple(() => mockStageSummonerResponse({ stage_id }));

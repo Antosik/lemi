@@ -7,7 +7,7 @@ const chance = new Chance();
 export const mockStageModeResponse = (): EStageModeResponse => {
   const variants: EStageModeResponse[] = [EStageModeResponse.registration, EStageModeResponse.team_init, EStageModeResponse.main];
   return variants[chance.natural({ max: variants.length })];
-}
+};
 
 export function mockStageResponse(
   { season_id, index, is_live }: { season_id: number, index: number, is_live: boolean }

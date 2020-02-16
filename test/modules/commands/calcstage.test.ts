@@ -4,9 +4,11 @@ import { generateCalcStageNotPart, generateCalcStagePart } from "../../../src/co
 
 const chance = new Chance();
 
-describe("Commands - CalcStage", () => {
-  describe("Text generation", () => {
-    test("Not participating", () => {
+describe("commands - CalcStage", () => {
+  describe("text generation", () => {
+    it("not participating", () => {
+      expect.assertions(5);
+
       const points_needed = chance.natural({ max: 1e5 });
       const games_count = chance.natural({ max: 1e5 });
       const group_size = chance.natural({ max: 5 });
@@ -20,7 +22,9 @@ describe("Commands - CalcStage", () => {
       expect(text).toContain(`составом из ${group_size}`);
     });
 
-    test("Participating", () => {
+    it("participating", () => {
+      expect.assertions(5);
+
       const wanted_place = chance.natural({ max: 50 });
       const points_needed = chance.natural({ max: 1e5 });
       const games_count = chance.natural({ max: 1e5 });
@@ -34,5 +38,5 @@ describe("Commands - CalcStage", () => {
       expect(text).toContain(`выиграв **${games_count}`);
       expect(text).toContain(`составом из ${group_size}`);
     });
-  })
+  });
 });

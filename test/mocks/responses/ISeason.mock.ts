@@ -25,7 +25,7 @@ export const mockSeasonResponse = ({ is_live }: { is_live: boolean } = { is_live
           is_live
         })
       )
-  }
+  };
   return season;
 };
 

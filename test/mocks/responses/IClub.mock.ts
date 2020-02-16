@@ -25,7 +25,7 @@ export const mockParticipatingClubResponse = (): IParticipatingClubResponse => (
   games: chance.natural({ max: 1e3 }),
   joined: chance.date().toISOString(),
   rank: chance.natural({ min: 1, max: 100 }),
-})
+});
 
 export const mockSeasonsClubResponse = ({ season_id }: { season_id: number }): ISeasonsClubResponse => ({
   ...mockParticipatingClubResponse(),

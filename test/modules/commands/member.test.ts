@@ -1,17 +1,19 @@
 import { Chance } from "chance";
 
-import { mockStageSummonerResponse } from "../../__mocks__/responses/ISummoner.mock";
-import { mockMultiple } from "../../__mocks__/responses/helpers";
+import { mockStageSummonerResponse } from "../../mocks/responses/ISummoner.mock";
+import { mockMultiple } from "../../mocks/responses/helpers";
 
 import { generateFoundManyMembersEmbed, generateFoundOneMemberEmbed } from "../../../src/commands/member/embed";
 
 const chance = new Chance();
 
-describe("Commands - Member", () => {
-  describe("Embed generation", () => {
+describe("commands - Member", () => {
+  describe("embed generation", () => {
     const stage_id = chance.natural({ max: 1e4 });
 
-    test("Many member", () => {
+    it("many member", () => {
+      expect.assertions(3);
+
       const members = mockMultiple(() => mockStageSummonerResponse({ stage_id }));
 
       const embed = generateFoundManyMembersEmbed(members);
@@ -24,11 +26,13 @@ describe("Commands - Member", () => {
         fields: expect.any(Array),
         footer: expect.any(Object)
       });
-      expect(json.title).toContain(`Найдено ${members.length}`)
+      expect(json.title).toContain(`Найдено ${members.length}`);
       expect(json.fields).toHaveLength(members.length);
     });
 
-    test("One members", () => {
+    it("one members", () => {
+      expect.assertions(3);
+
       const stage_index = chance.natural({ max: 5 });
       const list_index = chance.natural({ max: 20 });
       const member = mockStageSummonerResponse({ stage_id });

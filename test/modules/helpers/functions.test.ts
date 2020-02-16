@@ -4,30 +4,38 @@ import { boldIF, underlineIF, capitalizeFirstLetter, isValidURL } from "../../..
 
 const chance = new Chance();
 
-describe("Helpers - Functions", () => {
-  test("boldIF", () => {
+describe("helpers - Functions", () => {
+  it("boldIF", () => {
+    expect.assertions(2);
+
     const text = chance.string();
 
     expect(boldIF(text, true)).toStrictEqual(`**${text}**`);
     expect(boldIF(text, false)).toStrictEqual(text);
   });
 
-  test("underlineIF", () => {
+  it("underlineIF", () => {
+    expect.assertions(2);
+
     const text = chance.string();
 
     expect(underlineIF(text, true)).toStrictEqual(`__${text}__`);
     expect(underlineIF(text, false)).toStrictEqual(text);
   });
 
-  test("isValidURL", () => {
-    expect(isValidURL(chance.url())).toBeTruthy();
-    expect(isValidURL(chance.string())).toBeFalsy();
+  it("isValidURL", () => {
+    expect.assertions(2);
+
+    expect(isValidURL(chance.url())).toStrictEqual(true);
+    expect(isValidURL(chance.string())).toStrictEqual(false);
   });
 
-  test("capitalizeFirstLetter", () => {
+  it("capitalizeFirstLetter", () => {
+    expect.assertions(1);
+
     const text = chance.string({ casing: "lower", symbols: false });
     const capitalized = capitalizeFirstLetter(text);
 
-    expect(capitalized[0]).toStrictEqual(text[0].toUpperCase());;
+    expect(capitalized[0]).toStrictEqual(text[0].toUpperCase());
   });
 });

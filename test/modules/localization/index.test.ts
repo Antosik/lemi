@@ -4,8 +4,10 @@ import format, { locale } from "../../../src/localization";
 
 const chance = new Chance();
 
-describe("Localization - Format", () => {
-  test("Pre-defined tokens", () => {
+describe("localization - Format", () => {
+  it("pre-defined tokens", () => {
+    expect.hasAssertions();
+
     for (const token of Object.keys(locale)) {
       const count = chance.natural();
 
@@ -13,10 +15,12 @@ describe("Localization - Format", () => {
       expect(format(token, count).length).toBeGreaterThan(1);
     }
   });
-  test("Undefined token", () => {
+  it("undefined token", () => {
+    expect.assertions(1);
+
     const token = chance.string();
     const count = chance.natural();
 
     expect(format(token, count)).toStrictEqual("");
-  })
+  });
 });

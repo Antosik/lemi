@@ -1,17 +1,19 @@
 import { Chance } from "chance";
 
-import { mockSeasonsClubResponse, mockStageClubResponse, mockParticipatingClubResponse } from "../../__mocks__/responses/IClub.mock";
-import { mockMultiple } from "../../__mocks__/responses/helpers";
+import { mockSeasonsClubResponse, mockStageClubResponse, mockParticipatingClubResponse } from "../../mocks/responses/IClub.mock";
+import { mockMultiple } from "../../mocks/responses/helpers";
 
 import { generateFoundMultipleClubsEmbed, generateFoundOneClubEmbed } from "../../../src/commands/search/embed";
 
 const chance = new Chance();
 
-describe("Commands - Search", () => {
-  describe("Embed generation", () => {
+describe("commands - Search", () => {
+  describe("embed generation", () => {
     const season_id = chance.natural({ max: 1e4 });
 
-    test("Many clubs", () => {
+    it("many clubs", () => {
+      expect.assertions(3);
+
       const clubs = mockMultiple(() => mockSeasonsClubResponse({ season_id }));
 
       const embed = generateFoundMultipleClubsEmbed({ query: "", clubs });
@@ -24,11 +26,13 @@ describe("Commands - Search", () => {
         fields: expect.any(Array),
         footer: expect.any(Object)
       });
-      expect(json.title).toContain(`Найдено ${clubs.length}`)
+      expect(json.title).toContain(`Найдено ${clubs.length}`);
       expect(json.fields).toHaveLength(clubs.length);
     });
 
-    test("One club", () => {
+    it("one club", () => {
+      expect.assertions(6);
+
       const stage_id = chance.natural({ max: 1e4 });
       const stage_index = chance.natural({ min: 1, max: 5 });
 

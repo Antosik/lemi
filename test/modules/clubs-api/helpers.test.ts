@@ -3,40 +3,46 @@ import * as nock from "nock";
 import { ClubsAPIInvoker } from "../../../src/clubs-api/helpers/api-invoker";
 import { createClubsAPIAxiosInstance } from "../../../src/clubs-api/helpers/axios";
 
-describe("ClubsAPI - Helpers", () => {
-  describe("AxiosInstance", () => {
-    test("v1 endpoint", () => {
+describe("clubsAPI - Helpers", () => {
+  describe("axiosInstance", () => {
+    it("v1 endpoint", () => {
+      expect.assertions(2);
+
       const instance = createClubsAPIAxiosInstance("https://clubs.lcu.ru.leagueoflegends.com/api/");
 
-      expect(instance.defaults.baseURL).toEqual("https://clubs.lcu.ru.leagueoflegends.com/api/");
+      expect(instance.defaults.baseURL).toStrictEqual("https://clubs.lcu.ru.leagueoflegends.com/api/");
       expect(instance.defaults.headers).toMatchObject({ "Cache-Control": "no-cache" });
     });
 
-    test("v2 endpoint", () => {
+    it("v2 endpoint", () => {
+      expect.assertions(2);
+
       const instance = createClubsAPIAxiosInstance("https://clubs.lcu.ru.leagueoflegends.com/api-v2/");
 
-      expect(instance.defaults.baseURL).toEqual("https://clubs.lcu.ru.leagueoflegends.com/api-v2/");
+      expect(instance.defaults.baseURL).toStrictEqual("https://clubs.lcu.ru.leagueoflegends.com/api-v2/");
       expect(instance.defaults.headers).toMatchObject({ "Cache-Control": "no-cache" });
     });
   });
 
-  describe("ClubsAPIInvoker", () => {
+  describe("clubsAPIInvoker", () => {
     const invoker = new ClubsAPIInvoker();
 
-    test("base v1 request", async (done) => {
+    it("base v1 request", async () => {
+      expect.assertions(1);
+
       const req = nock("https://clubs.lcu.ru.leagueoflegends.com/api/")
         .persist()
-        .get(`/rules/rulesversion/`)
+        .get("/rules/rulesversion/")
         .reply(200);
 
       await invoker.query("rules/rulesversion");
 
-      expect(req.isDone()).toBeTruthy();
+      expect(req.isDone()).toStrictEqual(true);
+    });
 
-      done();
-    })
+    it("base v2 request", async () => {
+      expect.assertions(1);
 
-    test("base v2 request", async (done) => {
       const req = nock("https://clubs.lcu.ru.leagueoflegends.com/api-v2/")
         .persist()
         .get("/contest/season/")
@@ -44,9 +50,7 @@ describe("ClubsAPI - Helpers", () => {
 
       await invoker.query("contest/season", {}, 2);
 
-      expect(req.isDone()).toBeTruthy();
-
-      done();
+      expect(req.isDone()).toStrictEqual(true);
     });
   });
 });

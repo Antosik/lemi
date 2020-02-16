@@ -4,26 +4,33 @@ import { ESeasonArgs, EStageArgs, isSeason, isStage } from "../../../src/interfa
 
 const chance = new Chance();
 
-describe("Interfaces", () => {
+describe("interfaces", () => {
   describe("isSeason", () => {
-    test("valid", () => {
-      expect(isSeason(ESeasonArgs.ru)).toBeTruthy();
-      expect(isSeason(ESeasonArgs.en)).toBeTruthy();
+    it("valid", () => {
+      expect.assertions(2);
+
+      expect(isSeason(ESeasonArgs.ru)).toStrictEqual(true);
+      expect(isSeason(ESeasonArgs.en)).toStrictEqual(true);
     });
 
-    test("invalid", () => {
-      expect(isSeason(chance.string())).toBeFalsy();
+    it("invalid", () => {
+      expect.assertions(1);
+
+      expect(isSeason(chance.string())).toStrictEqual(false);
     });
   });
-  
+
   describe("isStage", () => {
-    test("valid", () => {
-      expect(isStage(EStageArgs.ru)).toBeTruthy();
-      expect(isStage(EStageArgs.en)).toBeTruthy();
+    it("valid", () => {
+      expect.assertions(2);
+      expect(isStage(EStageArgs.ru)).toStrictEqual(true);
+      expect(isStage(EStageArgs.en)).toStrictEqual(true);
     });
-    
-    test("invalid", () => {
-      expect(isStage(chance.string())).toBeFalsy();
+
+    it("invalid", () => {
+      expect.assertions(1);
+
+      expect(isStage(chance.string())).toStrictEqual(false);
     });
-  })
-})
+  });
+});

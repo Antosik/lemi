@@ -1,21 +1,23 @@
 import { Chance } from "chance";
 import { RichEmbed } from "discord.js";
 
-import { mockStageClubResponse } from "../../__mocks__/responses/IClub.mock";
-import { mockSeasonResponse } from "../../__mocks__/responses/ISeason.mock";
-import { mockSeasonEntity } from "../../__mocks__/entities/ISeason";
-import { mockStageSummonerResponse } from "../../__mocks__/responses/ISummoner.mock";
-import { mockMultiple } from "../../__mocks__/responses/helpers";
+import { mockStageClubResponse } from "../../mocks/responses/IClub.mock";
+import { mockSeasonResponse } from "../../mocks/responses/ISeason.mock";
+import { mockSeasonEntity } from "../../mocks/entities/ISeason";
+import { mockStageSummonerResponse } from "../../mocks/responses/ISummoner.mock";
+import { mockMultiple } from "../../mocks/responses/helpers";
 
 import { generateFarmTemplateEmbed, formatDeficiencyMembers } from "../../../src/commands/farm/embed";
 
 const chance = new Chance();
 
-describe("Commands - Farm", () => {
-  describe("Embed generation", () => {
+describe("commands - Farm", () => {
+  describe("embed generation", () => {
     const points = chance.natural({ max: 1e5 });
 
-    test("Generate Template", () => {
+    it("generate Template", () => {
+      expect.assertions(5);
+
       const live_season = mockSeasonResponse({ is_live: true });
       const live_stage = live_season.stages[live_season.stages.length - 1];
       const homeclub = mockStageClubResponse({ stage_id: live_stage.id });
@@ -23,10 +25,10 @@ describe("Commands - Farm", () => {
       const season_entity = mockSeasonEntity({ season_data: live_season });
       const stage_entity = season_entity.stages[live_season.stages.length - 1];
 
-      const embed = generateFarmTemplateEmbed(points, new Date().toLocaleString(), { 
-        live_season: season_entity, 
-        live_stage: stage_entity, 
-        homeclub 
+      const embed = generateFarmTemplateEmbed(points, new Date().toLocaleString(), {
+        live_season: season_entity,
+        live_stage: stage_entity,
+        homeclub
       });
       const json = JSON.parse(JSON.stringify(embed));
 
@@ -43,7 +45,9 @@ describe("Commands - Farm", () => {
       expect(json.description).toContain(`${live_stage.number}`);
     });
 
-    test("Format Members", () => {
+    it("format Members", () => {
+      expect.assertions(2);
+
       const index_start = chance.natural({ max: 10 });
       const stage_id = chance.natural({ max: 1e4 });
       const summoners = mockMultiple(() => mockStageSummonerResponse({ stage_id }));

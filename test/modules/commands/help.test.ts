@@ -6,10 +6,12 @@ import { generateHelpEmbed } from "../../../src/commands/help/embed";
 
 const chance = new Chance();
 
-describe("Commands - Help", () => {
-  test("Embed generation", () => {
+describe("commands - Help", () => {
+  it("embed generation", () => {
+    expect.assertions(3);
+
     const prefix = chance.string({ length: 3 });
-    const commands = new Collection([]) as Collection<string, ICommand>;
+    const commands: Collection<string, ICommand> = new Collection([]);
 
     const embed = generateHelpEmbed({ prefix, commands });
     const json = JSON.parse(JSON.stringify(embed));

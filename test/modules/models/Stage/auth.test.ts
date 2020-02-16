@@ -1,11 +1,11 @@
 import { Chance } from "chance";
 
-import { mocks } from "../../../__mocks__/StageClubAPI.mock";
-import { mockPagedResponse } from "../../../__mocks__/responses/IApiCaller";
-import { mockStageClubResponse } from "../../../__mocks__/responses/IClub.mock";
-import { mockStageResponse } from "../../../__mocks__/responses/IStage.mock";
-import { mockStageSummonerResponse, mockSummonerStageRatingResponse } from "../../../__mocks__/responses/ISummoner.mock";
-import { mockMultiple } from "../../../__mocks__/responses/helpers";
+import { mocks } from "../../../mocks/StageClubAPI.mock";
+import { mockPagedResponse } from "../../../mocks/responses/IApiCaller";
+import { mockStageClubResponse } from "../../../mocks/responses/IClub.mock";
+import { mockStageResponse } from "../../../mocks/responses/IStage.mock";
+import { mockStageSummonerResponse, mockSummonerStageRatingResponse } from "../../../mocks/responses/ISummoner.mock";
+import { mockMultiple } from "../../../mocks/responses/helpers";
 
 import { ClubsAPIInvoker } from "../../../../src/clubs-api/helpers/api-invoker";
 
@@ -14,7 +14,7 @@ import { consts } from "../../../../src/localization";
 
 const chance = new Chance();
 
-describe("Clubs - Stage Entity [auth]", () => {
+describe("clubs - Stage Entity [auth]", () => {
   const season_id = chance.natural({ max: 15 });
   const paged = { page: 1, per_page: 10 };
   const api = new ClubsAPIInvoker();
@@ -24,7 +24,9 @@ describe("Clubs - Stage Entity [auth]", () => {
 
   const { stage_id } = stage;
 
-  test("getClub", async () => {
+  it("getClub", async () => {
+    expect.assertions(2);
+
     const current_stage = mockStageClubResponse({ stage_id });
     const other_stages = mockMultiple((_, i) => mockStageClubResponse({ stage_id: i }));
     const stages = [...other_stages, current_stage];
@@ -35,54 +37,63 @@ describe("Clubs - Stage Entity [auth]", () => {
 
     const getClubReq = stage.getClub(club_id);
 
-    await expect(getClubReq).resolves.toBeDefined();
-    expect(req.isDone()).toBeTruthy();
+    expect(await getClubReq).toBeDefined();
+    expect(req.isDone()).toStrictEqual(true);
   });
 
-  test("getClubMe", async () => {
+  it("getClubMe", async () => {
+    expect.assertions(2);
+
     const club = mockStageClubResponse({ stage_id });
     const req = mocks.getStageClubMe(stage.season_id, stage_id).reply(200, club);
 
     const getClubMeReq = stage.getClubMe();
 
-    await expect(getClubMeReq).resolves.toBeDefined();
-    expect(req.isDone()).toBeTruthy();
+    expect(await getClubMeReq).toBeDefined();
+    expect(req.isDone()).toStrictEqual(true);
   });
 
-  test("getClubMembers", async () => {
-    const members = mockMultiple(() => mockStageSummonerResponse({ stage_id }))
+  it("getClubMembers", async () => {
+    expect.assertions(2);
+
+    const members = mockMultiple(() => mockStageSummonerResponse({ stage_id }));
     const req = mocks.getStageClubMembers(stage.season_id, stage_id).query(paged)
       .reply(200, mockPagedResponse(members, paged));
 
     const getClubMembersReq = stage.getClubMembers(paged.per_page, paged.page);
 
-    await expect(getClubMembersReq).resolves.toBeDefined();
-    expect(req.isDone()).toBeTruthy();
+    expect(await getClubMembersReq).toBeDefined();
+    expect(req.isDone()).toStrictEqual(true);
   });
 
-  test("getClubMembersRating", async () => {
+  it("getClubMembersRating", async () => {
+    expect.assertions(2);
+
     const rating = mockMultiple(() => mockSummonerStageRatingResponse({ stage_id }));
     const req = mocks.getStageClubMembersRating(stage_id).reply(200, rating);
 
     const getClubMembersRatingReq = stage.getClubMembersRating();
 
-    await expect(getClubMembersRatingReq).resolves.toBeDefined();
-    expect(req.isDone()).toBeTruthy();
+    expect(await getClubMembersRatingReq).toBeDefined();
+    expect(req.isDone()).toStrictEqual(true);
   });
 
-  test("getTopN", async () => {
+  it("getTopN", async () => {
+    expect.assertions(1);
+
     const clubs = mockMultiple(() => mockStageClubResponse({ stage_id }));
-    const req = mocks.getStageTopClubs(stage.season_id, stage_id).query(paged)
+    mocks.getStageTopClubs(stage.season_id, stage_id).query(paged)
       .reply(200, mockPagedResponse(clubs, paged));
 
     const getTopNReq = stage.getTopN(paged.per_page, paged.page);
 
-    await expect(getTopNReq).resolves.toBeDefined();
-    expect(req.isDone()).toBeTruthy();
+    expect(await getTopNReq).toBeDefined();
   });
 
   describe("toGetTopN", () => {
-    test("Invalid top", async () => {
+    it("invalid top", async () => {
+      expect.assertions(1);
+
       const top = chance.natural({ min: 26 });
 
       const toGetTopNReq = stage.toGetTopN(top, { group_size: 5, isARAM: true });
@@ -90,16 +101,18 @@ describe("Clubs - Stage Entity [auth]", () => {
       await expect(toGetTopNReq).rejects.toThrow(consts.invalidTopPosition);
     });
 
-    test("Invalid group size", async () => {
+    it("invalid group size", async () => {
+      expect.assertions(1);
+
       const top = chance.natural({ min: 2, max: 20 });
-      const group_size = chance.bool() ? chance.natural({ min: 5 }) : 1;
+      const group_size = chance.natural({ min: 5 });
 
       const toGetTopNReq = stage.toGetTopN(top, { group_size, isARAM: true });
 
       await expect(toGetTopNReq).rejects.toThrow(consts.invalidPlayerCount);
     });
 
-    describe("Valid arguments", () => {
+    describe("valid arguments", () => {
       const top = chance.natural({ min: 2, max: 25 });
       const group_size = chance.natural({ min: 3, max: 5 });
       const isARAM = chance.bool();
@@ -111,39 +124,45 @@ describe("Clubs - Stage Entity [auth]", () => {
       mocks.getStageTopClubs(stage.season_id, stage_id).query(topClubsPaged)
         .reply(200, mockPagedResponse(topclubs, topClubsPaged));
 
-      test("Not participating", async () => {
-        const topClubsPaged = { page: 1, per_page: top };
-        mocks.getStageTopClubs(stage.season_id, stage_id).query(topClubsPaged)
-          .reply(200, mockPagedResponse(topclubs, topClubsPaged));
+      it("not participating", async () => {
+        expect.assertions(1);
+
+        const topClubsPagedOverride = { page: 1, per_page: top };
+        mocks.getStageTopClubs(stage.season_id, stage_id).query(topClubsPagedOverride)
+          .reply(200, mockPagedResponse(topclubs, topClubsPagedOverride));
         mocks.getStageClubMe(stage.season_id, stage_id).reply(200, { ...club, rank: 0 });
 
         const toGetTopNReq = stage.toGetTopN(top, { group_size, isARAM });
 
-        await expect(toGetTopNReq).resolves.toMatchObject({ games_count: expect.any(Number), points_needed: expect.any(Number) });
+        expect(await toGetTopNReq).toMatchObject({ games_count: expect.any(Number), points_needed: expect.any(Number) });
       });
 
-      test("Higher place", async () => {
+      it("higher place", async () => {
+        expect.assertions(1);
+
         const new_top = 3;
-        const topClubsPaged = { page: 1, per_page: new_top };
-        mocks.getStageTopClubs(stage.season_id, stage_id).query(topClubsPaged)
-          .reply(200, mockPagedResponse(topclubs, topClubsPaged));
+        const topClubsPagedOverride = { page: 1, per_page: new_top };
+        mocks.getStageTopClubs(stage.season_id, stage_id).query(topClubsPagedOverride)
+          .reply(200, mockPagedResponse(topclubs, topClubsPagedOverride));
         mocks.getStageClubMe(stage.season_id, stage_id).reply(200, { ...club, rank: 1 });
 
         const toGetTopNReq = stage.toGetTopN(new_top, { group_size, isARAM });
 
-        await expect(toGetTopNReq).resolves.toMatchObject({ games_count: expect.any(Number), points_needed: expect.any(Number) });
+        expect(await toGetTopNReq).toMatchObject({ games_count: expect.any(Number), points_needed: expect.any(Number) });
       });
 
-      test("Lower place", async () => {
+      it("lower place", async () => {
+        expect.assertions(1);
+
         const new_rank = chance.natural({ min: top, max: 25 });
-        const topClubsPaged = { page: 1, per_page: top };
-        mocks.getStageTopClubs(stage.season_id, stage_id).query(topClubsPaged)
-          .reply(200, mockPagedResponse(topclubs, topClubsPaged));
+        const topClubsPagedOverride = { page: 1, per_page: top };
+        mocks.getStageTopClubs(stage.season_id, stage_id).query(topClubsPagedOverride)
+          .reply(200, mockPagedResponse(topclubs, topClubsPagedOverride));
         mocks.getStageClubMe(stage.season_id, stage_id).reply(200, { ...club, rank: new_rank });
 
         const toGetTopNReq = stage.toGetTopN(top, { group_size, isARAM });
 
-        await expect(toGetTopNReq).resolves.toMatchObject({ games_count: expect.any(Number), points_needed: expect.any(Number) });
+        expect(await toGetTopNReq).toMatchObject({ games_count: expect.any(Number), points_needed: expect.any(Number) });
       });
     });
   });

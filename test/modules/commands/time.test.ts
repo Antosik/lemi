@@ -1,34 +1,42 @@
 import { generateSeasonTime, generateStageTime } from "../../../src/commands/time/text";
-import { mockCurrentSeasonResponse } from "../../__mocks__/responses/ISeason.mock";
-import { mockSeasonEntity } from "../../__mocks__/entities/ISeason";
+import { mockCurrentSeasonResponse } from "../../mocks/responses/ISeason.mock";
+import { mockSeasonEntity } from "../../mocks/entities/ISeason";
 
 import { consts } from "../../../src/localization";
 
-describe("Commands - Time", () => {
-  describe("Text generation", () => {
+describe("commands - Time", () => {
+  describe("text generation", () => {
     const season_data = mockCurrentSeasonResponse();
     const live_season = mockSeasonEntity({ season_data });
     const stage = live_season.stages[0];
 
-    describe("Stage", () => {
-      test("No active", () => {
+    describe("stage", () => {
+      it("no active", () => {
+        expect.assertions(1);
+
         const text = generateStageTime(undefined);
         expect(text).toStrictEqual(consts.noActiveStage);
-      })
+      });
 
-      test("Active", () => {
+      it("active", () => {
+        expect.assertions(1);
+
         const text = generateStageTime(stage);
         expect(typeof text).toStrictEqual("string");
       });
     });
 
-    describe("Season", () => {
-      test("No active", () => {
+    describe("season", () => {
+      it("no active", () => {
+        expect.assertions(1);
+
         const text = generateSeasonTime(undefined);
         expect(text).toStrictEqual(consts.noActiveSeason);
-      })
+      });
 
-      test("Active", () => {
+      it("active", () => {
+        expect.assertions(1);
+
         const text = generateSeasonTime(live_season);
         expect(typeof text).toStrictEqual("string");
       });

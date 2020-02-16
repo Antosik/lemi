@@ -4,8 +4,10 @@ import { generateCalcseasonText } from "../../../src/commands/calcseason/text";
 
 const chance = new Chance();
 
-describe("Commands - CalcSeason", () => {
-  test("Text generation", () => {
+describe("commands - CalcSeason", () => {
+  it("text generation", () => {
+    expect.assertions(5);
+
     const wanted = chance.natural({ max: 50 });
     const points_needed = chance.natural({ max: 1e5 });
     const games_count = chance.natural({ max: 1e5 });
@@ -18,5 +20,5 @@ describe("Commands - CalcSeason", () => {
     expect(text).toContain(`заработать ${points_needed}`);
     expect(text).toContain(`выиграв **${games_count}`);
     expect(text).toContain(`составом из ${group_size}`);
-  })
+  });
 });

@@ -1,13 +1,15 @@
-import { mockSeasonRewardEntity, mockStageRewardEntity } from "../../__mocks__/entities/IReward";
-import { mockParticipatingClubResponse } from "../../__mocks__/responses/IClub.mock";
-import { mockSeasonRewardResponse, mockStageRewardResponse } from "../../__mocks__/responses/IReward.mock";
-import { mockSeasonResponse } from "../../__mocks__/responses/ISeason.mock";
-import { mockMultiple } from "../../__mocks__/responses/helpers";
+import { mockSeasonRewardEntity, mockStageRewardEntity } from "../../mocks/entities/IReward";
+import { mockParticipatingClubResponse } from "../../mocks/responses/IClub.mock";
+import { mockSeasonRewardResponse, mockStageRewardResponse } from "../../mocks/responses/IReward.mock";
+import { mockSeasonResponse } from "../../mocks/responses/ISeason.mock";
+import { mockMultiple } from "../../mocks/responses/helpers";
 
 import { generateRewardsEmbed } from "../../../src/commands/rewards/embed";
 
-describe("Commands - Rewards", () => {
-  test("Embed generation", () => {
+describe("commands - Rewards", () => {
+  it("embed generation", () => {
+    expect.assertions(4);
+
     const season = mockSeasonResponse();
     const stage = season.stages[0];
 

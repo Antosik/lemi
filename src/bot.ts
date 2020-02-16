@@ -21,7 +21,7 @@ export default class Lemi {
   private commands: DiscordCollection<string, ICommand>;
 
   constructor(config: ILemiConfig) {
-    if (!config.discord_token) {
+    if (config.discord_token === undefined || config.discord_token.trim().length === 0) {
       throw new Error("No discord token passed!");
     }
 

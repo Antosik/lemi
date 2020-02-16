@@ -1,13 +1,13 @@
 import { Chance } from "chance";
 
-import { mockSeasonsClubResponse, mockStageClubResponse } from "../../__mocks__/responses/IClub.mock";
+import { mockSeasonsClubResponse, mockStageClubResponse } from "../../mocks/responses/IClub.mock";
 
 import { generateClubEmbed } from "../../../src/commands/club/embed";
 
 const chance = new Chance();
 
-describe("Commands - Club", () => {
-  describe("Embed generation", () => {
+describe("commands - Club", () => {
+  describe("embed generation", () => {
     const season_id = chance.natural({ max: 1e4 });
     const stage_id = chance.natural({ max: 1e4 });
     const stage_index = chance.natural({ min: 1, max: 10 });
@@ -15,7 +15,9 @@ describe("Commands - Club", () => {
     const homeclub_stage = mockStageClubResponse({ stage_id });
 
 
-    test("Stage - Not participating", () => {
+    it("stage - Not participating", () => {
+      expect.assertions(6);
+
       const embed = generateClubEmbed({ homeclub_season, homeclub_stage, stage_index });
       const json = JSON.parse(JSON.stringify(embed));
 
@@ -33,7 +35,8 @@ describe("Commands - Club", () => {
       expect(json.fields).toHaveLength(3);
     });
 
-    test("Stage - Participating", () => {
+    it("stage - Participating", () => {
+      expect.assertions(6);
       const embed = generateClubEmbed({ homeclub_season, homeclub_stage: undefined, stage_index });
       const json = JSON.parse(JSON.stringify(embed));
 
