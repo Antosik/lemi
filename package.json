@@ -7,7 +7,7 @@
     "build": "rimraf dist && tsc",
     "watch": "tsc -w",
     "postinstall": "npm run build",
-    "lint": "eslint --ext .js,.ts src",
+    "lint": "eslint --ext .js,.ts .",
     "lint:dump": "eslint --print-config ./.eslintrc.json",
     "jest": "jest --setupFiles dotenv/config",
     "test": "npm run lint && npm run jest"
@@ -31,6 +31,7 @@
     "@typescript-eslint/parser": "^2.19.2",
     "chance": "^1.1.4",
     "eslint": "^6.8.0",
+    "eslint-plugin-jest": "^23.7.0",
     "jest": "^24.9.0",
     "nock": "^11.7.2",
     "nodemon": "^2.0.2",
