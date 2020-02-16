@@ -16,14 +16,15 @@ export interface IRewardConditionResponse {
   readonly reward_value: number;
 }
 
-export interface ISeasonRewardResponse {
+export interface IRewardResponse {
   readonly id: number;
-  readonly club: ISeasonsClubResponse;
   readonly reward_condition: IRewardConditionResponse;
 }
 
-export interface IStageRewardResponse {
-  readonly id: number;
+export interface ISeasonRewardResponse extends IRewardResponse {
+  readonly club: ISeasonsClubResponse;
+}
+
+export interface IStageRewardResponse extends IRewardResponse {
   readonly club: IStageClubResponse;
-  readonly reward_condition: IRewardConditionResponse;
 }

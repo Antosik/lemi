@@ -1,11 +1,10 @@
 import { format as formatDate } from "date-fns";
-import { RichEmbed } from "discord.js";
 
 import { ICommand } from "../../interfaces/ICommand";
 import { consts } from "../../localization";
 import { createPagedMessage } from "../../helpers/discord";
 
-import { generateTopseasonEmbed } from "./embed";
+import { generateTopseasonEmbed, generateTopseasonTemplateEmbed } from "./embed";
 
 
 module.exports = {
@@ -26,14 +25,8 @@ module.exports = {
       return message.channel.send(consts.noActiveSeason);
     }
 
-    const start_date = formatDate(live_season.start_date, "dd.MM.yyyy");
-    const end_date = formatDate(live_season.end_date, "dd.MM.yyyy");
     const now = formatDate(new Date(), "HH:mm:ss dd.MM.yyyy");
-    const template = new RichEmbed()
-      .setColor("#0099ff")
-      .setTitle("Рейтинг клубов")
-      .setDescription(`Сезон "${live_season.title}" (${start_date} - ${end_date})`)
-      .setFooter(`Страница 1 • ${now}`);
+    const template = generateTopseasonTemplateEmbed(now, { live_season });
 
     let top10 = await live_season.getTopN(count);
     let result = generateTopseasonEmbed(template, top10);

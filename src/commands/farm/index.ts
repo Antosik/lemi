@@ -1,11 +1,10 @@
 import { format as formatDate } from "date-fns";
-import { RichEmbed } from "discord.js";
 
 import { ICommand } from "../../interfaces/ICommand";
 import { consts } from "../../localization";
 import { createPagedMessage } from "../../helpers/discord";
 
-import { formatDeficiencyMembers } from "./embed";
+import { formatDeficiencyMembers, generateFarmTemplateEmbed } from "./embed";
 
 
 module.exports = {
@@ -37,14 +36,8 @@ module.exports = {
       return message.channel.send(consts.farmEnoughPoints);
     }
 
-    const start_date = formatDate(live_stage.start_date, "dd.MM.yyyy");
-    const end_date = formatDate(live_stage.end_date, "dd.MM.yyyy");
     const now = formatDate(new Date(), "HH:mm:ss dd.MM.yyyy");
-    const template = new RichEmbed()
-      .setColor("#0099ff")
-      .setTitle(`Игроки клуба "${homeclub.club.lol_name}", не заработавшие ${points}pt`)
-      .setDescription(`Сезон "${live_season.title}". Этап ${live_stage.index} (${start_date} - ${end_date})`)
-      .setFooter(now);
+    const template = generateFarmTemplateEmbed(points, now, { live_season, live_stage, homeclub });
 
     const pages_count = Math.ceil(deficiency.length / count);
     let deficiency_slice = deficiency.slice(0, count);

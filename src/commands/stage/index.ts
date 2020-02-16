@@ -1,12 +1,11 @@
 import { format as formatDate } from "date-fns";
-import { RichEmbed } from "discord.js";
 
 import { ICommand } from "../../interfaces/ICommand";
 import { consts } from "../../localization";
 import { createPagedMessage } from "../../helpers/discord";
 
 import { generateCalcStageNotPart } from "../calcstage/text";
-import { generateStageEmbed } from "./embed";
+import { generateStageEmbed, generateStageTemplateEmbed } from "./embed";
 
 module.exports = {
   name: "myclubstage",
@@ -41,15 +40,8 @@ module.exports = {
       return message.channel.send(result_not);
     }
 
-    const start_date = formatDate(stage.start_date, "dd.MM.yyyy");
-    const end_date = formatDate(stage.end_date, "dd.MM.yyyy");
     const now = formatDate(new Date(), "HH:mm:ss dd.MM.yyyy");
-
-    const template = new RichEmbed()
-      .setColor("#0099ff")
-      .setTitle("Рейтинг клубов")
-      .setDescription(`Сезон "${live_season.title}". Этап ${stage.index} (${start_date} - ${end_date})`)
-      .setFooter(now);
+    const template = generateStageTemplateEmbed(now, { stage, live_season });
 
     const pages_count = Math.ceil(clubs_stage.length / count);
     let stage_clubs_slice = clubs_stage.slice(0, count);
