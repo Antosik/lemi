@@ -31,7 +31,7 @@ module.exports = {
       return message.channel.send(consts.stageNotFound);
     }
 
-    const [homeclub_stage, clubs_stage] = await Promise.all([stage.getClubMe(), stage.getTopN()]);
+    const [homeclub_stage, clubs_stage] = await Promise.all([stage.getClubMe(), stage.getTopN(50)]);
 
     if (!homeclub_stage.rank) {
       const group_size = 5;
