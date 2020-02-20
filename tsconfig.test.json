@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/**/*",
+    "test/**/*"
+  ],
+  "env": {
+      "jest": true
+  },
+  "plugins": [
+      "jest"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

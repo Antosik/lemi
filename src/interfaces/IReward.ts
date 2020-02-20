@@ -1,23 +1,17 @@
-import { IStageClub } from "./IClub";
+import { ISeasonEntity } from "./ISeason";
+import { IStageEntity } from "./IStage";
 
-export interface IRewardDescription {
-  id: number;
-  description: string;
-  reward_type: number;
-  rules: number;
+export interface IRewardEntity {
+  reason: string;
+  count: number;
 }
 
-export interface IRewardCondition {
-  id: number;
-  reward: IRewardDescription;
-  description?: string;
-  min: number;
-  max: number;
-  reward_value: 1;
+export interface ISeasonRewardEntity {
+  season: ISeasonEntity;
+  reward?: IRewardEntity;
 }
 
-export interface IReward {
-  id: number;
-  club: IStageClub;
-  reward_condition: IRewardCondition;
+export interface IStageRewardEntity {
+  stage: IStageEntity;
+  reward: IRewardEntity;
 }

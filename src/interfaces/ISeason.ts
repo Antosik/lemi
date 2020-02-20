@@ -1,17 +1,15 @@
-import { IStage } from "./IStage";
+import { IStageEntity } from "./IStage";
 
-export interface ISeason {
-  id: number;
-  rules: number;
-  start_date: string;
-  end_date: string;
-  title: string;
-  is_open: boolean;
-  is_closed: boolean;
-  status: number;
-}
+export interface ISeasonEntity {
+  readonly season_id: number;
+  readonly title: string;
 
-export interface ICurrentSeason extends ISeason {
-  current_stage: IStage;
-  stages: IStage[];
+  readonly start_date: Date;
+  readonly end_date: Date;
+  readonly is_open: boolean;
+  readonly is_closed: boolean;
+
+  readonly stages: IStageEntity[];
+
+  isLive(): boolean;
 }

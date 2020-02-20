@@ -1,36 +1,33 @@
 import * as dotenv from "dotenv";
+
 import Lemi from "../../src/bot";
 
-dotenv.config();
 
-describe("Lemi tests", () => {
+describe("lemi tests", function () {
   describe("init tests", () => {
-    test("incorrect init", (done) => {
-      function incorrectInit() {
-        const lemi = new Lemi({ discord_token: "", prefix: "", lol_token: "" });
-        lemi.run();
-      }
-
+    it("incorrect init", () => {
       expect.assertions(1);
-      expect(incorrectInit).toThrow();
 
-      done();
+      expect(() => {
+        new Lemi({ discord_token: "", prefix: "", lol_token: "" });
+      }).toThrow("No discord token passed!");
     });
 
-    test("correct init", async (done) => {
+    it("correct init", async () => {
+      expect.assertions(1);
+
+      dotenv.config();
+
       const lemi = new Lemi({
-        lol_token: process.env.LOL_TOKEN,
-        discord_token: process.env.DISCORD_TOKEN,
-        prefix: process.env.LEMI_PREFIX
+        lol_token: process.env.LOL_TOKEN || "test",
+        discord_token: process.env.DISCORD_TOKEN || "test",
+        prefix: process.env.LEMI_PREFIX || "test"
       });
       const token = await lemi.run();
 
-      expect.assertions(1);
-      expect(token).toEqual(process.env.DISCORD_TOKEN);
+      expect(token).toStrictEqual(process.env.DISCORD_TOKEN);
 
       await lemi.stop();
-
-      done();
     });
   });
 });

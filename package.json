@@ -4,10 +4,11 @@
   "description": "Bot for Clubs in League of Legends",
   "scripts": {
     "start": "node dist/main.js",
-    "build": "tsc --sourceMap false",
+    "build": "rimraf dist && tsc",
     "watch": "tsc -w",
     "postinstall": "npm run build",
-    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "lint": "eslint --ext .js,.ts .",
+    "lint:dump": "eslint --print-config ./.eslintrc.json",
     "jest": "jest --setupFiles dotenv/config",
     "test": "npm run lint && npm run jest"
   },
@@ -20,10 +21,17 @@
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
+    "@types/chance": "^1.0.8",
     "@types/dotenv": "^8.2.0",
     "@types/jest": "^24.9.1",
     "@types/nock": "^11.1.0",
     "@types/node": "^10.17.14",
+    "@typescript-eslint/eslint-plugin": "^2.19.2",
+    "@typescript-eslint/eslint-plugin-tslint": "^2.19.2",
+    "@typescript-eslint/parser": "^2.19.2",
+    "chance": "^1.1.4",
+    "eslint": "^6.8.0",
+    "eslint-plugin-jest": "^23.7.0",
     "jest": "^24.9.0",
     "nock": "^11.7.2",
     "nodemon": "^2.0.2",

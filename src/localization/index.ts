@@ -1,6 +1,6 @@
-import { getLocaleFn } from "./helpers";
+import { getLocaleFn, LocaleFn } from "./helpers";
 
-const locale = {
+export const locale: { [key: string]: LocaleFn } = {
   game: getLocaleFn({
     singularNominative: "{{count}} игра",
     singularGenitive: "{{count}} игры",
@@ -71,11 +71,13 @@ export const consts = {
   timeToStageEnd: "До конца этапа осталось",
 
   authError: "Ошибка авторизации.",
-  requestError: "Ошибка получения данных с сервера."
+  requestError: "Ошибка получения данных с сервера.",
+  unexpectedError: "Непредвиденная ошибка."
 };
 
 export default function format(token: string, count: number): string {
-  if (!locale[token]) { return ""; }
+  const formatter = locale[token];
+  if (!formatter) { return ""; }
 
-  return locale[token](count);
+  return formatter(count);
 }

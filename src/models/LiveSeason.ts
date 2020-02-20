@@ -1,29 +1,29 @@
+import { ICurrentSeasonResponse } from "../clubs-api/interfaces/ISeason";
+import { ClubsAPIInvoker } from "../clubs-api/helpers/api-invoker";
+
 import Season from "./Season";
 import Stage from "./Stage";
 
-import { ICurrentSeason } from "../interfaces/ISeason";
+import { consts } from "../localization";
 
 export default class LiveSeason extends Season {
-  public readonly current_stage: Stage;
-  public readonly stages: Stage[];
+  public readonly current_stage?: Stage;
 
-  constructor(data: ICurrentSeason, token: string) {
-    super(data, token);
+  constructor(data: ICurrentSeasonResponse, api: ClubsAPIInvoker) {
+    super(data, api);
 
-    this.current_stage = data.current_stage ? new Stage(data.current_stage) : undefined;
-    this.stages = data.stages.map((stage) => new Stage(stage));
+    this.current_stage = data.current_stage ? new Stage(data.current_stage, api) : undefined;
   }
 
-  public getStageIdByIndex(stage_index?: number): Stage {
-    if (stage_index) {
-      const stage = this.stages.find(({ number }) => number === stage_index);
-      return stage;
+  public getStageByIndex(index?: number): Stage | undefined {
+    if (index === undefined) {
+      return this.current_stage;
     }
 
-    return this.current_stage;
-  }
-
-  public isEnded(): boolean {
-    return this.stages.every((stage) => !stage.is_live);
+    const stage = this.stages.find(({ index: i }) => index === i);
+    if (stage === undefined) {
+      throw new Error(consts.stageNotFound);
+    }
+    return stage;
   }
 }
