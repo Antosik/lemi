@@ -12,7 +12,7 @@
     "test": "npm run lint && npm run jest"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "axios-extensions": "^3.0.6",
     "co": "^4.6.0",
     "date-fns": "^2.9.0",
